@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c332e0445cbb742a19e34357867b49, type: 3}
+  m_Name: Fire Card
+  m_EditorClassIdentifier: 
+  cardName: Fire Ball
+  cardArt: {fileID: -1415197967714447595, guid: 51f542ee3d09aab4099731087c026acc, type: 3}
+  description: 
+  cardType: 0
+  element: 1
+  baseDamage: 12
+  healAmount: 0
+  specialEffect: 0
+  energyCost: 2
+  supportEffect: 0
+  supportValue: 0

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c332e0445cbb742a19e34357867b49, type: 3}
+  m_Name: Shield
+  m_EditorClassIdentifier: 
+  cardName: Shield
+  cardArt: {fileID: 0}
+  description: use it in card exchange slot and activate 5 shield
+  cardType: 3
+  element: 0
+  baseDamage: 0
+  healAmount: 0
+  specialEffect: 0
+  energyCost: 0
+  supportEffect: 5
+  supportValue: 12

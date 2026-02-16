@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
+  m_Name: Mini Golem
+  m_EditorClassIdentifier: 
+  enemyName: Mini Golem
+  maxHealth: 30
+  element: 3
+  enemyArt: {fileID: 8006858486370496591, guid: c64f05fbd4ed7c2489e24e33936637e8, type: 3}
+  damage: 8
+  goldReward: 9

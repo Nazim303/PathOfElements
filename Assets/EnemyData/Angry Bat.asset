@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
+  m_Name: Angry Bat
+  m_EditorClassIdentifier: 
+  enemyName: Angry Bat
+  maxHealth: 20
+  element: 4
+  enemyArt: {fileID: -4478820209125475245, guid: ca204c6b5e6770b45a84949c59f6b657, type: 3}
+  damage: 7
+  goldReward: 5

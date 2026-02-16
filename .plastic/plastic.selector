@@ -1,0 +1,3 @@
+repository "Path Of Elements/Path Of Elements@18968106260748@cloud"
+  path "/"
+    smartbranch "/main"

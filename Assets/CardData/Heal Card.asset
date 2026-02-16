@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c332e0445cbb742a19e34357867b49, type: 3}
+  m_Name: Heal Card
+  m_EditorClassIdentifier: 
+  cardName: Heal Potion
+  cardArt: {fileID: 5678092926742680985, guid: 1ab5206155cb8e74d9856101fe2b5568, type: 3}
+  description: 
+  cardType: 1
+  element: 0
+  baseDamage: 8
+  healAmount: 8
+  specialEffect: 0
+  energyCost: 1
+  supportEffect: 0
+  supportValue: 0
