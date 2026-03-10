@@ -20,6 +20,9 @@ public class TurnManager : MonoBehaviour
 
     [Header("UI Feedback")]
     public TextMeshProUGUI turnIndicatorText;
+    public TextMeshProUGUI roundText;     // --- YENÝ: Ekranda görünecek Raunt yazýsý ---
+    private int currentRound = 1;         // --- YENÝ: Arka planda tutulan sayý ---
+
 
     // Savaþ türünü saklayalým
     private PathType currentBattleType;
@@ -44,6 +47,10 @@ public class TurnManager : MonoBehaviour
 
     IEnumerator SetupBattle(PathType battleType)
     {
+
+        currentRound = 1;       // Savaþ baþlarken Raunt 1'den baþlar
+        UpdateRoundUI();        // Yazýyý günceller
+
         currentBattleType = battleType;
 
         // Yazýyý Türe Göre Ayarla
@@ -100,6 +107,10 @@ public class TurnManager : MonoBehaviour
     // ... Kalan fonksiyonlar (PlayerTurn, Attack, EnemyTurn vs.) ayný kalacak ...
     // Sadece aþaðýya kopyalýyorum ki eksik kalmasýn:
 
+    void UpdateRoundUI()
+    {
+        if (roundText != null) roundText.text = $"ROUND {currentRound}";
+    }
     void PlayerTurn()
     {
         state = BattleState.PLAYERTURN;
@@ -183,6 +194,11 @@ public class TurnManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
             if (deckManager != null) deckManager.DrawCard(2);
             yield return new WaitForSeconds(0.8f);
+
+            // --- YENÝ: Düþman hamlesini bitirdi, yeni raunta geçiyoruz ---
+            currentRound++;
+            UpdateRoundUI();
+
             PlayerTurn();
         }
     }

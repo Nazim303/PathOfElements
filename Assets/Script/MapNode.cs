@@ -13,6 +13,8 @@ public class MapNode : MonoBehaviour
     public PathType pathType;       // Görünen Tür (Mystery olabilir)
     public PathType realPathType;   // --- YENÝ: Gerçek Tür (Týklanýnca çalýþacak olan) ---
 
+    public bool isPreviewVisible = false; // --- YENÝ: Sadece bakmak için mi açýk? ---
+
     public Button nodeButton;
     public Image nodeIcon;
 
@@ -87,6 +89,7 @@ public class MapNode : MonoBehaviour
 
     void OnNodeClicked()
     {
+        if (PathManager.instance != null && PathManager.instance.isPeekingMap) return;
         if (isLocked || isCompleted || isSkipped) return;
 
         // PathManager'a GÖRÜNEN türü deðil, GERÇEK türü gönderiyoruz!
@@ -109,7 +112,6 @@ public class MapNode : MonoBehaviour
     {
         if (nodeButton == null || nodeIcon == null) return;
 
-        // Görsel güncelleme (Renk tonlarý)
         if (isCompleted)
         {
             nodeButton.interactable = false;
@@ -120,12 +122,19 @@ public class MapNode : MonoBehaviour
             nodeButton.interactable = false;
             nodeIcon.color = new Color(0.2f, 0.2f, 0.2f, 0.3f);
         }
+        // --- YENÝ: Önizleme durumunu kontrol et ---
+        else if (isPreviewVisible)
+        {
+            nodeButton.interactable = true; // Buton aktif olsa bile PathManager týklamayý engeller
+            nodeIcon.color = Color.white;  // Görseli aç (Siyahlýktan kurtar)
+            nodeButton.transform.localScale = Vector3.one * 1.1f;
+        }
         else if (isLocked)
         {
             nodeButton.interactable = false;
-            nodeIcon.color = Color.black;
+            nodeIcon.color = Color.black; // Normal kilitli hali
         }
-        else
+        else // Tamamen açýk ve gidilebilir durum
         {
             nodeButton.interactable = true;
             nodeIcon.color = Color.white;

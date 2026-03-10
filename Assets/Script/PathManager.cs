@@ -16,7 +16,12 @@ public class PathManager : MonoBehaviour
     public MapGenerator mapGenerator; // Inspector'dan baðla
 
     [Header("Current State")]
-    public MapNode currentNode;         // Þu an hangi düðümdeyiz?
+    public MapNode currentNode;
+    public bool isPeekingMap = false; // --- YENÝ: Þu an haritaya sadece bakýyor muyuz? ---
+
+    [Header("UI Elements")]
+    public GameObject closePeekMapButton; // --- YENÝ: Haritayý kapatma butonu (Sadece Peek modunda görünür) ---
+
 
     void Awake()
     {
@@ -31,20 +36,36 @@ public class PathManager : MonoBehaviour
             mapGenerator.GenerateMap();
         }
 
-        ShowMap();
-        // Baþlangýçta sadece Harita açýk olsun (Test için)
+        // Önce her þeyi gizle
+        mapPanel.SetActive(false);
+        combatPanel.SetActive(false);
+        if (divinerPanel != null) divinerPanel.SetActive(false);
+        if (shopPanel != null) shopPanel.SetActive(false);
+        if (companionPanel != null) companionPanel.SetActive(false);
 
+        // --- YENÝ EKLENEN: Baþlangýç destesi seçimini aç ---
+        if (StartingDeckManager.instance != null)
+        {
+            StartingDeckManager.instance.OpenSelection();
+        }
+        else
+        {
+            ShowMap(); // Eðer script sahnede yoksa direkt haritayý aç (Hata önleyici)
+        }
     }
 
     // Haritayý Açar, diðer her þeyi kapatýr
     public void ShowMap()
     {
+        isPeekingMap = false;
         mapPanel.SetActive(true);
         combatPanel.SetActive(false);
-        divinerPanel.SetActive(false);
-        shopPanel.SetActive(false);
-        companionPanel.SetActive(false);
         if (divinerPanel != null) divinerPanel.SetActive(false);
+        if (shopPanel != null) shopPanel.SetActive(false);
+        if (companionPanel != null) companionPanel.SetActive(false);
+
+        // --- YENÝ: Normal harita seçimindeysek kapatma butonunu gizle ---
+        if (closePeekMapButton != null) closePeekMapButton.SetActive(false);
     }
 
     // Düðüme týklandýðýnda çalýþýr
@@ -117,6 +138,56 @@ public class PathManager : MonoBehaviour
         if (DivinerManager.instance != null) DivinerManager.instance.OpenDivinerEvent();
     }
 
+    // --- YENÝ: Haritaya sadece göz atmak için ---
+    public void ToggleMapOverlay()
+    {
+        isPeekingMap = !isPeekingMap;
+
+        if (isPeekingMap)
+        {
+            mapPanel.SetActive(true);
+            mapPanel.transform.SetAsLastSibling();
+
+            // --- YENÝ: Sadece bakmak için açtýysak, haritayý kapatma butonunu göster ---
+            if (closePeekMapButton != null) closePeekMapButton.SetActive(true);
+
+            // Sýradaki patikalarý önizleme için "Görünür" yap (Önceki yazdýðýmýz kod)
+            if (currentNode != null && currentNode.nextNodes != null)
+            {
+                foreach (MapNode next in currentNode.nextNodes)
+                {
+                    if (next != null)
+                    {
+                        next.isPreviewVisible = true;
+                        next.UpdateVisuals();
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Harita kapandýðýnda önizleme modunu temizle
+            if (currentNode != null && currentNode.nextNodes != null)
+            {
+                foreach (MapNode next in currentNode.nextNodes)
+                {
+                    if (next != null)
+                    {
+                        next.isPreviewVisible = false;
+                        next.UpdateVisuals();
+                    }
+                }
+            }
+
+            if (currentNode != null && !currentNode.isCompleted)
+            {
+                mapPanel.SetActive(false);
+
+                // --- YENÝ: Harita kapandýðýnda butonu da gizle ---
+                if (closePeekMapButton != null) closePeekMapButton.SetActive(false);
+            }
+        }
+    }
     void StartCompanionEvent()
     {
         if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(2);

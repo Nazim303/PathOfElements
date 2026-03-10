@@ -16,11 +16,13 @@ public class DeckManager : MonoBehaviour
     [Header("References")]
     public Transform handArea;
     public GameObject cardPrefab;
-
     [Header("Visuals")]
     public Transform deckDrawPoint;
+    public Transform discardPoint; // --- YENÝ: Ýskarta destesinin ekrandaki konumu ---
 
     private Canvas mainCanvas;
+
+
 
     void Start()
     {
@@ -293,5 +295,40 @@ public class DeckManager : MonoBehaviour
             Destroy(child.gameObject);
         }
         DrawCard(drawAmount);
+    }
+
+    // --- YENÝ: Kartý iskartaya uçuran ortak fonksiyon ---
+    public IEnumerator AnimateCardToDiscard(GameObject cardObj)
+    {
+        if (cardObj == null) yield break;
+
+        // Kartýn UI'da her þeyin üstünde görünmesi için Canvas'a taþý
+        if (mainCanvas != null) cardObj.transform.SetParent(mainCanvas.transform);
+        cardObj.transform.SetAsLastSibling();
+
+        Vector3 startPos = cardObj.transform.position;
+        Quaternion startRot = cardObj.transform.rotation;
+        Vector3 targetPos = discardPoint != null ? discardPoint.position : Vector3.zero;
+
+        float t = 0;
+        float duration = 0.4f;
+
+        while (t < 1)
+        {
+            if (cardObj == null) yield break;
+            t += Time.deltaTime / duration;
+
+            // Hareketi yumuþat
+            float smoothT = t * t * (3f - 2f * t);
+
+            // Pozisyonu, boyutu ve açýyý ayný anda deðiþtir
+            cardObj.transform.position = Vector3.Lerp(startPos, targetPos, smoothT);
+            cardObj.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, smoothT);
+            cardObj.transform.rotation = Quaternion.Lerp(startRot, Quaternion.Euler(0, 0, 180), smoothT); // Uçarken döner
+
+            yield return null;
+        }
+
+        Destroy(cardObj);
     }
 }

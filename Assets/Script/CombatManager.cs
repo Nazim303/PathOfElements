@@ -23,6 +23,13 @@ public class CombatManager : MonoBehaviour
 
     public GameObject enemyDeathEffectPrefab;
 
+    [Header("Fusion System")]
+    public List<FusionRecipe> allFusionRecipes; // Inspector'dan tüm tarifleri buraya at
+    public GameObject cardPrefab;
+
+    [Header("Visuals")]
+    public Transform discardPoint;
+
     // LAG FIX
     public void SetupEnemies(List<EnemyData> enemiesToSpawn)
     {
@@ -171,13 +178,18 @@ public class CombatManager : MonoBehaviour
                     cardTransform.localScale = Vector3.zero;
 
                     // D. Temizlik (Ýskartaya at ve yok et)
-                    if (FindObjectOfType<DeckManager>() != null)
+                    DeckManager dm = FindObjectOfType<DeckManager>();
+                    if (dm != null)
                     {
-                        // Kart boþa gittiði için iskartaya ekliyoruz
-                        FindObjectOfType<DeckManager>().AddToDiscard(card);
+                        dm.AddToDiscard(card);
+                        // YENÝ: Direk yok etmek yerine uçur
+                        dm.StartCoroutine(dm.AnimateCardToDiscard(cardTransform.gameObject));
+                    }
+                    else
+                    {
+                        Destroy(cardTransform.gameObject);
                     }
 
-                    Destroy(cardTransform.gameObject);
                     playerSlots[i] = null; // Veriyi de temizle
 
                     yield return new WaitForSeconds(0.2f);
@@ -430,11 +442,22 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-   
+    public FusionRecipe CheckFusion(CardData a, CardData b)
+    {
+        foreach (FusionRecipe recipe in allFusionRecipes)
+        {
+            // A+B veya B+A kombinasyonlarýný kontrol et (Sýra önemli olmasýn)
+            if ((recipe.cardA == a && recipe.cardB == b) || (recipe.cardA == b && recipe.cardB == a))
+            {
+                return recipe;
+            }
+        }
+        return null; // Fizyon yok
+    }
+
     public IEnumerator DestroyPlayedCards()
     {
-        List<GameObject> cardsToDestroy = new List<GameObject>();
-        DeckManager deckManager = FindObjectOfType<DeckManager>(); // Referans al
+        DeckManager deckManager = FindObjectOfType<DeckManager>();
 
         for (int i = 0; i < slotTransforms.Length; i++)
         {
@@ -442,40 +465,32 @@ public class CombatManager : MonoBehaviour
             {
                 foreach (Transform child in slotTransforms[i])
                 {
-                    cardsToDestroy.Add(child.gameObject);
+                    GameObject cardObj = child.gameObject;
 
-                    // --- YENÝ: Ýskartaya Ekleme ---
-                    // Eðer kart hala datada varsa (Companion mantýðý null yapmýþ olabilir, kontrol et)
                     if (playerSlots[i] != null && deckManager != null)
                     {
-                        // Sadece Companion OLMAYANLARI iskartaya at
-                        // (Companion zaten OnAttackPhase'de silindi)
                         if (playerSlots[i].cardType != CardType.Companion)
                         {
                             deckManager.AddToDiscard(playerSlots[i]);
                         }
+                    }
+
+                    // --- YENÝ: Kartý iskartaya uçur ---
+                    if (deckManager != null)
+                    {
+                        deckManager.StartCoroutine(deckManager.AnimateCardToDiscard(cardObj));
+                    }
+                    else
+                    {
+                        Destroy(cardObj);
                     }
                 }
             }
             playerSlots[i] = null;
         }
 
-        // Görsel yok etme efekti (Aynen kalýyor)
-        float t = 0;
-        while (t < 1)
-        {
-            t += Time.deltaTime * 5;
-            foreach (GameObject card in cardsToDestroy)
-            {
-                if (card != null)
-                    card.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, t);
-            }
-            yield return null;
-        }
-
-        foreach (GameObject card in cardsToDestroy) Destroy(card);
+        yield return new WaitForSeconds(0.4f); // Uçma animasyonunun bitmesini bekle
         Debug.Log("Masa temizlendi ve kartlar iskartaya yollandý.");
-
         RecalculateTotalEnergyCost();
     }
 }

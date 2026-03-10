@@ -4,13 +4,20 @@ using UnityEngine;
 public enum ElementType
 {
     None,
-    Fire,   // Ateþ
-    Water,  // Su
-    Earth,  // Toprak
-    Air     // Hava
-    // Ýleride Roadmap'te belirtilen Iþýk/Karanlýk buraya eklenecek
+    // --- ANA ELEMENTLER ---
+    Fire,
+    Water,
+    Earth,  // (Doða)
+    Air,
+
+    // --- YAN ELEMENTLER (FÝZYON) ---
+    Magma,  // Ateþ + Doða
+    Steam,  // Su + Ateþ
+    Ice,    // Su + Hava
+    Dust    // Doða + Hava
 }
 
+// ElementSystem.cs sýnýfýnýn kalan kýsmý (GetDamageMultiplier) ayný kalacak.
 public static class ElementSystem
 {
     // Hasar çarpanýný hesaplayan fonksiyon

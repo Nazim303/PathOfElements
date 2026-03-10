@@ -19,6 +19,8 @@ public class PlayerManager : MonoBehaviour
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI goldText;
     public TextMeshProUGUI shieldText;
+    public Image healthFillBar;
+    public Image shieldFillBar;
 
     [Header("Visual Effects")]
     public Image damageFlashImage;
@@ -129,6 +131,7 @@ public class PlayerManager : MonoBehaviour
 
     void UpdateUI()
     {
+        // 1. Yazýlarý Güncelle (Yine de kalsýn, barýn üstüne yazýlýr)
         if (healthText != null)
         {
             string shieldInfo = currentShield > 0 ? $" <color=#00FFFF>(+{currentShield})</color>" : "";
@@ -136,8 +139,50 @@ public class PlayerManager : MonoBehaviour
         }
 
         if (goldText != null) goldText.text = $"{currentGold} G";
-
         if (shieldText != null) shieldText.gameObject.SetActive(false);
+
+        // --- 2. YENÝ: Barlarý Güncelle ---
+
+        // Can Barý
+        if (healthFillBar != null)
+        {
+            healthFillBar.fillAmount = (float)currentHealth / maxHealth;
+        }
+
+        // Kalkan Barý (Slay the Spire Mantýðý)
+        // Kalkan, can barýnýn bittiði yerden baþlamalýdýr veya can barýnýn üstüne ayrý bir katman olarak binmelidir.
+        if (shieldFillBar != null)
+        {
+            if (currentShield > 0)
+            {
+                shieldFillBar.gameObject.SetActive(true);
+
+                // Kalkan miktarýný Max HP'ye göre orantýla (Can barý üzerinde kaplayacaðý alan)
+                float shieldPercentage = (float)currentShield / maxHealth;
+
+                // Kalkaný, canýn kaldýðý yerden baþlatacak þekilde bir "offset" verebiliriz, 
+                // ya da direkt can barýnýn üstünü kaplayacak þekilde ayarlayabiliriz. 
+                // En basiti: Kalkan barýnýn doluluðunu (Can + Kalkan) kadar yapýp, Can barýnýn ARKASINA veya ÜSTÜNE koymaktýr.
+
+                // Yöntem: Shield Bar, Can Barý ile ayný boyutta olsun. Doluluðu sadece kalkan kadar olsun.
+                shieldFillBar.fillAmount = shieldPercentage;
+
+                // UI'da ShieldFillBar'ýn RectTransform'unda pivot'u Left (X:0) yap ve 
+                // kod ile X pozisyonunu Can barýnýn bittiði yere it:
+                RectTransform shieldRect = shieldFillBar.GetComponent<RectTransform>();
+                RectTransform healthRect = healthFillBar.GetComponent<RectTransform>();
+
+                if (shieldRect != null && healthRect != null)
+                {
+                    float healthWidth = healthRect.rect.width * healthFillBar.fillAmount;
+                    shieldRect.anchoredPosition = new Vector2(healthWidth, shieldRect.anchoredPosition.y);
+                }
+            }
+            else
+            {
+                shieldFillBar.gameObject.SetActive(false);
+            }
+        }
     }
 
     IEnumerator FlashRoutine(Image imageToFlash, Color targetColor)

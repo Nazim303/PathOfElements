@@ -103,12 +103,12 @@ TextureImporter:
       name: Breeze_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1443
-        height: 1933
+        x: 336
+        y: 473
+        width: 800
+        height: 1000
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 9022888e3316c4c4f9bebb685ceb56b3
     internalID: 0
     vertices: []
     indices: 

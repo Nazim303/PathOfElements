@@ -53,6 +53,7 @@ public class EnergyManager : MonoBehaviour
 
     public void GainEnergy(int amount)
     {
+
         currentEnergy += amount;
         if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
         UpdateUI();

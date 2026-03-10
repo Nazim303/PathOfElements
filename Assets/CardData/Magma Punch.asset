@@ -16,7 +16,7 @@ MonoBehaviour:
   cardArt: {fileID: 1393219917549494242, guid: b9160e20aa22f9541a2c0903c149d873, type: 3}
   description: 
   cardType: 0
-  element: 1
+  element: 5
   baseDamage: 15
   healAmount: 0
   specialEffect: 0

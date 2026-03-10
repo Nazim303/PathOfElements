@@ -122,33 +122,24 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler
 
     IEnumerator BurnAndDestroyCard(GameObject cardObj, DeckManager dmRef, bool drawReplacement)
     {
-        // 1. Efekt
+        // 1. Efekt (Yanma partikülü)
         if (burnEffectPrefab != null)
         {
             GameObject effect = Instantiate(burnEffectPrefab, cardObj.transform.position, Quaternion.identity, transform.root);
             Destroy(effect, 2f);
         }
 
-        // 2. Küçülme Animasyonu
-        float t = 0;
-        Vector3 startScale = cardObj.transform.localScale;
-
-        if (cardObj != null)
+        // 2. YENÝ: Kartý iskartaya uçur
+        if (dmRef != null && cardObj != null)
         {
-            while (t < 1)
-            {
-                t += Time.deltaTime * 5f;
-                if (cardObj == null) yield break;
-
-                cardObj.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
-                yield return null;
-            }
+            dmRef.StartCoroutine(dmRef.AnimateCardToDiscard(cardObj));
+        }
+        else if (cardObj != null)
+        {
+            Destroy(cardObj);
         }
 
-        // 3. Yok Et
-        if (cardObj != null) Destroy(cardObj);
-
-        // 4. Yeni Kart Çek
+        // 3. Yeni Kart Çek
         if (drawReplacement)
         {
             yield return new WaitForSeconds(0.1f);
