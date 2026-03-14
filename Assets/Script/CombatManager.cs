@@ -370,11 +370,35 @@ public class CombatManager : MonoBehaviour
         if (boss != null && boss.IsInvulnerable())
         {
             Debug.Log("SALDIRI ÝÞLEMEDÝ! Boss þu an ölümsüz (Minyonlarý öldür).");
-            // Kalkan efekti sesi veya görseli eklenebilir
             return;
         }
 
         float multiplier = ElementSystem.GetDamageMultiplier(card.element, target.enemyData.element);
+
+        // ==========================================
+        // --- YENÝ: ZEMÝN (TERRAIN) HASAR ETKÝSÝ ---
+        // ==========================================
+        if (TerrainManager.instance != null && TerrainManager.instance.currentTerrain != ElementType.None)
+        {
+            ElementType activeTerrain = TerrainManager.instance.currentTerrain;
+
+            // 1. BUFF (Güçlendirme): Oynanan kart zeminle ayný elementteyse (+0.5x Hasar)
+            if (card.element == activeTerrain)
+            {
+                multiplier += 0.5f;
+                Debug.Log("ZEMÝN AVANTAJI! Hasar arttý.");
+            }
+            // 2. NERF (Zayýflatma): Zemin elementi, oynanan karta baskýnsa (-0.5x Hasar)
+            // (Örn: Zemin Ateþ. Ateþ, Topraða x2 vurur. Demek ki oynanan kart Topraksa zemin onu boðar!)
+            else if (ElementSystem.GetDamageMultiplier(activeTerrain, card.element) > 1.0f)
+            {
+                multiplier -= 0.5f;
+                if (multiplier < 0.1f) multiplier = 0.1f; // Hasar 0'ýn altýna düþmesin
+                Debug.Log("ZEMÝN DEZAVANTAJI! Hasar azaldý.");
+            }
+        }
+        // ==========================================
+
         int finalDamage = Mathf.RoundToInt(card.baseDamage * multiplier);
 
         target.currentHealth -= finalDamage;

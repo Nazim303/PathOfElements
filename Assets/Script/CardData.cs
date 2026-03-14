@@ -17,14 +17,16 @@ public enum SpecialEffect
 }
 
 // --- YENÝ: Destek Kartý Efektleri ---
+// --- YENÝ: Destek Kartý Efektleri ---
 public enum SupportEffect
 {
     DrawExtraCards,
     DiscardHandAndDraw,
     GainGold,
     HealPlayer,
-    GainEnergy,         // --- YENÝ: Enerji Kazan ---
-    GainShield          // --- YENÝ: Kalkan Kazan (Hasarý emer) ---
+    GainEnergy,
+    GainShield,
+    ChangeTerrain       
 }
 
 [CreateAssetMenu(fileName = "New Card", menuName = "Path of Elements/Card Data")]

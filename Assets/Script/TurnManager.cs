@@ -51,6 +51,8 @@ public class TurnManager : MonoBehaviour
         currentRound = 1;       // Savaþ baþlarken Raunt 1'den baþlar
         UpdateRoundUI();        // Yazýyý günceller
 
+        if (TerrainManager.instance != null) TerrainManager.instance.ResetTerrain();
+
         currentBattleType = battleType;
 
         // Yazýyý Türe Göre Ayarla
@@ -195,9 +197,13 @@ public class TurnManager : MonoBehaviour
             if (deckManager != null) deckManager.DrawCard(2);
             yield return new WaitForSeconds(0.8f);
 
-            // --- YENÝ: Düþman hamlesini bitirdi, yeni raunta geçiyoruz ---
             currentRound++;
             UpdateRoundUI();
+
+            if (TerrainManager.instance != null)
+            {
+                TerrainManager.instance.ResetTerrain();
+            }
 
             PlayerTurn();
         }

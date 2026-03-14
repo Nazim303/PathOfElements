@@ -117,6 +117,14 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler
                     PlayerManager.instance.AddShield(card.supportValue);
                 }
                 break;
+
+            case SupportEffect.ChangeTerrain:
+                if (TerrainManager.instance != null)
+                {
+                    // Kartýn kendi elementini zemin elementi yapýyoruz
+                    TerrainManager.instance.ChangeTerrain(card.element);
+                }
+                break;
         }
     }
 

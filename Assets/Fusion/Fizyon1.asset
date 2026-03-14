@@ -16,4 +16,4 @@ MonoBehaviour:
   cardA: {fileID: 11400000, guid: 808967b8d877de3429089abe659c445a, type: 2}
   cardB: {fileID: 11400000, guid: 1d5636bf99254ce458086d9e5a1c9cbc, type: 2}
   resultCard: {fileID: 11400000, guid: 15cabf75df4fe794da127450d18796ee, type: 2}
-  fusionVFX: {fileID: 0}
+  fusionVFX: {fileID: 5425751106460454401, guid: 28f5b68c9ee70d04bad138e7285632de, type: 3}
