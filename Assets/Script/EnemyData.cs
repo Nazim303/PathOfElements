@@ -7,6 +7,7 @@ public class EnemyData : ScriptableObject
     public int maxHealth;
     public ElementType element;
     public Sprite enemyArt;
+    public Sprite enemybander;
     public int damage;      // Düþmanýn tur baþýna vurduðu hasar
     public int goldReward;  // Yendiðimizde düþecek para [YENÝ]
 }

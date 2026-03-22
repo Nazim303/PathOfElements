@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Blood Transfer
   cardArt: {fileID: -7253866770713736879, guid: 1ba1c824cc60ce94d9dcf2705d1031e2, type: 3}
+  cardbander: {fileID: 3280247252720426850, guid: 51c3d88803ce4944aa6b7c5328e66944, type: 3}
   description: use it in card exchange slot and get 15 HP
   cardType: 3
   element: 0

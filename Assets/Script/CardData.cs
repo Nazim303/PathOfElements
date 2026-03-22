@@ -35,6 +35,7 @@ public class CardData : ScriptableObject
     [Header("Visuals")]
     public string cardName;
     public Sprite cardArt;
+    public Sprite cardbander;
     [TextArea] public string description;
 
     [Header("Stats")]

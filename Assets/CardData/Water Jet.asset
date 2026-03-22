@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Water Jet
   cardArt: {fileID: -3563148514567261158, guid: 2e875eedb8d9329479960e63b84fedeb, type: 3}
+  cardbander: {fileID: -4214241332329590814, guid: 9124df916b089e44288147b585d9592c, type: 3}
   description: 
   cardType: 0
   element: 2

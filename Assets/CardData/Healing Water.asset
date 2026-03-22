@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Healing Water
   cardArt: {fileID: 3268949355143398380, guid: b867422f734a7974ba19d20211addb3c, type: 3}
+  cardbander: {fileID: -4214241332329590814, guid: 9124df916b089e44288147b585d9592c, type: 3}
   description: 
   cardType: 1
   element: 2

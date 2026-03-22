@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Gambling
   cardArt: {fileID: -1744033376873275585, guid: 4796a039733befa4dbe384c636d2906b, type: 3}
+  cardbander: {fileID: 3280247252720426850, guid: 51c3d88803ce4944aa6b7c5328e66944, type: 3}
   description: 'Use it in card exchange slot '
   cardType: 3
   element: 0

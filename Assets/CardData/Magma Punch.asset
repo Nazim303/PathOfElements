@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Magma Punch
   cardArt: {fileID: 1393219917549494242, guid: b9160e20aa22f9541a2c0903c149d873, type: 3}
+  cardbander: {fileID: 3280247252720426850, guid: 51c3d88803ce4944aa6b7c5328e66944, type: 3}
   description: 
   cardType: 0
   element: 5

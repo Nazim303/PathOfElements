@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Quake
   cardArt: {fileID: -2932612526820762341, guid: 0a4613eb41be8f4408cf4a9b3b2c4afd, type: 3}
+  cardbander: {fileID: 744950415022112236, guid: 63f9b525fc2269247bf75506dbdd47db, type: 3}
   description: 
   cardType: 0
   element: 3

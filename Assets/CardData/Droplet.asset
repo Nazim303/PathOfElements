@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Droplet
   cardArt: {fileID: -757571461024565052, guid: cd371676d231cf348b71b561622b98ae, type: 3}
+  cardbander: {fileID: -4214241332329590814, guid: 9124df916b089e44288147b585d9592c, type: 3}
   description: 
   cardType: 0
   element: 2

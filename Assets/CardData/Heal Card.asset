@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Heal Potion
   cardArt: {fileID: 5678092926742680985, guid: 1ab5206155cb8e74d9856101fe2b5568, type: 3}
+  cardbander: {fileID: -4119780039443726140, guid: b34221698ebcd014f90b70635080765d, type: 3}
   description: 
   cardType: 1
   element: 0

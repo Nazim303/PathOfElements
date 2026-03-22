@@ -323,7 +323,7 @@ public class DeckManager : MonoBehaviour
 
             // Pozisyonu, boyutu ve açýyý ayný anda deðiþtir
             cardObj.transform.position = Vector3.Lerp(startPos, targetPos, smoothT);
-            cardObj.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, smoothT);
+            cardObj.transform.localScale = Vector3.Lerp(new Vector3(1.5f, 1.5f, 1.5f ), Vector3.zero, smoothT);
             cardObj.transform.rotation = Quaternion.Lerp(startRot, Quaternion.Euler(0, 0, 180), smoothT); // Uçarken döner
 
             yield return null;

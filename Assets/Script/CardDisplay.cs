@@ -10,6 +10,7 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [Header("UI Components")]
     public TextMeshProUGUI nameText;
     public Image artImage;
+    public Image banderimage;
     public TextMeshProUGUI damageText;
     public Image elementIcon; // Ana Element Ýkonu
 
@@ -46,16 +47,17 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         nameText.text = data.cardName;
         artImage.sprite = data.cardArt;
+        banderimage.sprite = data.cardbander;
         if (damageText != null) damageText.text = data.baseDamage.ToString();
 
         // 1. Önce Element Rengini Belirle
         Color targetColor = Color.white; // Varsayýlan (None)
         switch (data.element)
         {
-            case ElementType.Fire: targetColor = Color.red; break;
-            case ElementType.Water: targetColor = Color.blue; break;
-            case ElementType.Earth: targetColor = new Color(0.6f, 0.4f, 0.2f); break; // Kahverengi
-            case ElementType.Air: targetColor = Color.cyan; break;
+            case ElementType.Fire: targetColor = Color.white; break;
+            case ElementType.Water: targetColor = Color.white; break;
+            case ElementType.Earth: targetColor = Color.white; break; // Kahverengi
+            case ElementType.Air: targetColor = Color.white; break;
             default: targetColor = Color.gray; break; // None veya diðerleri için Gri
         }
 

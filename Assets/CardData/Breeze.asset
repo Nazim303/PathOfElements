@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Breeze
   cardArt: {fileID: -5818968488010580517, guid: 17ed7ae2176c9d24da47a83857b81024, type: 3}
+  cardbander: {fileID: 3970667679311140378, guid: b5c872dbde4dcdc429acf49e76f1c49e, type: 3}
   description: 
   cardType: 0
   element: 4

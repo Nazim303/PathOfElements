@@ -18,6 +18,12 @@ public class TurnManager : MonoBehaviour
     public EnemyData[] allEnemies; // Normal düþmanlar
     public EnemyData[] bossEnemies; // --- YENÝ: Boss listesi ---
 
+  
+   
+    public int minEnemySpawn = 2; // En az kaç düþman çýksýn?
+    public int maxEnemySpawn = 3; // En çok kaç düþman çýksýn?
+    // --------------------------
+
     [Header("UI Feedback")]
     public TextMeshProUGUI turnIndicatorText;
     public TextMeshProUGUI roundText;     // --- YENÝ: Ekranda görünecek Raunt yazýsý ---
@@ -86,7 +92,9 @@ public class TurnManager : MonoBehaviour
         else
         {
             // --- NORMAL SAVAÞ MANTIÐI ---
-            int enemyCount = Random.Range(2, 3);
+            // Eskiden Random.Range(2, 3) yazýyordu, artýk Inspector'dan ayarlayacaðýz:
+            int enemyCount = Random.Range(minEnemySpawn, maxEnemySpawn + 1);
+
             for (int i = 0; i < enemyCount; i++)
             {
                 if (allEnemies.Length > 0)

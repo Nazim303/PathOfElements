@@ -71,7 +71,7 @@ public class CardSlot : MonoBehaviour, IDropHandler
             normalRect.anchoredPosition = Vector2.zero;
             droppedObject.transform.localRotation = Quaternion.identity;
 
-            droppedObject.transform.localScale = Vector3.one;
+            droppedObject.transform.localScale = new Vector3(1.5f, 1.5f , 1.5f); 
 
             if (combatManager != null)
             {

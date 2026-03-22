@@ -358,7 +358,7 @@ public class CombatManager : MonoBehaviour
         // Görsel olarak da baþa al (Layout Group soldan saða diziyorsa sol baþa geçer)
         newEnemyObj.transform.SetAsFirstSibling();
 
-        newEnemyObj.transform.localScale = Vector3.one;
+        newEnemyObj.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
         activeEnemyCount = activeEnemies.Count;
     }
 

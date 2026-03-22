@@ -14,6 +14,7 @@ public class EnemyDisplay : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI healthText;
     public Image artImage;
+    public Image banderimage;
     public Image elementIcon;
 
     public void SetupEnemy(EnemyData data, int maxHealth)
@@ -22,6 +23,12 @@ public class EnemyDisplay : MonoBehaviour
         this.currentHealth = maxHealth;
 
         if (nameText != null) nameText.text = data.enemyName;
+        if(banderimage != null)
+        {
+            banderimage.sprite = data.enemybander;
+            banderimage.preserveAspect = true;
+
+        }
         if (artImage != null)
         {
             artImage.sprite = data.enemyArt;
