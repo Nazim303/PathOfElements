@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Mother Nature
   cardArt: {fileID: 7722677761958815681, guid: 02a62df2df196e14394e5dbc17b57e89, type: 3}
-  cardbander: {fileID: 744950415022112236, guid: 63f9b525fc2269247bf75506dbdd47db, type: 3}
+  cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
   description: a heal card with eath element
   cardType: 1
   element: 3

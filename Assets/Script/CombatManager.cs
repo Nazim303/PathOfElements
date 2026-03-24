@@ -56,6 +56,9 @@ public class CombatManager : MonoBehaviour
             // Listeye ekle
             activeEnemies.Add(display);
 
+            float enemyScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.normalEnemyScale : 1f;
+            newEnemyObj.transform.localScale = new Vector3(enemyScale, enemyScale, enemyScale);
+
             // Animasyon YOK. Direkt görünür olsunlar.
             newEnemyObj.transform.localScale = Vector3.one;
             if (data.enemyName.Contains("Protector"))

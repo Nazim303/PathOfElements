@@ -16,6 +16,7 @@ public class DeckManager : MonoBehaviour
     [Header("References")]
     public Transform handArea;
     public GameObject cardPrefab;
+    public GameObject supportCardPrefab;
     [Header("Visuals")]
     public Transform deckDrawPoint;
     public Transform discardPoint; // --- YENÝ: Ýskarta destesinin ekrandaki konumu ---
@@ -127,10 +128,18 @@ public class DeckManager : MonoBehaviour
             CardData cardToDraw = drawPile[0];
             drawPile.RemoveAt(0);
 
-            if (cardPrefab != null)
+            GameObject prefabToUse = cardPrefab; // Varsayýlan normal kart
+
+            if (cardToDraw.cardType == CardType.Support && supportCardPrefab != null)
+            {
+                prefabToUse = supportCardPrefab; // Destek kartýysa özel prefabý kullan
+            }
+
+
+            if (prefabToUse != null)
             {
                 // 1. GERÇEK KART (HandArea içinde)
-                GameObject realCard = Instantiate(cardPrefab, handArea);
+                GameObject realCard = Instantiate(prefabToUse, handArea);
 
                 // --- DÜZELTME: Prefabýn orijinal scale'ini koru ---
                 // Layout Group bazen scale'i bozabilir, emin olmak için prefab scale'i tekrar atayabilirsin ama
@@ -148,8 +157,17 @@ public class DeckManager : MonoBehaviour
                 yield return new WaitForEndOfFrame();
 
                 // 2. UÇAN KART
-                GameObject flyingCard = Instantiate(cardPrefab, mainCanvas.transform);
-                flyingCard.transform.position = deckDrawPoint.position;
+                GameObject flyingCard = Instantiate(prefabToUse, mainCanvas.transform);
+
+                RectTransform flyRect = flyingCard.GetComponent<RectTransform>();
+                flyRect.anchorMin = new Vector2(0.5f, 0.5f);
+                flyRect.anchorMax = new Vector2(0.5f, 0.5f);
+                flyRect.pivot = new Vector2(0.5f, 0.5f);
+
+                if (deckDrawPoint != null) flyingCard.transform.position = deckDrawPoint.position;
+                CanvasGroup flyCG = flyingCard.GetComponent<CanvasGroup>();
+                if (flyCG == null) flyCG = flyingCard.AddComponent<CanvasGroup>();
+                flyCG.blocksRaycasts = false;
 
                 // Küçük baþla
                 flyingCard.transform.localScale = Vector3.zero;
@@ -205,6 +223,7 @@ public class DeckManager : MonoBehaviour
         if (targetCard != null)
         {
             targetCG.alpha = 1f;
+            targetCG.blocksRaycasts = true; // YENÝ: Uçuþ bitti, artýk mouse ile tutulabilir!
         }
 
         Destroy(flyingCard);

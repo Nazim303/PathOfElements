@@ -51,7 +51,7 @@ public class TutorialManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         isStepCompleted = false;
-        popupUI.Show("Taverna Patikalarý", "Harika bir deste kurdun!\n\nEðitim boyunca sadece Savaþ (Kýlýç) patikalarýna gireceðiz. Ýlk antrenmanýmýz için kýlýç ikonlu düðüme týkla.", () => { isStepCompleted = true; });
+        popupUI.Show("Patikalar", "Harika bir deste kurdun!\n\nEðitim boyunca sadece Savaþ (Kýlýç) patikalarýna gireceðiz. Ýlk antrenmanýmýz için kýlýç ikonlu düðüme týkla.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => PathManager.instance.combatPanel.activeSelf);

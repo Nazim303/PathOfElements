@@ -7,7 +7,8 @@ public class DeckViewerUI : MonoBehaviour
     [Header("UI References")]
     public GameObject viewerPanel;        // Saðdan açýlacak ana panel
     public Transform contentContainer;    // Scroll View içindeki Content objesi
-    public GameObject cardPrefab;         // Standart kart prefabý (DeckManager'daki ile ayný)
+    public GameObject cardPrefab;         // Standart kart prefabý 
+    public GameObject supportCardPrefab;  // <--- YENÝ: Destek Kartý Prefabý ---
 
     private DeckManager deckManager;
 
@@ -47,7 +48,16 @@ public class DeckViewerUI : MonoBehaviour
         // 2. Güncel desteyi döngüye al ve yarat
         foreach (CardData card in deckManager.allCardsInDeck)
         {
-            GameObject newCard = Instantiate(cardPrefab, contentContainer);
+            // --- YENÝ: KART TÜRÜNE GÖRE PREFAB SEÇÝMÝ ---
+            GameObject prefabToUse = cardPrefab;
+            if (card.cardType == CardType.Support && supportCardPrefab != null)
+            {
+                prefabToUse = supportCardPrefab;
+            }
+
+            // Seçilen prefabý yarat
+            GameObject newCard = Instantiate(prefabToUse, contentContainer);
+            // ----------------------------------------------
 
             // Kartýn UI'da düzgün durmasý için boyutunu sabitle
             newCard.transform.localScale = Vector3.one;

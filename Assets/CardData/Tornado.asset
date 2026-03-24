@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Tornado
   cardArt: {fileID: -2105305842262875611, guid: fdd2bcabf9585424e810fbbc2e25a6f0, type: 3}
-  cardbander: {fileID: 3970667679311140378, guid: b5c872dbde4dcdc429acf49e76f1c49e, type: 3}
+  cardbander: {fileID: 3970667679311140378, guid: ca29aabeb6032604eab4f881dfcc8333, type: 3}
   description: 
   cardType: 0
   element: 4

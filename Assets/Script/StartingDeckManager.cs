@@ -14,6 +14,7 @@ public class StartingDeckManager : MonoBehaviour
     public GameObject cardPrefab;             // Kart Prefabý (DeckManager'daki ile ayný)
     public Button confirmButton;              // Belirle Butonu
     public TextMeshProUGUI countText;         // "X / 12" yazýsý
+    public GameObject supportCardPrefab;
 
     [Header("Settings")]
     public int requiredCardCount = 12;        // Limitimiz
@@ -89,18 +90,32 @@ public class StartingDeckManager : MonoBehaviour
         foreach (Transform child in availableCardsContainer) Destroy(child.gameObject);
         foreach (Transform child in selectedCardsContainer) Destroy(child.gameObject);
 
-        // Üst Tarafý Doldur
+        // --- Üst Tarafý Doldur ---
         foreach (CardData card in unlockedPool)
         {
-            GameObject obj = Instantiate(cardPrefab, availableCardsContainer);
+            // Kart türüne göre prefab seçimi
+            GameObject prefabToUse = cardPrefab;
+            if (card.cardType == CardType.Support && supportCardPrefab != null)
+            {
+                prefabToUse = supportCardPrefab;
+            }
+
+            GameObject obj = Instantiate(prefabToUse, availableCardsContainer);
             obj.transform.localScale = Vector3.one;
             obj.AddComponent<DeckSelectionCard>().Setup(card, this, false);
         }
 
-        // Alt Tarafý Doldur
+        // --- Alt Tarafý Doldur ---
         foreach (CardData card in selectedDeck)
         {
-            GameObject obj = Instantiate(cardPrefab, selectedCardsContainer);
+            // Kart türüne göre prefab seçimi
+            GameObject prefabToUse = cardPrefab;
+            if (card.cardType == CardType.Support && supportCardPrefab != null)
+            {
+                prefabToUse = supportCardPrefab;
+            }
+
+            GameObject obj = Instantiate(prefabToUse, selectedCardsContainer);
             obj.transform.localScale = Vector3.one;
             obj.AddComponent<DeckSelectionCard>().Setup(card, this, true);
         }
@@ -109,7 +124,6 @@ public class StartingDeckManager : MonoBehaviour
         if (countText != null) countText.text = $"{selectedDeck.Count} / {requiredCardCount}";
         confirmButton.interactable = (selectedDeck.Count == requiredCardCount); // Sadece 12 olunca aktifleþir
     }
-
     void ConfirmDeck()
     {
         // 1. Oyuncunun seçtiði 12 kartý asýl desteye at

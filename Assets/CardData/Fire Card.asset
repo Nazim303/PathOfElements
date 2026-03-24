@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Fire Ball
   cardArt: {fileID: -1415197967714447595, guid: 51f542ee3d09aab4099731087c026acc, type: 3}
-  cardbander: {fileID: -6889857487880924528, guid: 4eeaf8ad62c91b946a1d6b519b8a7ce7, type: 3}
+  cardbander: {fileID: -6889857487880924528, guid: 1828523002e97944b8014fc218db0d6a, type: 3}
   description: 
   cardType: 0
   element: 1

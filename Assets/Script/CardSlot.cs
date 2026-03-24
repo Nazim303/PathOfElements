@@ -71,7 +71,8 @@ public class CardSlot : MonoBehaviour, IDropHandler
             normalRect.anchoredPosition = Vector2.zero;
             droppedObject.transform.localRotation = Quaternion.identity;
 
-            droppedObject.transform.localScale = new Vector3(1.5f, 1.5f , 1.5f); 
+            float slotScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.cardInSlotScale : 1.5f;
+            droppedObject.transform.localScale = new Vector3(slotScale, slotScale, slotScale);
 
             if (combatManager != null)
             {
@@ -167,10 +168,13 @@ public class CardSlot : MonoBehaviour, IDropHandler
     }
 
     // Yeni kartýn ufaktan büyüyerek belirmesi animasyonu
+    // Yeni kartýn ufaktan büyüyerek belirmesi animasyonu
     IEnumerator AnimateCardArrival(GameObject cardObj)
     {
         float t = 0;
         float duration = 0.3f;
+
+        float targetScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.cardInSlotScale : 1.5f;
 
         if (cardObj != null) cardObj.transform.localScale = Vector3.zero; // Sýfýrdan baþla
 
@@ -179,10 +183,10 @@ public class CardSlot : MonoBehaviour, IDropHandler
             t += Time.deltaTime / duration;
             float smoothT = t * t * (3f - 2f * t);
 
-            if (cardObj != null) cardObj.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, smoothT);
+            if (cardObj != null) cardObj.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one * targetScale, smoothT);
             yield return null;
         }
 
-        if (cardObj != null) cardObj.transform.localScale = Vector3.one; // Sabitle
+        if (cardObj != null) cardObj.transform.localScale = Vector3.one * targetScale; // Sabitle
     }
 }

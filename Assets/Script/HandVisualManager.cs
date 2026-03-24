@@ -64,7 +64,10 @@ public class HandVisualManager : MonoBehaviour
             float normalizedX = (count > 1) ? (float)i / (count - 1) * 2f - 1f : 0f;
             float yPos = Mathf.Abs(normalizedX) * -arcHeight;
             float targetRotation = -normalizedX * rotationAmount;
-            float targetScale = 1f;
+           
+
+            float baseScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.cardInHandScale : 1f;
+            float targetScale = baseScale;
 
             // 2. HOVER (Sürüklenen kart varsa Hover çalýþmasýn veya kýsýtlý çalýþsýn)
             if (hoveredIndex != -1 && draggingCard == null)

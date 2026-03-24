@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Wind Slash
   cardArt: {fileID: 8319001633863549942, guid: e80885064349d8542972fb1043a8eff5, type: 3}
-  cardbander: {fileID: 3970667679311140378, guid: b5c872dbde4dcdc429acf49e76f1c49e, type: 3}
+  cardbander: {fileID: 3970667679311140378, guid: ca29aabeb6032604eab4f881dfcc8333, type: 3}
   description: 
   cardType: 0
   element: 4

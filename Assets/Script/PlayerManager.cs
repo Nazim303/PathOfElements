@@ -17,6 +17,7 @@ public class PlayerManager : MonoBehaviour
 
     [Header("UI References")]
     public TextMeshProUGUI healthText;
+    public TextMeshProUGUI maxHealthText;
     public TextMeshProUGUI goldText;
     public TextMeshProUGUI shieldText;
     public Image healthFillBar;
@@ -131,56 +132,66 @@ public class PlayerManager : MonoBehaviour
 
     void UpdateUI()
     {
-        // 1. Yazýlarý Güncelle (Yine de kalsýn, barýn üstüne yazýlýr)
-        if (healthText != null)
-        {
-            string shieldInfo = currentShield > 0 ? $" <color=#00FFFF>(+{currentShield})</color>" : "";
-            healthText.text = $"{currentHealth}/{maxHealth}{shieldInfo}";
-        }
-
         if (goldText != null) goldText.text = $"{currentGold} G";
         if (shieldText != null) shieldText.gameObject.SetActive(false);
 
-        // --- 2. YENÝ: Barlarý Güncelle ---
-
-        // Can Barý
-        if (healthFillBar != null)
+        // --- YENÝ: MAX CAN YAZISI (Sabit Arka Plan Yazýsý) ---
+        if (maxHealthText != null)
         {
-            healthFillBar.fillAmount = (float)currentHealth / maxHealth;
+            maxHealthText.text = maxHealth.ToString();
         }
 
-        // Kalkan Barý (Slay the Spire Mantýðý)
-        // Kalkan, can barýnýn bittiði yerden baþlamalýdýr veya can barýnýn üstüne ayrý bir katman olarak binmelidir.
-        if (shieldFillBar != null)
+        // --- BARLAR VE KAYAN YAZI MANTIÐI ---
+        // --- BARLAR VE KAYAN YAZI MANTIÐI ---
+        if (healthFillBar != null)
         {
-            if (currentShield > 0)
+            // 1. Can Barýný Doldur
+            healthFillBar.fillAmount = (float)currentHealth / maxHealth;
+
+            // --- DÜZELTME BURADA BAÞLIYOR ---
+            RectTransform healthRect = healthFillBar.GetComponent<RectTransform>();
+            float barWidth = healthRect.rect.width; // Barýn toplam geniþliði (Örn: 240)
+
+            // Barýn Pivot'una göre sol baþlangýç noktasýný bul (Pivot 0.5 ise -120 olur)
+            float startX = -barWidth * healthRect.pivot.x;
+
+            // Sol uçtan baþla ve doluluk oranýna göre ilerle
+            float currentHealthEndX = startX + (barWidth * healthFillBar.fillAmount);
+            // --- DÜZELTME BÝTÝÞ ---
+
+            // 2. Kayan Yazýyý (Mevcut Can) Güncelle ve Pozisyonunu Ayarla
+            if (healthText != null)
             {
-                shieldFillBar.gameObject.SetActive(true);
+                string shieldInfo = currentShield > 0 ? $" <color=#00FFFF>(+{currentShield})</color>" : "";
+                healthText.text = $"{currentHealth}{shieldInfo}";
 
-                // Kalkan miktarýný Max HP'ye göre orantýla (Can barý üzerinde kaplayacaðý alan)
-                float shieldPercentage = (float)currentShield / maxHealth;
-
-                // Kalkaný, canýn kaldýðý yerden baþlatacak þekilde bir "offset" verebiliriz, 
-                // ya da direkt can barýnýn üstünü kaplayacak þekilde ayarlayabiliriz. 
-                // En basiti: Kalkan barýnýn doluluðunu (Can + Kalkan) kadar yapýp, Can barýnýn ARKASINA veya ÜSTÜNE koymaktýr.
-
-                // Yöntem: Shield Bar, Can Barý ile ayný boyutta olsun. Doluluðu sadece kalkan kadar olsun.
-                shieldFillBar.fillAmount = shieldPercentage;
-
-                // UI'da ShieldFillBar'ýn RectTransform'unda pivot'u Left (X:0) yap ve 
-                // kod ile X pozisyonunu Can barýnýn bittiði yere it:
-                RectTransform shieldRect = shieldFillBar.GetComponent<RectTransform>();
-                RectTransform healthRect = healthFillBar.GetComponent<RectTransform>();
-
-                if (shieldRect != null && healthRect != null)
+                RectTransform textRect = healthText.GetComponent<RectTransform>();
+                if (textRect != null)
                 {
-                    float healthWidth = healthRect.rect.width * healthFillBar.fillAmount;
-                    shieldRect.anchoredPosition = new Vector2(healthWidth, shieldRect.anchoredPosition.y);
+                    // Artýk X pozisyonuna düzeltilmiþ deðeri veriyoruz
+                    textRect.anchoredPosition = new Vector2(currentHealthEndX, textRect.anchoredPosition.y);
                 }
             }
-            else
+
+            // 3. Kalkan Barýný Canýn Bittiði Yere Ekle
+            if (shieldFillBar != null)
             {
-                shieldFillBar.gameObject.SetActive(false);
+                if (currentShield > 0)
+                {
+                    shieldFillBar.gameObject.SetActive(true);
+                    shieldFillBar.fillAmount = (float)currentShield / maxHealth;
+
+                    RectTransform shieldRect = shieldFillBar.GetComponent<RectTransform>();
+                    if (shieldRect != null)
+                    {
+                        // Kalkan da tam olarak canýn bittiði o düzeltilmiþ noktadan baþlayacak
+                        shieldRect.anchoredPosition = new Vector2(currentHealthEndX, shieldRect.anchoredPosition.y);
+                    }
+                }
+                else
+                {
+                    shieldFillBar.gameObject.SetActive(false);
+                }
             }
         }
     }

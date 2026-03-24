@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Water change
   cardArt: {fileID: 5678092926742680985, guid: 1ab5206155cb8e74d9856101fe2b5568, type: 3}
-  cardbander: {fileID: 564605684917123078, guid: 56dee90e7aab4e6418d274c844d9ee93, type: 3}
+  cardbander: {fileID: 564605684917123078, guid: ed395e5534fe1be44b49278f2b32d937, type: 3}
   description: 
   cardType: 3
   element: 2

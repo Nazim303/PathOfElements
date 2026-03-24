@@ -13,6 +13,7 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public Image banderimage;
     public TextMeshProUGUI damageText;
     public Image elementIcon; // Ana Element Ýkonu
+    public TextMeshProUGUI descriptionText;
 
     public Transform costContainer;
     public GameObject costIconPrefab;
@@ -58,11 +59,16 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             case ElementType.Water: targetColor = Color.white; break;
             case ElementType.Earth: targetColor = Color.white; break; // Kahverengi
             case ElementType.Air: targetColor = Color.white; break;
-            default: targetColor = Color.gray; break; // None veya diðerleri için Gri
+            default: targetColor = Color.white; break; // None veya diðerleri için Gri
         }
 
         // 2. Ana Ýkonu Boya (Döngü dýþýnda, bir kere)
         if (elementIcon != null) elementIcon.color = targetColor;
+
+        if (descriptionText != null)
+        {
+            descriptionText.text = data.description; // CardData'daki yazýyý UI'a aktar
+        }
 
         // 3. Enerji Ýkonlarýný Oluþtur ve Boya
         if (costContainer != null && costIconPrefab != null)

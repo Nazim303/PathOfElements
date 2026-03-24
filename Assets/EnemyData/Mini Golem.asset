@@ -16,6 +16,6 @@ MonoBehaviour:
   maxHealth: 30
   element: 3
   enemyArt: {fileID: 8006858486370496591, guid: c64f05fbd4ed7c2489e24e33936637e8, type: 3}
-  enemybander: {fileID: -5544542530636854122, guid: 5039b8d6709e52145862ebc95567ee64, type: 3}
+  enemybander: {fileID: -5544542530636854122, guid: fa01ea136791dd84980dbfebcac81d6b, type: 3}
   damage: 8
   goldReward: 9

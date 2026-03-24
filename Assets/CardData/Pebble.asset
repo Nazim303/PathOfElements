@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Pebble
   cardArt: {fileID: -7521744758332252851, guid: 1273403aa81b4b542b1c06e74473e77b, type: 3}
-  cardbander: {fileID: 744950415022112236, guid: 63f9b525fc2269247bf75506dbdd47db, type: 3}
+  cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
   description: 
   cardType: 0
   element: 3

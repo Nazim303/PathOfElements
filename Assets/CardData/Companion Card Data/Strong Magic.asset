@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Tsunami
   cardArt: {fileID: 8191787836398006521, guid: 2e4ee35dc1dd24b4c87e7e96c0e19f88, type: 3}
-  cardbander: {fileID: -4214241332329590814, guid: 9124df916b089e44288147b585d9592c, type: 3}
+  cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
   description: a strong water attack
   cardType: 0
   element: 2

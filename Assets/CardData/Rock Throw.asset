@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Rock Throw
   cardArt: {fileID: -1525176672141646216, guid: 31c2c63a2516ebe49b3cdebb2d878ed3, type: 3}
-  cardbander: {fileID: 744950415022112236, guid: 63f9b525fc2269247bf75506dbdd47db, type: 3}
+  cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
   description: 
   cardType: 0
   element: 3
