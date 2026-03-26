@@ -202,32 +202,32 @@ public class PathManager : MonoBehaviour
     // Savaþ veya Olay bitince çaðrýlacak fonksiyon
     // PathManager.cs içine ekle/güncelle:
 
- 
 
+
+    // Bir düðümü tamamlayýp haritaya dönünce
     // Bir düðümü tamamlayýp haritaya dönünce
     public void CompleteCurrentNode()
     {
+        ShowMap();
         if (currentNode != null)
         {
             currentNode.SetCompleted();
 
-            // --- YENÝ: KARDEÞ DÜÐÜMLERÝ KAPATMA MANTIÐI ---
-            // Eðer ayný katmanda (Layer) baþka düðümler varsa, onlarý "Atlandý" (Skipped) yap.
-            // Böylece oyuncu 2 yoldan birini seçtiðinde diðeri ölür.
-
+            // Kardeþ düðümleri kapatma mantýðý
             if (mapGenerator != null)
             {
                 List<MapNode> siblingNodes = mapGenerator.GetNodesInLayer(currentNode.gridLayer);
                 foreach (MapNode sibling in siblingNodes)
                 {
-                    // Kendisi deðilse ve tamamlanmadýysa kapat
                     if (sibling != currentNode && !sibling.isCompleted)
                     {
                         sibling.SetSkipped();
                     }
                 }
+
+                // YENÝ: Yollar açýldýðý için renkleri güncelle ??
+                mapGenerator.UpdateAllLineColors();
             }
-            // ------------------------------------------------
         }
 
         ShowMap();
