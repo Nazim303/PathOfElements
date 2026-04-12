@@ -148,12 +148,11 @@ public class PlayerManager : MonoBehaviour
             // 1. Can Barýný Doldur
             healthFillBar.fillAmount = (float)currentHealth / maxHealth;
 
-            // --- DÜZELTME BURADA BAÞLIYOR ---
             RectTransform healthRect = healthFillBar.GetComponent<RectTransform>();
-            float barWidth = healthRect.rect.width; // Barýn toplam geniþliði (Örn: 240)
+            float barWidth = healthRect.rect.width;
 
-            // Barýn Pivot'una göre sol baþlangýç noktasýný bul (Pivot 0.5 ise -120 olur)
-            float startX = -barWidth * healthRect.pivot.x;
+            // YENÝ: Barýn kendi "X" pozisyonunu da hesaba katarak GÜNCEL sol ucunu buluyoruz!
+            float startX = healthRect.anchoredPosition.x - (barWidth * healthRect.pivot.x);
 
             // Sol uçtan baþla ve doluluk oranýna göre ilerle
             float currentHealthEndX = startX + (barWidth * healthFillBar.fillAmount);

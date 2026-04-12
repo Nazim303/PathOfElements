@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Tornado
   m_EditorClassIdentifier: 
   cardName: Tornado
-  cardArt: {fileID: -2105305842262875611, guid: fdd2bcabf9585424e810fbbc2e25a6f0, type: 3}
+  cardArt: {fileID: 2076349192607735517, guid: a0bfc1377ec361243a669b3da0d7701a, type: 3}
   cardbander: {fileID: 3970667679311140378, guid: ca29aabeb6032604eab4f881dfcc8333, type: 3}
   description: 
   cardType: 0

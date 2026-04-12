@@ -257,7 +257,7 @@ public class MapGenerator : MonoBehaviour
         UpdateAllLineColors(); // Harita ilk oluþtuðunda renkleri ayarla
     }
 
-    // --- GÜNCELLENEN KISIM: CreateLineBetween ---
+    
     void CreateLineBetween(MapNode startNode, MapNode endNode)
     {
         RectTransform start = startNode.GetComponent<RectTransform>();
@@ -267,15 +267,23 @@ public class MapGenerator : MonoBehaviour
         float distance = diff.magnitude;
         Vector2 direction = diff.normalized;
 
-        int dotCount = Mathf.FloorToInt(distance / dotSpacing);
-        List<Image> dots = new List<Image>(); // Bu yola ait noktalarý tutacak liste
+        // --- YENÝ KUSURSUZ DAÐILIM MANTIÐI ---
+        // Toplam mesafeye tahmini kaç nokta sýðacaðýný yuvarlayarak buluyoruz
+        int dotCount = Mathf.RoundToInt(distance / dotSpacing);
+        if (dotCount < 2) dotCount = 2; // Çok yakýnsalar bile en az 1 nokta çizilsin
+
+        // Noktalar arasý "gerçek" mesafeyi hesaplýyoruz ki sonda boþluk kalmasýn
+        float exactSpacing = distance / dotCount;
+
+        List<Image> dots = new List<Image>();
 
         for (int i = 1; i < dotCount; i++)
         {
             GameObject dotObj = Instantiate(linePrefab, lineContainer);
             RectTransform dotRect = dotObj.GetComponent<RectTransform>();
 
-            Vector2 dotPosition = start.anchoredPosition + (direction * (i * dotSpacing));
+            // Sabit 25 birim yerine exactSpacing kullanýyoruz, böylece noktalar tam düðümün dibinde biter
+            Vector2 dotPosition = start.anchoredPosition + (direction * (i * exactSpacing));
             dotRect.anchoredPosition = dotPosition;
 
             dotObj.transform.SetAsFirstSibling();
@@ -284,11 +292,9 @@ public class MapGenerator : MonoBehaviour
             if (dotImage != null) dots.Add(dotImage);
         }
 
-        // Çizilen noktalarý baþlangýç düðümünün hafýzasýna kaydet
         startNode.lineDots.Add(endNode, dots);
     }
 
-    // --- YENÝ FONKSÝYON: Tüm Çizgilerin Rengini Güncelle ---
     public void UpdateAllLineColors()
     {
         foreach (List<MapNode> layer in mapGrid)
@@ -300,12 +306,26 @@ public class MapGenerator : MonoBehaviour
                     MapNode targetNode = kvp.Key;
                     List<Image> dots = kvp.Value;
 
-                    // AKTÝF YOL KURALI: 
-                    // 1. Ben tamamlandýysam ve sýradaki hedef açýksa (Þu anki rotam)
-                    // 2. Veya Hedef zaten tamamlandýysa (Geçmiþte kullandýðým rotam)
-                    bool isPathActive = (node.isCompleted && !targetNode.isLocked && !targetNode.isSkipped) || targetNode.isCompleted;
+                    // --- DÜZELTÝLEN AKTÝF YOL KURALI ---
+                    bool isPathActive = false;
 
-                    // Aktifse tam beyaz, kilitliyse koyu gri
+                    // 1. KURAL: Bir yolun parlamasý için kesinlikle BAÞLANGIÇ noktasýndan (node) geçmiþ olmalýyýz!
+                    if (node.isCompleted)
+                    {
+                        // 2. KURAL: Eðer baþlangýçtan geçmiþsek;
+                        if (targetNode.isCompleted)
+                        {
+                            // A) Hedefi de geçmiþiz (Geçmiþte yürüdüðümüz temiz rota)
+                            isPathActive = true;
+                        }
+                        else if (!targetNode.isLocked && !targetNode.isSkipped)
+                        {
+                            // B) Hedefi henüz geçmedik ama önümüzde AÇIK bir seçenek olarak duruyor
+                            isPathActive = true;
+                        }
+                    }
+
+                    // Aktifse tam beyaz, kilitliyse/atlanmýþsa koyu gri
                     Color pathColor = isPathActive ? Color.white : new Color(0.2f, 0.2f, 0.2f, 0.4f);
 
                     foreach (Image dot in dots)

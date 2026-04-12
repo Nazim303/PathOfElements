@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
   m_Name: Green Slime
   m_EditorClassIdentifier: 
-  enemyName: Green Slime
+  enemyName: Drowned
   maxHealth: 25
   element: 2
-  enemyArt: {fileID: 7922476754636105524, guid: 56de71121ea31e2419e0ccef8aab138b, type: 3}
+  enemyArt: {fileID: 5177290623388768844, guid: dee98339b178d1b4983e1e4149e41c3b, type: 3}
   enemybander: {fileID: -4179425161918205984, guid: 68e365159cbff1a4685c611e86bd5831, type: 3}
   damage: 6
   goldReward: 5

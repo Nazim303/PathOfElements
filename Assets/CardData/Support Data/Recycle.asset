@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Recycle
   m_EditorClassIdentifier: 
   cardName: Blood Transfer
-  cardArt: {fileID: -7253866770713736879, guid: 1ba1c824cc60ce94d9dcf2705d1031e2, type: 3}
+  cardArt: {fileID: -8876319794365974641, guid: 1792b1e3eee0917489a47643e67ecda6, type: 3}
   cardbander: {fileID: 3280247252720426850, guid: a9c49fd53ecd9444b88c5be8f15c6d57, type: 3}
   description: use it in card exchange slot and get 15 HP
   cardType: 3

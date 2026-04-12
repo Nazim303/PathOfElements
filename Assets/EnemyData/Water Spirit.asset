@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
   m_Name: Water Spirit
   m_EditorClassIdentifier: 
-  enemyName: Water Spirit
+  enemyName: Boiling Desire
   maxHealth: 30
   element: 2
-  enemyArt: {fileID: 7040962700074144048, guid: e904478e9db01844dbe3438ebb073463, type: 3}
+  enemyArt: {fileID: -7825159072999598754, guid: 6232b9b1d746807448ea4159da82df01, type: 3}
   enemybander: {fileID: -4179425161918205984, guid: 68e365159cbff1a4685c611e86bd5831, type: 3}
   damage: 10
   goldReward: 9

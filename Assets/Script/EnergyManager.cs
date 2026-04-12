@@ -75,22 +75,23 @@ public class EnergyManager : MonoBehaviour
             maxEnergyText.text = maxEnergy.ToString();
         }
 
-        // --- 2. BAR VE KAYAN YAZI MANTIÐI ---
+      
         if (energyFillBar != null)
         {
             // Barý Doldur
             energyFillBar.fillAmount = (float)currentEnergy / maxEnergy;
 
-            // Barýn Pivot'una göre sol baþlangýç noktasýný bul ve doluluk oranýný ekle
+            // --- DÜZELTÝLEN MANTIK ---
             RectTransform energyRect = energyFillBar.GetComponent<RectTransform>();
             float barWidth = energyRect.rect.width;
-            float startX = -barWidth * energyRect.pivot.x;
+
+            // YENÝ: Barýn X pozisyonunu hesaba kat
+            float startX = energyRect.anchoredPosition.x - (barWidth * energyRect.pivot.x);
             float currentEnergyEndX = startX + (barWidth * energyFillBar.fillAmount);
 
             // Kayan Yazýyý Güncelle ve Pozisyonunu Ayarla
             if (energyText != null)
             {
-                // Eðer harcama varsa kýrmýzý ile göster (Artýk /Max kýsmý yok, sadece mevcut yazýyor)
                 if (currentPendingCost > 0)
                 {
                     energyText.text = $"{currentEnergy} <color=red>(-{currentPendingCost})</color>";

@@ -7,6 +7,7 @@ public class CompanionSelectUI : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descText; // Özel gücünü yazar
     public Image cardArt;
+    public Image cardBander; // --- YENÝ: Kartýn orijinal çerçevesi ---
     public Button selectButton;
 
     private CardData myCard;
@@ -20,6 +21,12 @@ public class CompanionSelectUI : MonoBehaviour
         if (nameText != null) nameText.text = card.cardName;
         if (descText != null) descText.text = card.description;
         if (cardArt != null) cardArt.sprite = card.cardArt;
+
+        // --- YENÝ: Orijinal çerçeveyi (bander) UI'a uygula ---
+        if (cardBander != null && card.cardbander != null)
+        {
+            cardBander.sprite = card.cardbander;
+        }
 
         selectButton.onClick.RemoveAllListeners();
         selectButton.onClick.AddListener(() => manager.OnCompanionSelected(myCard));

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
   m_Name: Toxic Mushroom
   m_EditorClassIdentifier: 
-  enemyName: Toxic Mushroom
+  enemyName: Tree
   maxHealth: 25
   element: 3
-  enemyArt: {fileID: 3559192908260905200, guid: f2e7e1856433b284e8d342e786e18340, type: 3}
+  enemyArt: {fileID: 4829468266492176169, guid: c2a80a91517386a4ba9badd5500985e4, type: 3}
   enemybander: {fileID: -5544542530636854122, guid: fa01ea136791dd84980dbfebcac81d6b, type: 3}
   damage: 9
   goldReward: 8

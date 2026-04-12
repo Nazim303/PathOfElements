@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ice Card
   m_EditorClassIdentifier: 
   cardName: Ice Spear
-  cardArt: {fileID: 2961500608261993140, guid: 6afea93aa9d2c344cb7b63a7c2b78fd3, type: 3}
+  cardArt: {fileID: 448556309585627184, guid: 5001560e1a7695044beff940f87e4aad, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
   description: 
   cardType: 0

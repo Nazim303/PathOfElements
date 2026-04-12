@@ -91,9 +91,34 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-            // --- NORMAL SAVAÞ MANTIÐI ---
-            // Eskiden Random.Range(2, 3) yazýyordu, artýk Inspector'dan ayarlayacaðýz:
-            int enemyCount = Random.Range(minEnemySpawn, maxEnemySpawn + 1);
+            // --- YENÝ: NORMAL SAVAÞ MANTIÐI (Dinamik Zorluk) ---
+            int enemyCount = 1;
+
+            // Oyuncunun haritada nerede olduðunu kontrol et
+            if (PathManager.instance != null && PathManager.instance.currentNode != null && PathManager.instance.mapGenerator != null)
+            {
+                int currentLayer = PathManager.instance.currentNode.gridLayer;
+                int totalLayers = PathManager.instance.mapGenerator.mapLength;
+
+                // Haritanýn ortasýný hesapla (Örn: 10 katmansa ortasý 5)
+                int middleLayer = totalLayers / 2;
+
+                if (currentLayer < middleLayer)
+                {
+                    // 1. AÞAMA (Haritanýn baþlarý): 1 veya 2 düþman
+                    enemyCount = Random.Range(1, 3); // (1 dahil, 3 hariç)
+                }
+                else
+                {
+                    // 2. AÞAMA (Haritanýn sonlarý): 2 veya 3 düþman
+                    enemyCount = Random.Range(2, 4); // (2 dahil, 4 hariç)
+                }
+            }
+            else
+            {
+                // Harita dýþýnda (örneðin direkt savaþ sahnesini test ederken) hata vermemesi için eski sistem:
+                enemyCount = Random.Range(minEnemySpawn, maxEnemySpawn + 1);
+            }
 
             for (int i = 0; i < enemyCount; i++)
             {
