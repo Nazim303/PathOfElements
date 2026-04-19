@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+
 public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     private RectTransform rectTransform;
@@ -47,7 +48,19 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnDrag(PointerEventData eventData)
     {
-        rectTransform.position = eventData.position;
+        RectTransform rectTransform = GetComponent<RectTransform>();
+
+        // --- YENÝ EKLENEN ÇEVÝRÝ KODU ---
+        // Farenin piksel koordinatýný, kameranýn render ettiði gerçek dünya koordinatýna çevirir!
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            rectTransform,
+            eventData.position,
+            eventData.pressEventCamera, // Týklamayý algýlayan kamerayý referans alýr
+            out Vector3 globalMousePos))
+        {
+            // Kartýn Z eksenini (derinliðini) bozmamak için X ve Y'yi f ??????, Z'yi kendi deðerinde býrakýyoruz
+            transform.position = new Vector3(globalMousePos.x, globalMousePos.y, transform.position.z);
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)

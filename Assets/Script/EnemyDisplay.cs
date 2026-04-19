@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic; // YENÝ: List yapýsý için eklendi
 
 public class EnemyDisplay : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class EnemyDisplay : MonoBehaviour
     public int currentHealth;
 
     [Header("UI Components")]
-    public Transform visualRoot; // --- YENÝ: Her þeyin içinde olduðu obje ---
+    public Transform visualRoot;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI healthText;
     public Image artImage;
@@ -23,11 +24,10 @@ public class EnemyDisplay : MonoBehaviour
         this.currentHealth = maxHealth;
 
         if (nameText != null) nameText.text = data.enemyName;
-        if(banderimage != null)
+        if (banderimage != null)
         {
             banderimage.sprite = data.enemybander;
             banderimage.preserveAspect = true;
-
         }
         if (artImage != null)
         {
@@ -35,16 +35,12 @@ public class EnemyDisplay : MonoBehaviour
             artImage.preserveAspect = true;
         }
 
-        // Görsel kökün pozisyonunu sýfýrla
         if (visualRoot != null) visualRoot.localPosition = Vector3.zero;
 
         UpdateElementVisual(data.element);
         UpdateHealthUI(currentHealth);
 
-
-        // Tooltip verisini hazýrla
         TooltipTrigger tooltip = GetComponent<TooltipTrigger>();
-        // Eðer ana objede yoksa VisualRoot içinde ara (Çünkü raycast hedefi orasý olabilir)
         if (tooltip == null && visualRoot != null) tooltip = visualRoot.GetComponent<TooltipTrigger>();
 
         if (tooltip != null)
@@ -73,13 +69,10 @@ public class EnemyDisplay : MonoBehaviour
         }
     }
 
-    // --- HASAR EFEKTÝ (Visual Root Titrer) ---
     public IEnumerator TakeDamageEffect()
     {
         if (artImage != null) artImage.color = Color.red;
 
-        // Eðer VisualRoot atanmadýysa hata vermesin diye kendisini kullanmayý deneriz
-        // ama layout sorunu olmamasý için VisualRoot þart.
         Transform target = (visualRoot != null) ? visualRoot : transform;
 
         Vector3 originalPos = Vector3.zero;
@@ -102,12 +95,8 @@ public class EnemyDisplay : MonoBehaviour
         if (artImage != null) artImage.color = Color.white;
     }
 
-    // --- SALDIRI ANÝMASYONU (Visual Root Hareket Eder) ---
     public IEnumerator AttackAnimation()
     {
-        // Layout Group ana objeyi (transform) tutar.
-        // Biz içindeki VisualRoot'u hareket ettirirsek, Layout bozulmadan animasyon oynar.
-
         Transform target = (visualRoot != null) ? visualRoot : transform;
         Vector3 originalPos = Vector3.zero;
         Vector3 attackPos = originalPos + new Vector3(0, -50f, 0);
@@ -115,7 +104,6 @@ public class EnemyDisplay : MonoBehaviour
         float speed = 10f;
         float t = 0;
 
-        // Ýleri
         while (t < 1)
         {
             t += Time.deltaTime * speed;
@@ -123,7 +111,6 @@ public class EnemyDisplay : MonoBehaviour
             yield return null;
         }
 
-        // Geri
         t = 0;
         while (t < 1)
         {
@@ -135,20 +122,47 @@ public class EnemyDisplay : MonoBehaviour
         target.localPosition = originalPos;
     }
 
+    // --- YENÝ: DISSOLVE SHADER ÝLE ERÝYEREK ÖLME MANTIÐI ---
     public IEnumerator DieAnimationAndDestroy()
     {
+        // Yazýlarý gizle
         if (healthText != null) healthText.gameObject.SetActive(false);
+        if (nameText != null) nameText.gameObject.SetActive(false);
 
-        // Visual Root'u küçült
         Transform target = (visualRoot != null) ? visualRoot : transform;
 
+        // Düþmanýn içindeki tüm UI görsellerini (Image) bul
+        Image[] allImages = target.GetComponentsInChildren<Image>(true);
+        List<Material> dissolveMats = new List<Material>();
+
+        // Her görsel için materyalin KOPYASINI oluþtur (Tüm düþmanlar ayný anda erimesin diye)
+        foreach (Image img in allImages)
+        {
+            Material matInstance = new Material(img.material);
+            img.material = matInstance;
+            dissolveMats.Add(matInstance);
+        }
+
         float t = 0;
-        Vector3 startScale = target.localScale;
+        float duration = 1.0f; // Erime süresi (1 saniye)
+        Vector3 startPos = target.localPosition;
 
         while (t < 1)
         {
-            t += Time.deltaTime * 4f;
-            target.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+            t += Time.deltaTime / duration;
+
+            // Yanarken hafif titreme efekti (Kül oluyormuþ hissi verir)
+            target.localPosition = startPos + new Vector3(Mathf.Sin(t * 50f) * 5f, 0, 0);
+
+            // Tüm materyallerdeki _DissolveAmount parametresini artýr
+            foreach (Material mat in dissolveMats)
+            {
+                if (mat != null)
+                {
+                    mat.SetFloat("_DissolveAmount", t);
+                }
+            }
+
             yield return null;
         }
 

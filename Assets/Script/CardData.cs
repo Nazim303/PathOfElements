@@ -26,7 +26,7 @@ public enum SupportEffect
     HealPlayer,
     GainEnergy,
     GainShield,
-    ChangeTerrain       
+    ChangeTerrain
 }
 
 [CreateAssetMenu(fileName = "New Card", menuName = "Path of Elements/Card Data")]
@@ -44,6 +44,11 @@ public class CardData : ScriptableObject
 
     public int baseDamage;
     public int healAmount;
+
+
+    [Header("Modifier Settings")]
+    [Tooltip("Eðer iþaretlenirse, solundaki karta destek çýkar.")]
+    public bool isElementalModifier = false;
 
     [Header("Companion Settings")]
     public SpecialEffect specialEffect;

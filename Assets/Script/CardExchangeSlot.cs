@@ -13,11 +13,7 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler
     public void OnDrop(PointerEventData eventData)
     {
         TurnManager tm = FindObjectOfType<TurnManager>();
-        if (tm != null && tm.state != BattleState.PLAYERTURN)
-        {
-            Debug.Log("Sýra sizde deðil!");
-            return;
-        }
+        if (tm != null && tm.state != BattleState.PLAYERTURN) return;
 
         GameObject droppedObj = eventData.pointerDrag;
         if (droppedObj == null) return;
@@ -28,24 +24,39 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler
         DeckManager dm = FindObjectOfType<DeckManager>();
         if (dm == null) return;
 
-        // --- DÜZELTME BAÞLANGICI: Eski Slotu Temizle ---
-        // Eðer bu kart masadaki bir slottan geliyorsa, CombatManager'a "Bunu sildim" de.
-        // Bu sayede enerji hesaplamasý (Recalculate) tetiklenir.
         CardSlot oldSlot = droppedObj.transform.parent.GetComponent<CardSlot>();
         if (oldSlot != null)
         {
             CombatManager cm = FindObjectOfType<CombatManager>();
-            if (cm != null)
-            {
-                cm.ClearSlot(oldSlot.slotIndex); // Bu fonksiyon enerjiyi yeniden hesaplar
-            }
+            if (cm != null) cm.ClearSlot(oldSlot.slotIndex);
         }
-        // --- DÜZELTME BÝTÝÞÝ ---
 
-        // --- TÜR KONTROLÜ ---
-        if (cardDisplay.cardData.cardType == CardType.Support)
+        // --- 1. DURUM: GÜÇLENDÝRÝCÝ KART (MODIFIER) FEDA CEZASI ---
+        if (cardDisplay.cardData.isElementalModifier)
         {
-            // >>> DESTEK KARTI MANTIÐI (Ücretsiz) <<<
+            int penaltyCost = hpCost * 2; // Can bedeli 2 katýna çýkar!
+
+            if (PlayerManager.instance.currentHealth <= penaltyCost)
+            {
+                Debug.Log("Bu kartý feda edecek kadar canýn yok!");
+                return;
+            }
+
+            PlayerManager.instance.TakeDamage(penaltyCost);
+            dm.AddToDiscard(cardDisplay.cardData);
+
+            CanvasGroup cg = droppedObj.GetComponent<CanvasGroup>();
+            if (cg != null) cg.blocksRaycasts = false;
+
+            StartCoroutine(BurnAndDestroyCard(droppedObj, dm, false));
+
+            Debug.Log("Güçlendirici kart feda edildi. Aðýr hasar alýndý, enerji kazanýlmadý.");
+            return;
+        }
+        // --- 2. DURUM: NORMAL DESTEK (SUPPORT) KARTLARI (Örn: Greed) ---
+        else if (cardDisplay.cardData.cardType == CardType.Support)
+        {
+            // Support kartlarý can yakmaz, direkt kendi özel efektlerini çalýþtýrýr.
             ApplySupportEffect(cardDisplay.cardData, dm, droppedObj);
 
             dm.AddToDiscard(cardDisplay.cardData);
@@ -54,15 +65,12 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler
             if (cg != null) cg.blocksRaycasts = false;
 
             StartCoroutine(BurnAndDestroyCard(droppedObj, dm, false));
+            return;
         }
+        // --- 3. DURUM: NORMAL KART (ATTACK/HEAL) FEDA MANTIÐI ---
         else
         {
-            // >>> NORMAL FEDA MANTIÐI (Can Karþýlýðý Enerji) <<<
-            if (PlayerManager.instance.currentHealth <= hpCost)
-            {
-                Debug.Log("Can yetersiz!");
-                return;
-            }
+            if (PlayerManager.instance.currentHealth <= hpCost) return;
 
             PlayerManager.instance.TakeDamage(hpCost);
             dm.AddToDiscard(cardDisplay.cardData);
@@ -71,12 +79,8 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler
             if (cg != null) cg.blocksRaycasts = false;
 
             StartCoroutine(BurnAndDestroyCard(droppedObj, dm, false));
-        }
 
-        // Her iki durumda da Enerji Kazanýlýr
-        if (EnergyManager.instance != null)
-        {
-            EnergyManager.instance.GainEnergy(cardDisplay.cardData.energyCost);
+            if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(cardDisplay.cardData.energyCost);
         }
     }
 

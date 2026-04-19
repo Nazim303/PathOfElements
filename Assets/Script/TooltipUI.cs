@@ -40,14 +40,23 @@ public class TooltipUI : MonoBehaviour
     {
         if (tooltipPanel.activeSelf)
         {
-            Vector2 mousePos = Input.mousePosition;
+            // 1. Tooltip'in bulunduðu Canvas'ý veya bir üst objesini referans alýyoruz
+            RectTransform parentRect = rectTransform.parent.GetComponent<RectTransform>();
+
+            // 2. Farenin piksel pozisyonunu, Canvas'ýn yerel koordinatlarýna çeviriyoruz
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                parentRect,
+                Input.mousePosition,
+                Camera.main, // Canvas kameraya baðlý olduðu için ana kamerayý referans veriyoruz
+                out Vector2 localMousePos);
 
             // Pivotu ayarla
             if (rectTransform.pivot != Vector2.zero)
                 rectTransform.pivot = Vector2.zero;
 
-            // Pozisyonu güncelle
-            transform.position = mousePos + offset;
+            // 3. Pozisyonu güncelle (Z eksenini -50 yaparak en öne çekiyoruz)
+            // Artýk "position" yerine "localPosition" kullanýyoruz çünkü ebeveynine göre hizaladýk
+            transform.localPosition = new Vector3(localMousePos.x + offset.x, localMousePos.y + offset.y, -50f);
         }
     }
 
@@ -58,13 +67,18 @@ public class TooltipUI : MonoBehaviour
         contentText.text = text;
         tooltipPanel.SetActive(true);
 
+        // --- YENÝ: Hiyerarþide en alta (en öne) al ve Z pozisyonunu kameraya doðru çek ---
+        transform.SetAsLastSibling();
+        Vector3 pos = transform.localPosition;
+        pos.z = -50f; // Z ekseninde objelerden daha önde durmasýný saðlar
+        transform.localPosition = pos;
+
         // Boyutu yazýya göre yenile
         LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
 
-        // --- ÇÖZÜM 2: FADE IN ANÝMASYONU ---
         if (canvasGroup != null)
         {
-            StopAllCoroutines(); // Varsa eski animasyonu durdur
+            StopAllCoroutines();
             StartCoroutine(FadeInRoutine());
         }
     }

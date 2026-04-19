@@ -103,19 +103,33 @@ public class HandVisualManager : MonoBehaviour
     public void StartDraggingCard(RectTransform card)
     {
         draggingCard = card;
+
+        // Kartý en öne çizdir
+        card.SetAsLastSibling();
+        Canvas c = card.GetComponent<Canvas>();
+        if (c == null) c = card.gameObject.AddComponent<Canvas>();
+        c.overrideSorting = true;
+        c.sortingOrder = 250; // Tooltip 300'dü, sürüklenen kart 250 olsun
     }
 
     public void StopDraggingCard()
     {
+        if (draggingCard != null)
+        {
+            Canvas c = draggingCard.GetComponent<Canvas>();
+            if (c != null)
+            {
+                c.overrideSorting = false;
+                c.sortingOrder = 0;
+            }
+        }
         draggingCard = null;
-        hoveredIndex = -1; // Sürükleme bitince hover'ý da sýfýrla
+        hoveredIndex = -1;
     }
-    // -------------------------
 
     public void OnCardEnter(RectTransform card)
     {
-        // Sürükleme yaparken hover efektini kapat
-        if (draggingCard != null) return;
+        if (draggingCard != null) return; // Sürükleme varken hover'ý engelle
 
         hoveredIndex = cards.IndexOf(card);
 
@@ -128,6 +142,9 @@ public class HandVisualManager : MonoBehaviour
 
     public void OnCardExit(RectTransform card)
     {
+        // YENÝ: Eðer fare üstünden çýksa bile bu kart SÜRÜKLENEN KART ise iþlemleri iptal et! (Arkaya düþmesin)
+        if (draggingCard == card) return;
+
         hoveredIndex = -1;
         Canvas c = card.GetComponent<Canvas>();
         if (c != null)
