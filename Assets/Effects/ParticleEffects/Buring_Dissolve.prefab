@@ -4850,15 +4850,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: 3a31a36e12b04644aa753f470a3af5da, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.2
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: 3a31a36e12b04644aa753f470a3af5da, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.2
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: 3a31a36e12b04644aa753f470a3af5da, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.2
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: 3a31a36e12b04644aa753f470a3af5da, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4932,15 +4932,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: a3c7395c608b0e6449177e9cd357e913, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.2
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: a3c7395c608b0e6449177e9cd357e913, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.2
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: a3c7395c608b0e6449177e9cd357e913, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.2
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: a3c7395c608b0e6449177e9cd357e913, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4952,7 +4952,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: a3c7395c608b0e6449177e9cd357e913, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 533587139299785133, guid: a3c7395c608b0e6449177e9cd357e913, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5023,6 +5023,18 @@ PrefabInstance:
     - target: {fileID: 1884875722223554600, guid: f404d62e8024cb6449e5adb83bc3a1ac, type: 3}
       propertyPath: m_Name
       value: Embers
+      objectReference: {fileID: 0}
+    - target: {fileID: 8847222733066894688, guid: f404d62e8024cb6449e5adb83bc3a1ac, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8847222733066894688, guid: f404d62e8024cb6449e5adb83bc3a1ac, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 8847222733066894688, guid: f404d62e8024cb6449e5adb83bc3a1ac, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 8847222733066894688, guid: f404d62e8024cb6449e5adb83bc3a1ac, type: 3}
       propertyPath: m_LocalPosition.x
