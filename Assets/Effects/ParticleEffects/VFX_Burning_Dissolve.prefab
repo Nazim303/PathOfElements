@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 50647929489010922}
   - component: {fileID: 4200730405032912205}
   m_Layer: 0
-  m_Name: Buring_Dissolve
+  m_Name: VFX_Burning_Dissolve
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
