@@ -44,11 +44,11 @@ Material:
     - _DissolveAmount: 0
     - _EdgeThickness: 0
     - _FlashAmount: 0
-    - _MasterAlpha: 1
+    - _MasterAlpha: 0
     - _NoiseScale: 200
     m_Colors:
-    - _EdgeColor: {r: 9.51876, g: 9.51876, b: 9.51876, a: 0}
-    - _FlashColor: {r: 1, g: 1, b: 1, a: 0}
+    - _EdgeColor: {r: 1, g: 0.24174622, b: 0, a: 0}
+    - _FlashColor: {r: 0.8962264, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &3554667558077644466
