@@ -5,9 +5,9 @@ using TMPro;
 public class CompanionSelectUI : MonoBehaviour
 {
     public TextMeshProUGUI nameText;
-    public TextMeshProUGUI descText; // Özel gücünü yazar
+    public TextMeshProUGUI descText;
     public Image cardArt;
-    public Image cardBander; // --- YENÝ: Kartýn orijinal çerçevesi ---
+    public Image cardBander;
     public Button selectButton;
 
     private CardData myCard;
@@ -22,13 +22,13 @@ public class CompanionSelectUI : MonoBehaviour
         if (descText != null) descText.text = card.description;
         if (cardArt != null) cardArt.sprite = card.cardArt;
 
-        // --- YENÝ: Orijinal çerçeveyi (bander) UI'a uygula ---
         if (cardBander != null && card.cardbander != null)
         {
             cardBander.sprite = card.cardbander;
         }
 
         selectButton.onClick.RemoveAllListeners();
-        selectButton.onClick.AddListener(() => manager.OnCompanionSelected(myCard));
+        // YENÝ: Artýk animasyonun nereden baþlayacaðýný bilmesi için kendi transform'unu da gönderiyor
+        selectButton.onClick.AddListener(() => manager.OnCompanionSelected(myCard, this.transform));
     }
 }

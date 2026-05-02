@@ -47,7 +47,7 @@ Material:
     - _MasterAlpha: 1
     - _NoiseScale: 200
     m_Colors:
-    - _EdgeColor: {r: 5.3403134, g: 5.3403134, b: 5.3403134, a: 0}
+    - _EdgeColor: {r: 9.51876, g: 9.51876, b: 9.51876, a: 0}
     - _FlashColor: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

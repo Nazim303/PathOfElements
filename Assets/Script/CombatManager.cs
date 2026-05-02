@@ -42,6 +42,7 @@ public class CombatManager : MonoBehaviour
     public GameObject spellChargePrefab;     // Kartýn üstünde toplanan enerji
     public GameObject spellTrailPrefab;      // Düþmana giden mermi/ateþ
     public GameObject spellImpactPrefab;     // Düþmanda patlama
+    public GameObject enemySmokeDeathPrefab;
 
     // LAG FIX
     public void SetupEnemies(List<EnemyData> enemiesToSpawn)
@@ -158,7 +159,7 @@ public class CombatManager : MonoBehaviour
     // --- YENÝ: ElementType parametresi eklendi ---
     IEnumerator PlaySpellEffects(Transform startTransform, List<EnemyDisplay> targets, ElementType cardElement)
     {
-        if (targets == null || targets.Count == 0) yield break;
+        if (targets == null || targets.Count == 0 || startTransform == null) yield break;
 
         // Kartýn elementine göre rengi al
         Color spellColor = GetElementColor(cardElement);
@@ -167,12 +168,16 @@ public class CombatManager : MonoBehaviour
         GameObject charge = null;
         if (spellChargePrefab != null)
         {
-            charge = Instantiate(spellChargePrefab, startTransform);
-            charge.transform.localPosition = Vector3.zero;
+            // YENÝ: Efekti kartýn içine deðil, savaþ alanýna (CombatManager'ýn transformuna) yaratýyoruz.
+            charge = Instantiate(spellChargePrefab, transform);
 
-            SetParticleColor(charge, spellColor); // Rengi Uygula
+            // Pozisyonunu kartýn anlýk pozisyonuna eþitliyoruz.
+            charge.transform.position = startTransform.position;
+
+            SetParticleColor(charge, spellColor);
             BringEffectToFront(charge);
 
+            // BURASI KRÝTÝK: 1.2 saniye boyunca oyun akmaya devam ediyor!
             yield return new WaitForSeconds(1.2f);
         }
 
@@ -266,9 +271,14 @@ public class CombatManager : MonoBehaviour
                 {
                     if (playerSlots[i] != null && slotTransforms[i].childCount > 0)
                     {
-                        EnergyManager.instance.TrySpendEnergy(playerSlots[i].energyCost);
-                        ultimateCards.Add(slotTransforms[i].GetChild(0));
-                        ultimateData.Add(playerSlots[i]);
+                        // YENÝ: Sadece CardDisplay olan objeyi (Gerçek Kartý) bul
+                        CardDisplay cardDisplay = slotTransforms[i].GetComponentInChildren<CardDisplay>();
+                        if (cardDisplay != null)
+                        {
+                            EnergyManager.instance.TrySpendEnergy(playerSlots[i].energyCost);
+                            ultimateCards.Add(cardDisplay.transform); // Efekti deðil, kartý ekle
+                            ultimateData.Add(playerSlots[i]);
+                        }
                     }
                 }
             }
@@ -306,7 +316,6 @@ public class CombatManager : MonoBehaviour
             List<Coroutine> spellRoutines = new List<Coroutine>();
             for (int k = 0; k < ultimateCards.Count; k++)
             {
-                // Artýk ultimateData listesinden kartýn elementini de yolluyoruz
                 spellRoutines.Add(StartCoroutine(PlaySpellEffects(ultimateCards[k], targets, ultimateData[k].element)));
             }
             if (spellRoutines.Count > 0) yield return spellRoutines[0];
@@ -338,25 +347,24 @@ public class CombatManager : MonoBehaviour
         else
         {
             // ========================================================
-            // ?? DURUM B: NORMAL SALDIRI
-            // ========================================================
-            // ========================================================
             // ?? DURUM B: NORMAL SALDIRI (Ve Element Güçlendiricileri)
             // ========================================================
             if (isFullCombo) Debug.Log("?? TAM ELEMENTAL KOMBO (AOE) AKTÝF! ??");
             else if (isSplitCombo) Debug.Log("?? AYRIK ÝKÝLÝ KOMBO (SPLIT) AKTÝF! ??");
 
-            // Kartlarýn saðdaki güçlendirici olarak kullanýlýp kullanýlmadýðýný takip etmek için dizi:
             bool[] processed = new bool[4];
 
             for (int i = 0; i < playerSlots.Length; i++)
             {
-                // Kart saðdaki güçlendirici (modifier) olarak kullanýldýysa turunu atla!
                 if (processed[i]) continue;
 
                 if (playerSlots[i] != null && slotTransforms[i].childCount > 0)
                 {
-                    Transform cardTransform = slotTransforms[i].GetChild(0);
+                    // YENÝ: GetChild(0) yerine GERÇEK kartý bul!
+                    CardDisplay display = slotTransforms[i].GetComponentInChildren<CardDisplay>();
+                    if (display == null) continue; // Kart yoksa (sadece efekt kalmýþsa) atla
+
+                    Transform cardTransform = display.transform;
                     CardData card = playerSlots[i];
 
                     if (!EnergyManager.instance.TrySpendEnergy(card.energyCost))
@@ -371,33 +379,33 @@ public class CombatManager : MonoBehaviour
                     float currentSupportMultiplier = 1.0f;
 
                     // --- SAÐDAKÝ GÜÇLENDÝRÝCÝYÝ KONTROL ET ---
-                    // Eðer kartýn saðýnda (i+1) bir kart varsa ve bu kart bir "Modifier" ise:
                     if (i < 3 && playerSlots[i + 1] != null && playerSlots[i + 1].isElementalModifier)
                     {
                         supportCard = playerSlots[i + 1];
                         if (slotTransforms[i + 1].childCount > 0)
                         {
-                            supportTransform = slotTransforms[i + 1].GetChild(0);
+                            // YENÝ: Saðdaki slotun da GERÇEK kartýný bul!
+                            CardDisplay supDisplay = slotTransforms[i + 1].GetComponentInChildren<CardDisplay>();
+                            if (supDisplay != null) supportTransform = supDisplay.transform;
                         }
 
-                        // Destek kartýnýn da enerjisini (0) harca ve onu iþlenmiþ say
                         if (EnergyManager.instance.TrySpendEnergy(supportCard.energyCost))
                         {
                             processed[i + 1] = true;
 
                             if (card.element == supportCard.element)
                             {
-                                currentSupportMultiplier = 1.5f; // Ayný Element: %50 Fazla Vurur
+                                currentSupportMultiplier = 1.5f;
                                 Debug.Log($"?? MÜKEMMEL UYUM! {supportCard.cardName}, hasarý artýrdý!");
                             }
                             else if (IsAntiElement(card.element, supportCard.element))
                             {
-                                currentSupportMultiplier = 0.4f; // Zýt Element: Hasar çakýlýr
+                                currentSupportMultiplier = 0.4f;
                                 Debug.Log($"?? ZIT ELEMENT! {supportCard.cardName} yüzünden hasar çok düþtü!");
                             }
                             else
                             {
-                                currentSupportMultiplier = 0.8f; // Farklý Element: %20 Azaltýr
+                                currentSupportMultiplier = 0.8f;
                                 Debug.Log($"?? UYUMSUZ ELEMENT. {supportCard.cardName} yüzünden hasar düþtü.");
                             }
                         }
@@ -425,7 +433,6 @@ public class CombatManager : MonoBehaviour
                         yield return null;
                     }
 
-                    // --- HEDEFLERÝ BELÝRLE ---
                     List<EnemyDisplay> currentTargets = new List<EnemyDisplay>();
 
                     if (card.cardType == CardType.Companion)
@@ -447,21 +454,17 @@ public class CombatManager : MonoBehaviour
                         }
                     }
 
-                    // --- KURAL: GÜÇLENDÝRÝCÝ TEK BAÞINA OYNANDIYSA ---
                     if (card.isElementalModifier && supportCard == null)
                     {
-                        // Sadece kalkýp iner, bedelsiz elden çýkarma durumu
                         Debug.Log($"{card.cardName} tek baþýna oynandý. Etki etmeden kayboluyor.");
                     }
                     else
                     {
-                        // Büyü Efektini Oynat
                         if (currentTargets.Count > 0)
                         {
                             yield return StartCoroutine(PlaySpellEffects(cardTransform, currentTargets, card.element));
                         }
 
-                        // Hasarý Uygula (Multiplier parametresi ile!)
                         if (card.cardType == CardType.Companion)
                         {
                             switch (card.specialEffect)
@@ -476,8 +479,7 @@ public class CombatManager : MonoBehaviour
                                     }
                                     break;
                                 case SpecialEffect.FullPlayerHeal:
-                                    if (PlayerManager.instance != null)
-                                        PlayerManager.instance.Heal(PlayerManager.instance.maxHealth - PlayerManager.instance.currentHealth);
+                                    if (PlayerManager.instance != null) PlayerManager.instance.Heal(PlayerManager.instance.maxHealth - PlayerManager.instance.currentHealth);
                                     break;
                                 case SpecialEffect.AOE_Damage:
                                     foreach (EnemyDisplay enemy in currentTargets)
@@ -492,7 +494,7 @@ public class CombatManager : MonoBehaviour
                         {
                             if (PlayerManager.instance != null) PlayerManager.instance.Heal(card.healAmount);
                         }
-                        else // Normal Saldýrý Hasarý
+                        else
                         {
                             foreach (EnemyDisplay enemy in currentTargets)
                             {
@@ -501,7 +503,6 @@ public class CombatManager : MonoBehaviour
                         }
                     }
 
-                    // --- ANÝMASYON GERÝ DÖNÜÞ (Kartlar masaya oturur) ---
                     animT = 0;
                     while (animT < 1)
                     {
@@ -513,8 +514,6 @@ public class CombatManager : MonoBehaviour
 
                     yield return new WaitForSeconds(0.2f);
                     HandleDeaths();
-
-                    // YENÝ: Kart yutulduktan veya oynandýktan sonra biraz beklesin ki diðerine geçmesin
                     yield return new WaitForSeconds(0.6f);
                 }
             }
@@ -590,18 +589,23 @@ public class CombatManager : MonoBehaviour
     {
         if (PlayerManager.instance != null) PlayerManager.instance.AddGold(enemy.enemyData.goldReward);
         activeEnemies.Remove(enemy);
+
+        // 1. Orijinal Yanma/Erime Efekti
         if (enemyDeathEffectPrefab != null)
         {
             GameObject effect = Instantiate(enemyDeathEffectPrefab, enemy.transform.position, Quaternion.identity);
+            BringEffectToFront(effect);
             Destroy(effect, 2f);
         }
 
-        if (enemyDeathEffectPrefab != null)
+        // 2. YENÝ: Ekstra Duman Efekti
+        if (enemySmokeDeathPrefab != null)
         {
-            GameObject effect = Instantiate(enemyDeathEffectPrefab, enemy.transform.position, Quaternion.identity);
-            BringEffectToFront(effect); // YENÝ EKLENDÝ
-            Destroy(effect, 2f);
+            GameObject smokeEffect = Instantiate(enemySmokeDeathPrefab, enemy.transform.position, Quaternion.identity);
+            BringEffectToFront(smokeEffect);
+            Destroy(smokeEffect, 2.5f); // Duman biraz daha uzun kalabilir
         }
+
         StartCoroutine(enemy.DieAnimationAndDestroy());
         activeEnemyCount = activeEnemies.Count;
     }
@@ -632,15 +636,36 @@ public class CombatManager : MonoBehaviour
         {
             if (slotTransforms[i].childCount > 0)
             {
-                foreach (Transform child in slotTransforms[i])
+                // Slotun içindeki tüm objeleri (Kart + Efektler) bir listeye alalým
+                List<Transform> children = new List<Transform>();
+                foreach (Transform child in slotTransforms[i]) children.Add(child);
+
+                foreach (Transform child in children)
                 {
-                    GameObject cardObj = child.gameObject;
-                    if (playerSlots[i] != null && deckManager != null)
+                    GameObject childObj = child.gameObject;
+
+                    // YENÝ: Bu obje bir kart mý, yoksa efekt mi?
+                    CardDisplay isCard = childObj.GetComponent<CardDisplay>();
+
+                    if (isCard != null)
                     {
-                        if (playerSlots[i].cardType != CardType.Companion) deckManager.AddToDiscard(playerSlots[i]);
+                        // EÐER KART ÝSE: Ýskartaya yolla
+                        if (playerSlots[i] != null && deckManager != null)
+                        {
+                            if (playerSlots[i].cardType != CardType.Companion)
+                                deckManager.AddToDiscard(playerSlots[i]);
+                        }
+
+                        if (deckManager != null)
+                            deckManager.StartCoroutine(deckManager.AnimateCardToDiscard(childObj));
+                        else
+                            Destroy(childObj);
                     }
-                    if (deckManager != null) deckManager.StartCoroutine(deckManager.AnimateCardToDiscard(cardObj));
-                    else Destroy(cardObj);
+                    else
+                    {
+                        // EÐER SADECE EFEKT ÝSE (VFX_Element_Effect): Olduðu yerde direkt yok et
+                        Destroy(childObj);
+                    }
                 }
             }
             playerSlots[i] = null;
@@ -648,7 +673,6 @@ public class CombatManager : MonoBehaviour
         yield return new WaitForSeconds(0.4f);
         RecalculateTotalEnergyCost();
     }
-
     UltimateCombo CheckUltimateCombo()
     {
         if (ultimateCombos == null || ultimateCombos.Count == 0) return null;
@@ -686,10 +710,20 @@ public class CombatManager : MonoBehaviour
         }
 
         // 2. Burning (Yanma) Partikülünü Yarat
+        // 2. Burning (Yanma) Partikülünü Yarat
         GameObject burningEffect = null;
         if (dissolveBurningPrefab != null)
         {
-            burningEffect = Instantiate(dissolveBurningPrefab, cardTransform.position, Quaternion.identity, cardTransform);
+            // YENÝ: Sadece parent (cardTransform) vererek yaratýyoruz
+            burningEffect = Instantiate(dissolveBurningPrefab, cardTransform);
+
+            // YENÝ: Kartýn tam merkezine oturtuyoruz
+            burningEffect.transform.localPosition = Vector3.zero;
+
+            // KRÝTÝK ÇÖZÜM: Embers (kývýlcýmlar) parçacýklarýnýn düz bir çizgiye ezilmesini engeller!
+            burningEffect.transform.localScale = Vector3.one;
+
+            BringEffectToFront(burningEffect);
         }
 
         if (dissolveBurningPrefab != null)
