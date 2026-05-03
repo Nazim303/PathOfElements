@@ -44,7 +44,7 @@ Material:
     - _DissolveAmount: 0
     - _EdgeThickness: 0
     - _FlashAmount: 0
-    - _MasterAlpha: 0
+    - _MasterAlpha: 1
     - _NoiseScale: 200
     m_Colors:
     - _EdgeColor: {r: 1, g: 0.24174622, b: 0, a: 0}

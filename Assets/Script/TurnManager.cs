@@ -63,6 +63,7 @@ public class TurnManager : MonoBehaviour
 
         // Yazýyý Türe Göre Ayarla
         if (battleType == PathType.Boss) SetTurnText("BOSS FIGHT!");
+        else if (battleType == PathType.Elite) SetTurnText("ELITE COMBAT!"); // YENÝ: Elite için özel yazý
         else SetTurnText("PREPARÝNG FOR WAR...");
 
         // 1. Temizlik
@@ -79,7 +80,6 @@ public class TurnManager : MonoBehaviour
         if (battleType == PathType.Boss)
         {
             // --- BOSS MANTIÐI ---
-            // Boss listesinden rastgele 1 tane seç
             if (bossEnemies.Length > 0)
             {
                 enemiesToSpawn.Add(bossEnemies[Random.Range(0, bossEnemies.Length)]);
@@ -89,34 +89,55 @@ public class TurnManager : MonoBehaviour
                 Debug.LogError("HATA: Boss Enemies listesi boþ!");
             }
         }
+        else if (battleType == PathType.Elite)
+        {
+            // --- YENÝ: ELITE SAVAÞ MANTIÐI ---
+            // Kural: En az 2 düþman çýkacak
+            int enemyCount = Random.Range(2, 4); // 2 veya 3 düþman
+
+            for (int i = 0; i < enemyCount; i++)
+            {
+                if (allEnemies.Length > 0)
+                {
+                    // Düþmaný seç
+                    EnemyData baseEnemy = allEnemies[Random.Range(0, allEnemies.Length)];
+
+                    // Orijinal veriyi bozmamak için kopyasýný (Instance) oluþturuyoruz!
+                    EnemyData eliteEnemy = Instantiate(baseEnemy);
+                    eliteEnemy.name = baseEnemy.name + "_Elite"; // Bellekteki ismini deðiþtir
+
+                    // Elite Çarpanlarý (Orantýlý Artýþ)
+                    eliteEnemy.maxHealth = Mathf.RoundToInt(baseEnemy.maxHealth * 1.5f); // %50 Daha fazla can
+                    eliteEnemy.damage = Mathf.RoundToInt(baseEnemy.damage * 1.3f);       // %30 Daha fazla hasar
+                    eliteEnemy.goldReward = Mathf.RoundToInt(baseEnemy.goldReward * 2.0f); // 2 Katý altýn ödülü
+
+                    enemiesToSpawn.Add(eliteEnemy);
+                }
+            }
+            Debug.Log($"Elite Savaþý! {enemyCount} adet güçlendirilmiþ düþman geliyor.");
+        }
         else
         {
-            // --- YENÝ: NORMAL SAVAÞ MANTIÐI (Dinamik Zorluk) ---
+            // --- NORMAL SAVAÞ MANTIÐI (Dinamik Zorluk) ---
             int enemyCount = 1;
 
-            // Oyuncunun haritada nerede olduðunu kontrol et
             if (PathManager.instance != null && PathManager.instance.currentNode != null && PathManager.instance.mapGenerator != null)
             {
                 int currentLayer = PathManager.instance.currentNode.gridLayer;
                 int totalLayers = PathManager.instance.mapGenerator.mapLength;
-
-                // Haritanýn ortasýný hesapla (Örn: 10 katmansa ortasý 5)
                 int middleLayer = totalLayers / 2;
 
                 if (currentLayer < middleLayer)
                 {
-                    // 1. AÞAMA (Haritanýn baþlarý): 1 veya 2 düþman
-                    enemyCount = Random.Range(1, 3); // (1 dahil, 3 hariç)
+                    enemyCount = Random.Range(1, 3); // 1 veya 2 düþman
                 }
                 else
                 {
-                    // 2. AÞAMA (Haritanýn sonlarý): 2 veya 3 düþman
-                    enemyCount = Random.Range(2, 4); // (2 dahil, 4 hariç)
+                    enemyCount = Random.Range(2, 4); // 2 veya 3 düþman
                 }
             }
             else
             {
-                // Harita dýþýnda (örneðin direkt savaþ sahnesini test ederken) hata vermemesi için eski sistem:
                 enemyCount = Random.Range(minEnemySpawn, maxEnemySpawn + 1);
             }
 

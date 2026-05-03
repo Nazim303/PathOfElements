@@ -36,13 +36,49 @@ public class CombatManager : MonoBehaviour
     [Header("Ultimate Combos (Kadim Birleþimler)")]
     public List<UltimateCombo> ultimateCombos;
 
-    // --- YENÝ EFEKT REFERANSLARI ---
+    // --- YENÝ EFEKT REFERANSLARI (GÜNCELLENDÝ) ---
     [Header("Particle & Shader Effects")]
-    public GameObject dissolveBurningPrefab; // Kart yanma partikülü
-    public GameObject spellChargePrefab;     // Kartýn üstünde toplanan enerji
-    public GameObject spellTrailPrefab;      // Düþmana giden mermi/ateþ
-    public GameObject spellImpactPrefab;     // Düþmanda patlama
+    public GameObject dissolveBurningPrefab;
     public GameObject enemySmokeDeathPrefab;
+    public GameObject spellChargePrefab;
+
+    [Header("Level 1 Attack Effects")]
+    public GameObject vfx_FireAttack01;
+    public GameObject vfx_WaterAttack01;
+    public GameObject vfx_EarthAttack01;
+    public GameObject vfx_AirAttack01;
+
+    [Header("Level 2 Attack Effects")]
+    public GameObject vfx_FireAttack02;
+    public GameObject vfx_WaterAttack02;
+    public GameObject vfx_EarthAttack02;
+    public GameObject vfx_AirAttack02;
+
+    [Header("Level 3 Attack Effects")]
+    public GameObject vfx_FireAttack03;
+    public GameObject vfx_WaterAttack03;
+    public GameObject vfx_EarthAttack03;
+    public GameObject vfx_AirAttack03;
+
+    [Header("Level 1 Impact Effects")]
+    public GameObject vfx_FireImpact01;
+    public GameObject vfx_WaterImpact01;
+    public GameObject vfx_EarthImpact01;
+    public GameObject vfx_AirImpact01;
+
+    [Header("Level 2 Impact Effects")]
+    public GameObject vfx_FireImpact02;
+    public GameObject vfx_WaterImpact02;
+    public GameObject vfx_EarthImpact02;
+    public GameObject vfx_AirImpact02;
+
+    [Header("Level 3 Impact Effects")]
+    public GameObject vfx_FireImpact03;
+    public GameObject vfx_WaterImpact03;
+    public GameObject vfx_EarthImpact03;
+    public GameObject vfx_AirImpact03;
+
+
 
     // LAG FIX
     public void SetupEnemies(List<EnemyData> enemiesToSpawn)
@@ -127,6 +163,62 @@ public class CombatManager : MonoBehaviour
         }
     }
 
+    // Element ve Güç seviyesine göre doðru prefabý seçer
+    GameObject GetAttackVFXPrefab(ElementType element, int power)
+    {
+        switch (power)
+        {
+            case 1:
+                if (element == ElementType.Fire) return vfx_FireAttack01;
+                if (element == ElementType.Water) return vfx_WaterAttack01;
+                if (element == ElementType.Earth) return vfx_EarthAttack01;
+                if (element == ElementType.Air) return vfx_AirAttack01;
+                break;
+            case 2:
+                if (element == ElementType.Fire) return vfx_FireAttack02;
+                if (element == ElementType.Water) return vfx_WaterAttack02;
+                if (element == ElementType.Earth) return vfx_EarthAttack02;
+                if (element == ElementType.Air) return vfx_AirAttack02;
+                break;
+            case 3:
+            default: // 3 veya beklenmedik durumlarda en güçlüsü
+                if (element == ElementType.Fire) return vfx_FireAttack03;
+                if (element == ElementType.Water) return vfx_WaterAttack03;
+                if (element == ElementType.Earth) return vfx_EarthAttack03;
+                if (element == ElementType.Air) return vfx_AirAttack03;
+                break;
+        }
+        return null;
+    }
+
+    // Element ve Güç seviyesine göre doðru Impact (Çarpma) prefabýný seçer
+    GameObject GetImpactVFXPrefab(ElementType element, int power)
+    {
+        switch (power)
+        {
+            case 1:
+                if (element == ElementType.Fire) return vfx_FireImpact01;
+                if (element == ElementType.Water) return vfx_WaterImpact01;
+                if (element == ElementType.Earth) return vfx_EarthImpact01;
+                if (element == ElementType.Air) return vfx_AirImpact01;
+                break;
+            case 2:
+                if (element == ElementType.Fire) return vfx_FireImpact02;
+                if (element == ElementType.Water) return vfx_WaterImpact02;
+                if (element == ElementType.Earth) return vfx_EarthImpact02;
+                if (element == ElementType.Air) return vfx_AirImpact02;
+                break;
+            case 3:
+            default:
+                if (element == ElementType.Fire) return vfx_FireImpact03;
+                if (element == ElementType.Water) return vfx_WaterImpact03;
+                if (element == ElementType.Earth) return vfx_EarthImpact03;
+                if (element == ElementType.Air) return vfx_AirImpact03;
+                break;
+        }
+        return null;
+    }
+
     // Elementin türüne göre uygun rengi döndürür
     Color GetElementColor(ElementType type)
     {
@@ -153,92 +245,121 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    // --- YENÝ: 3 AÞAMALI BÜYÜ EFEKTÝ SÝSTEMÝ ---
-    // --- GÜNCELLENEN FONKSÝYON: 3 AÞAMALI BÜYÜ SÝSTEMÝ ---
-    // --- GÜNCELLENEN FONKSÝYON: 3 AÞAMALI BÜYÜ SÝSTEMÝ ---
-    // --- YENÝ: ElementType parametresi eklendi ---
-    IEnumerator PlaySpellEffects(Transform startTransform, List<EnemyDisplay> targets, ElementType cardElement)
+
+    // --- GÜNCELLENEN FONKSÝYON: UÇAN KUYRUKLU MERMÝ SÝSTEMÝ ---
+    // --- GÜNCELLENEN FONKSÝYON: SENKRONÝZE HASAR VE IMPACT SÝSTEMÝ ---
+    IEnumerator PlaySpellEffects(Transform startTransform, List<EnemyDisplay> targets, CardData cardData)
     {
-        if (targets == null || targets.Count == 0 || startTransform == null) yield break;
+        if (targets == null || targets.Count == 0 || startTransform == null || cardData == null) yield break;
 
-        // Kartýn elementine göre rengi al
-        Color spellColor = GetElementColor(cardElement);
+        Color elementColor = GetElementColor(cardData.element);
 
-        // 1. CHARGE (Enerji Toplama)
+        // 1. KARTIN PARLAMASI (M_MasterCard Flash)
+        CardDisplay display = startTransform.GetComponent<CardDisplay>();
+        if (display != null && display.artImage != null)
+        {
+            Material mat = display.artImage.material;
+            if (mat.HasProperty("_FlashColor") && mat.HasProperty("_FlashAmount"))
+            {
+                mat.SetColor("_FlashColor", elementColor);
+                float flashDuration = 0.15f;
+                float t = 0;
+
+                while (t < 1) { t += Time.deltaTime / flashDuration; mat.SetFloat("_FlashAmount", Mathf.Lerp(0f, 1f, t)); yield return null; }
+                t = 0;
+                while (t < 1) { t += Time.deltaTime / flashDuration; mat.SetFloat("_FlashAmount", Mathf.Lerp(1f, 0f, t)); yield return null; }
+                mat.SetFloat("_FlashAmount", 0f);
+            }
+        }
+
+        // 1.5 CHARGE (Enerji Toplama) 
         GameObject charge = null;
         if (spellChargePrefab != null)
         {
-            // YENÝ: Efekti kartýn içine deðil, savaþ alanýna (CombatManager'ýn transformuna) yaratýyoruz.
             charge = Instantiate(spellChargePrefab, transform);
-
-            // Pozisyonunu kartýn anlýk pozisyonuna eþitliyoruz.
             charge.transform.position = startTransform.position;
+            charge.transform.localScale = Vector3.one;
 
-            SetParticleColor(charge, spellColor);
+            SetParticleColor(charge, elementColor);
             BringEffectToFront(charge);
 
-            // BURASI KRÝTÝK: 1.2 saniye boyunca oyun akmaya devam ediyor!
-            yield return new WaitForSeconds(1.2f);
+            yield return new WaitForSeconds(0.5f);
         }
-
         if (charge != null) Destroy(charge);
 
-        // 2. TRAIL (Mermilerin Düþmana Gidiþi)
-        List<GameObject> trails = new List<GameObject>();
+        // 2. YENÝ MERMÝ MANTIÐI: Uçan Kuyruklar
+        GameObject vfxPrefabToUse = GetAttackVFXPrefab(cardData.element, cardData.cardPower);
+        List<GameObject> spawnedAttacks = new List<GameObject>();
         List<Vector3> startPositions = new List<Vector3>();
         List<Vector3> endPositions = new List<Vector3>();
 
-        if (spellTrailPrefab != null)
+        if (vfxPrefabToUse != null)
         {
             foreach (var target in targets)
             {
-                if (target != null)
+                if (target != null && target.gameObject != null)
                 {
-                    GameObject trail = Instantiate(spellTrailPrefab, startTransform.position, Quaternion.identity);
-
-                    SetParticleColor(trail, spellColor); // Rengi Uygula
-                    BringEffectToFront(trail);
-
-                    trails.Add(trail);
-                    startPositions.Add(trail.transform.position);
-
                     Transform targetCenter = target.visualRoot != null ? target.visualRoot : target.transform;
+
+                    GameObject attackVFX = Instantiate(vfxPrefabToUse, transform);
+                    attackVFX.transform.position = startTransform.position;
+                    attackVFX.transform.localScale = Vector3.one;
+
+                    BringEffectToFront(attackVFX);
+
+                    spawnedAttacks.Add(attackVFX);
+                    startPositions.Add(attackVFX.transform.position);
                     endPositions.Add(targetCenter.position);
                 }
             }
 
-            float t = 0;
-            while (t < 1)
+            // --- MERMÝLERÝ DÜÞMANA UÇUR ---
+            float moveT = 0;
+            while (moveT < 1)
             {
-                t += Time.deltaTime * 6f;
-                for (int i = 0; i < trails.Count; i++)
+                moveT += Time.deltaTime * 6f;
+                for (int i = 0; i < spawnedAttacks.Count; i++)
                 {
-                    if (trails[i] != null)
-                        trails[i].transform.position = Vector3.Lerp(startPositions[i], endPositions[i], t);
+                    if (spawnedAttacks[i] != null)
+                    {
+                        spawnedAttacks[i].transform.position = Vector3.Lerp(startPositions[i], endPositions[i], moveT);
+                    }
                 }
                 yield return null;
             }
 
-            foreach (var trail in trails) if (trail != null) Destroy(trail);
+            // HEDEFE ULAÞTI!
+            // Oyunu durdurmuyoruz (yield YOK). Mermilere "0.5 saniye sonra kendi kendinizi silin" diyoruz.
+            // Bu sayede arkadan gelen kuyruklarý anýnda yok olmaz, yavaþça erir.
+            foreach (var attack in spawnedAttacks)
+            {
+                if (attack != null) Destroy(attack, 0.5f);
+            }
         }
 
-        // 3. IMPACT (Patlama)
-        if (spellImpactPrefab != null)
+        // 3. 3 SEVÝYELÝ IMPACT (Patlama) 
+        // Kod bekleme yapmadýðý için mermi hedefe vardýðý AN burasý çalýþýr!
+        GameObject impactPrefabToUse = GetImpactVFXPrefab(cardData.element, cardData.cardPower);
+        if (impactPrefabToUse != null)
         {
             foreach (var target in targets)
             {
-                if (target != null)
+                if (target != null && target.gameObject != null)
                 {
                     Transform targetCenter = target.visualRoot != null ? target.visualRoot : target.transform;
-                    GameObject impact = Instantiate(spellImpactPrefab, targetCenter.position, Quaternion.identity);
 
-                    SetParticleColor(impact, spellColor); // Rengi Uygula
+                    GameObject impact = Instantiate(impactPrefabToUse, transform);
+                    impact.transform.position = targetCenter.position;
+                    impact.transform.localScale = Vector3.one;
+
                     BringEffectToFront(impact);
-
-                    Destroy(impact, 2f);
+                    Destroy(impact, 1f);
                 }
             }
         }
+
+        // Fonksiyon tam burada bitiyor. 
+        // CombatManager anýnda hasarý uygulayýp düþmanýn titreme (TakeDamage) animasyonunu tetikleyecek!
     }
 
     public IEnumerator OnAttackPhase()
@@ -316,7 +437,9 @@ public class CombatManager : MonoBehaviour
             List<Coroutine> spellRoutines = new List<Coroutine>();
             for (int k = 0; k < ultimateCards.Count; k++)
             {
-                spellRoutines.Add(StartCoroutine(PlaySpellEffects(ultimateCards[k], targets, ultimateData[k].element)));
+                // ESKÝ: spellRoutines.Add(StartCoroutine(PlaySpellEffects(ultimateCards[k], targets, ultimateData[k].element)));
+                // YENÝ:
+                spellRoutines.Add(StartCoroutine(PlaySpellEffects(ultimateCards[k], targets, ultimateData[k])));
             }
             if (spellRoutines.Count > 0) yield return spellRoutines[0];
 
@@ -462,7 +585,7 @@ public class CombatManager : MonoBehaviour
                     {
                         if (currentTargets.Count > 0)
                         {
-                            yield return StartCoroutine(PlaySpellEffects(cardTransform, currentTargets, card.element));
+                            yield return StartCoroutine(PlaySpellEffects(cardTransform, currentTargets, card));
                         }
 
                         if (card.cardType == CardType.Companion)

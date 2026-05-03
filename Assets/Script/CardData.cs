@@ -16,8 +16,6 @@ public enum SpecialEffect
     AOE_Damage
 }
 
-// --- YENÝ: Destek Kartý Efektleri ---
-// --- YENÝ: Destek Kartý Efektleri ---
 public enum SupportEffect
 {
     DrawExtraCards,
@@ -45,6 +43,11 @@ public class CardData : ScriptableObject
     public int baseDamage;
     public int healAmount;
 
+    // --- YENÝ: Kartýn Güç Seviyesi (1, 2 veya 3) ---
+    [Header("Power Level")]
+    [Range(1, 3)]
+    [Tooltip("Efekt seviyesini belirler (1=Zayýf, 2=Orta, 3=Güçlü)")]
+    public int cardPower = 1;
 
     [Header("Modifier Settings")]
     [Tooltip("Eðer iþaretlenirse, solundaki karta destek çýkar.")]
@@ -55,9 +58,9 @@ public class CardData : ScriptableObject
 
     [Header("Cost")]
     [Range(0, 5)]
-    public int energyCost = 1; // Varsayýlan 1 enerji
+    public int energyCost = 1;
 
     [Header("Support Settings")]
-    public SupportEffect supportEffect; // --- YENÝ ---
-    public int supportValue;            // --- YENÝ: Kaç kart? Kaç altýn? ---
+    public SupportEffect supportEffect;
+    public int supportValue;
 }

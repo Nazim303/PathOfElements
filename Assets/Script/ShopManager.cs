@@ -8,16 +8,15 @@ public class ShopManager : MonoBehaviour
     public static ShopManager instance;
 
     [Header("Configuration")]
-    public List<ItemData> allPossibleItems; // Editörden tüm eþyalarý buraya at
-    public int rerollCost = 10;             // Yenileme ücreti
+    public List<ItemData> allPossibleItems;
+    public int rerollCost = 10;
 
     [Header("UI References")]
-    public Transform itemsContainer;        // Eþyalarýn dizileceði panel (Grid Layout)
-    public GameObject shopItemPrefab;       // Eþya butonu prefab'ý
+    public Transform itemsContainer;
+    public GameObject shopItemPrefab;
     public TextMeshProUGUI rerollCostText;
     public TextMeshProUGUI playerGoldText;
 
-    // Anlýk dükkandaki eþyalarý tutan liste
     private List<GameObject> currentShopSlots = new List<GameObject>();
 
     void Awake()
@@ -30,41 +29,40 @@ public class ShopManager : MonoBehaviour
         UpdateUI();
     }
 
-    // PathManager dükkaný açtýðýnda bu fonksiyonu çaðýracak
     public void OpenShop()
     {
         GenerateItems();
         UpdateUI();
     }
 
-    // 3 Rastgele eþya oluþtur
     void GenerateItems()
     {
-        // Önce eski slotlarý temizle
         foreach (GameObject slot in currentShopSlots) Destroy(slot);
         currentShopSlots.Clear();
 
-        // 3 tane rastgele eþya seç
-        for (int i = 0; i < 3; i++)
-        {
-            if (allPossibleItems.Count == 0) break;
+        // Rastgele 3 eþya seçimi
+        // (Eðer listede 3'ten az eþya varsa hata vermemesi için koruma)
+        int itemsToSpawn = Mathf.Min(3, allPossibleItems.Count);
 
-            ItemData randomItem = allPossibleItems[Random.Range(0, allPossibleItems.Count)];
+        List<ItemData> availablePool = new List<ItemData>(allPossibleItems);
+
+        for (int i = 0; i < itemsToSpawn; i++)
+        {
+            int randomIndex = Random.Range(0, availablePool.Count);
+            ItemData randomItem = availablePool[randomIndex];
+
             CreateItemSlot(randomItem);
+
+            // Ayný eþyadan dükkanda 2 tane çýkmamasý için havuzdan çýkar
+            availablePool.RemoveAt(randomIndex);
         }
     }
 
-    // Eþyayý UI'da oluþtur
     void CreateItemSlot(ItemData item)
     {
         GameObject newSlot = Instantiate(shopItemPrefab, itemsContainer);
         currentShopSlots.Add(newSlot);
 
-        // UI elemanlarýný bul ve doldur (Prefab yapýna göre burayý düzenle)
-        // Örn: ShopItemUI diye bir script yapýp ona da atabilirsin ama þimdilik basit tutalým:
-        // Hiyerarþi varsayýmý: Image(Icon) -> Text(Name) -> Text(Cost) -> Button(Buy)
-
-        // Basit eriþim (Prefabýna ShopSlot scripti eklemen daha temiz olur, aþaðýda veriyorum)
         ShopSlot slotScript = newSlot.GetComponent<ShopSlot>();
         if (slotScript != null)
         {
@@ -78,31 +76,33 @@ public class ShopManager : MonoBehaviour
         if (PlayerManager.instance.currentGold >= item.cost)
         {
             // 1. Parayý düþ
-            PlayerManager.instance.AddGold(-item.cost); // Negatif ekleyerek düþüyoruz
+            PlayerManager.instance.AddGold(-item.cost);
 
             // 2. Efekti uygula
             ApplyItemEffect(item);
 
-            // 3. Eþyayý dükkandan kaldýr (Satýldý)
+            // 3. Eþyayý dükkandan kaldýr
             Destroy(slotObj);
+            currentShopSlots.Remove(slotObj);
 
             UpdateUI();
-            Debug.Log($"{item.itemName} satýn alýndý!");
+            Debug.Log($"[SHOP] {item.itemName} satýn alýndý!");
         }
         else
         {
-            Debug.Log("Yetersiz Bakiye!");
-            // Buraya kýrmýzý yanýp sönme efekti ekleyebilirsin
+            Debug.Log("[SHOP] Yetersiz Bakiye!");
+            // (Ýleride buraya ui titremesi veya kýrmýzý uyarý yazýsý koyabilirsin)
         }
     }
 
+    // --- GÜNCELLENEN KISIM: YENÝ EFEKTLERÝN ÇALIÞMA MANTIÐI ---
     void ApplyItemEffect(ItemData item)
     {
         switch (item.effectType)
         {
             case ItemEffectType.IncreaseMaxHealth:
                 PlayerManager.instance.maxHealth += item.effectValue;
-                PlayerManager.instance.Heal(item.effectValue); // Artan can kadar iyileþtir
+                PlayerManager.instance.Heal(item.effectValue);
                 break;
 
             case ItemEffectType.BonusDamage:
@@ -111,6 +111,31 @@ public class ShopManager : MonoBehaviour
 
             case ItemEffectType.FullHeal:
                 PlayerManager.instance.Heal(9999);
+                break;
+
+            // --- YENÝ EFEKTLER ---
+            case ItemEffectType.IncreaseMaxEnergy:
+                if (EnergyManager.instance != null)
+                {
+                    EnergyManager.instance.IncreaseMaxEnergy(item.effectValue);
+                }
+                break;
+
+            case ItemEffectType.IncreaseMaxHandSize:
+                if (DeckManager.instance != null) // Eðer DeckManager'da instance yoksa FindObjectOfType kullanabilirsin
+                {
+                    DeckManager dm = FindObjectOfType<DeckManager>();
+                    if (dm != null) dm.maxHandSize += item.effectValue;
+                }
+                break;
+
+            case ItemEffectType.GainCard:
+                if (item.rewardCard != null)
+                {
+                    DeckManager dm = FindObjectOfType<DeckManager>();
+                    if (dm != null) dm.allCardsInDeck.Add(item.rewardCard);
+                    Debug.Log($"Desteye yeni bir kart eklendi: {item.rewardCard.cardName}");
+                }
                 break;
         }
     }
@@ -122,25 +147,24 @@ public class ShopManager : MonoBehaviour
         {
             PlayerManager.instance.AddGold(-rerollCost);
             GenerateItems();
-            UpdateUI();
 
-            // Her yenilemede fiyat artsýn istersen: rerollCost += 5;
+            // Opsiyonel: Her yenilemede fiyat artsýn (Hardcore roguelike hissi)
+            // rerollCost += 5; 
+
+            UpdateUI();
         }
         else
         {
-            Debug.Log("Yenilemek için paran yetmiyor!");
+            Debug.Log("[SHOP] Yenilemek için paran yetmiyor!");
         }
     }
 
-    // GEÇ / ÇIK BUTONU
     public void LeaveShop()
     {
-        // Haritaya geri dön
         if (PathManager.instance != null)
         {
             PathManager.instance.CompleteCurrentNode();
         }
-        
     }
 
     void UpdateUI()

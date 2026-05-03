@@ -20,6 +20,8 @@ MonoBehaviour:
   element: 5
   baseDamage: 15
   healAmount: 0
+  cardPower: 3
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 2
   supportEffect: 0

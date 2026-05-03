@@ -23,7 +23,7 @@ public class DeckManager : MonoBehaviour
 
     private Canvas mainCanvas;
 
-
+    public static DeckManager instance;
 
     void Start()
     {

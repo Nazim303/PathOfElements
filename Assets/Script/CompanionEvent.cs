@@ -21,6 +21,10 @@ public class CompanionEvent : MonoBehaviour
     public Transform deckIconPoint; // Inspector'dan destenin durduðu UI objesini buraya ata
     public float flyDuration = 0.6f; // Süzülme süresi
 
+    [Header("Flying Animation Prefabs")]
+    public GameObject standardCardPrefab;
+    public GameObject supportCardPrefab;
+
     void Awake()
     {
         if (instance == null) instance = this;
@@ -83,9 +87,9 @@ public class CompanionEvent : MonoBehaviour
 
     IEnumerator AnimateAndSelectRoutine(CardData selectedCard, Transform startTransform)
     {
-        Debug.Log($"[DEBUG 1] Animasyon Coroutine'i basladi! Secilen kart: {selectedCard.cardName}");
+        Debug.Log($"[DEBUG] Süzülme Animasyonu Baþlýyor: {selectedCard.cardName}");
 
-        // 1. Oyuncu arka arkaya basmasýn diye tüm butonlarý kilitliyoruz
+        // 1. Lock buttons to prevent spam clicks
         foreach (Transform child in cardsContainer)
         {
             Button btn = child.GetComponent<Button>();
@@ -93,41 +97,55 @@ public class CompanionEvent : MonoBehaviour
         }
         if (skipButton != null) skipButton.interactable = false;
 
-        // 2. Havada süzülecek "sahte" bir kopya yarat
-        GameObject prefabToUse = (selectedCard.cardType == CardType.Support && choiceSupportButtonPrefab != null) ? choiceSupportButtonPrefab : choiceButtonPrefab;
+        // 2. Create the "Real Card" dummy for flying
+        GameObject prefabToUse = (selectedCard.cardType == CardType.Support && supportCardPrefab != null) ? supportCardPrefab : standardCardPrefab;
 
-        GameObject flyingCard = Instantiate(prefabToUse, this.transform);
-        Debug.Log($"[DEBUG 2] Ucan kopya obje basariyla yaratildi: {flyingCard.name}");
+        if (prefabToUse == null)
+        {
+            Debug.LogError("[HATA] Uçuþ için Card Prefab atanmamýþ! Lütfen Inspector'dan kontrol et.");
+            yield break;
+        }
 
+        // --- CRITICAL FIX: Find the Canvas and make it the parent ---
+        Canvas mainCanvas = GetComponentInParent<Canvas>();
+        if (mainCanvas == null)
+        {
+            // Fallback if the script isn't under a Canvas for some reason
+            mainCanvas = FindObjectOfType<Canvas>();
+        }
+
+        // Instantiate under the Canvas, NOT 'this.transform'
+        GameObject flyingCard = Instantiate(prefabToUse, mainCanvas.transform);
+
+        // Match the starting position and scale of the clicked button
         flyingCard.transform.position = startTransform.position;
-        flyingCard.transform.localScale = startTransform.localScale;
-        flyingCard.transform.SetAsLastSibling(); // En öne al
 
-        Button flyingBtn = flyingCard.GetComponent<Button>();
-        if (flyingBtn != null) flyingBtn.interactable = false; // Kopyaya tiklanmasin
+        // We use localScale here, but because it's under a Canvas now, it won't explode.
+        // We match it to the prefab's default scale just to be safe.
+        flyingCard.transform.localScale = prefabToUse.transform.localScale;
 
-        CompanionSelectUI uiScript = flyingCard.GetComponent<CompanionSelectUI>();
-        if (uiScript != null) uiScript.Setup(selectedCard, this);
+        flyingCard.transform.SetAsLastSibling(); // Bring to the very front
 
-        // Orijinal kartý saydamlaþtýr
+        // --- Remove Draggable ---
+        if (flyingCard.GetComponent<Draggable>() != null) Destroy(flyingCard.GetComponent<Draggable>());
+
+        // Disable Raycasts so it doesn't block the mouse
+        CanvasGroup flyCG = flyingCard.GetComponent<CanvasGroup>();
+        if (flyCG == null) flyCG = flyingCard.AddComponent<CanvasGroup>();
+        flyCG.blocksRaycasts = false;
+
+        // Load visual data into the dummy card
+        CardDisplay display = flyingCard.GetComponent<CardDisplay>();
+        if (display != null) display.LoadCard(selectedCard);
+
+        // Make the original clicked button transparent
         CanvasGroup originalCG = startTransform.GetComponent<CanvasGroup>();
         if (originalCG == null) originalCG = startTransform.gameObject.AddComponent<CanvasGroup>();
         originalCG.alpha = 0f;
 
-        // 3. Süzülme Animasyonu (Pozisyon ve Küçülme)
+        // 3. The Flying Animation (Position and Scale)
         float t = 0;
         Vector3 startPos = flyingCard.transform.position;
-
-        // --- KRÝTÝK HATA KONTROLÜ ---
-        if (deckIconPoint == null)
-        {
-            Debug.LogError("[HATA] Inspector'da 'Deck Icon Point' yuvasi BOS! Kart ucamayacak, sadece oldugu yerde kuculecek!");
-        }
-        else
-        {
-            Debug.Log($"[DEBUG 3] Hedef nokta bulundu. Ucus basliyor... Sure: {flyDuration} saniye");
-        }
-
         Vector3 targetPos = deckIconPoint != null ? deckIconPoint.position : startPos;
         Vector3 startScale = flyingCard.transform.localScale;
         Vector3 targetScale = Vector3.zero;
@@ -145,10 +163,9 @@ public class CompanionEvent : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log("[DEBUG 4] Ucus dongusu (while) bitti. Ucan kopya siliniyor.");
         if (flyingCard != null) Destroy(flyingCard);
 
-        // 4. Animasyon bitti! Orijinal iþlemleri gerçekleþtir
+        // 4. Animation finished! Execute the actual logic
         DeckManager dm = FindObjectOfType<DeckManager>();
         if (dm != null)
         {
@@ -160,15 +177,18 @@ public class CompanionEvent : MonoBehaviour
             if (allCompanionCards.Contains(selectedCard))
             {
                 allCompanionCards.Remove(selectedCard);
-                Debug.Log($"[DEBUG 5] {selectedCard.cardName} kalici bir kart, havuzdan cikarildi.");
+                Debug.Log($"{selectedCard.cardName} kalýcý bir kart, havuzdan çýkarýldý.");
             }
+        }
+        else
+        {
+            Debug.Log($"{selectedCard.cardName} tek kullanýmlýk bir yoldaþ, Tavernada kalmaya devam edecek.");
         }
 
         if (skipButton != null) skipButton.interactable = true;
 
         if (PathManager.instance != null)
         {
-            Debug.Log("[DEBUG 6] PathManager'a haritaya donus emri veriliyor.");
             PathManager.instance.CompleteCurrentNode();
         }
     }

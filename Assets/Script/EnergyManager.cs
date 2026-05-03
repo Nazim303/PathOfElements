@@ -67,6 +67,16 @@ public class EnergyManager : MonoBehaviour
         UpdateUI();
     }
 
+
+    // --- YENÝ: Dükkandan veya bir Event'ten Max Enerjiyi kalýcý olarak artýrma ---
+    public void IncreaseMaxEnergy(int amount)
+    {
+        maxEnergy += amount;
+        currentEnergy += amount; // Yeni gelen enerjiyi anýnda kullanýma sun
+        UpdateUI();
+        Debug.Log($"Max Enerji {amount} artýrýldý! Yeni Max: {maxEnergy}");
+    }
+
     void UpdateUI()
     {
         // --- 1. MAX ENERJÝ YAZISI (Sabit Arka Plan) ---
