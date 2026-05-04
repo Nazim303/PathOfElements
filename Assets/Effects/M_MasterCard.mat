@@ -42,7 +42,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _DissolveAmount: 0
-    - _EdgeThickness: 0
+    - _EdgeThickness: 0.119
     - _FlashAmount: 0
     - _MasterAlpha: 1
     - _NoiseScale: 200
