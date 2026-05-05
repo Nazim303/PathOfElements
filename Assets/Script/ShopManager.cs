@@ -113,7 +113,6 @@ public class ShopManager : MonoBehaviour
                 PlayerManager.instance.Heal(9999);
                 break;
 
-            // --- YENÝ EFEKTLER ---
             case ItemEffectType.IncreaseMaxEnergy:
                 if (EnergyManager.instance != null)
                 {
@@ -122,19 +121,26 @@ public class ShopManager : MonoBehaviour
                 break;
 
             case ItemEffectType.IncreaseMaxHandSize:
-                if (DeckManager.instance != null) // Eðer DeckManager'da instance yoksa FindObjectOfType kullanabilirsin
+                // --- STREAMLINED FIX ---
+                if (DeckManager.instance != null)
                 {
-                    DeckManager dm = FindObjectOfType<DeckManager>();
-                    if (dm != null) dm.maxHandSize += item.effectValue;
+                    DeckManager.instance.maxHandSize += item.effectValue;
+                    Debug.Log($"[SHOP] Max Hand Size increased to: {DeckManager.instance.maxHandSize}");
+                }
+                else
+                {
+                    Debug.LogError("[SHOP ERROR] DeckManager instance is NULL! Cannot increase hand size.");
                 }
                 break;
 
             case ItemEffectType.GainCard:
                 if (item.rewardCard != null)
                 {
-                    DeckManager dm = FindObjectOfType<DeckManager>();
-                    if (dm != null) dm.allCardsInDeck.Add(item.rewardCard);
-                    Debug.Log($"Desteye yeni bir kart eklendi: {item.rewardCard.cardName}");
+                    if (DeckManager.instance != null)
+                    {
+                        DeckManager.instance.allCardsInDeck.Add(item.rewardCard);
+                        Debug.Log($"[SHOP] Added new card to deck: {item.rewardCard.cardName}");
+                    }
                 }
                 break;
         }

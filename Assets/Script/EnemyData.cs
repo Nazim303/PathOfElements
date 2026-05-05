@@ -10,4 +10,9 @@ public class EnemyData : ScriptableObject
     public Sprite enemybander;
     public int damage;      // Düþmanýn tur baþýna vurduðu hasar
     public int goldReward;  // Yendiðimizde düþecek para [YENÝ]
+
+    
+    [Header("Journal Info")]
+    [TextArea(5, 10)]
+    public string journalDescription; // Düþmanýn uzun hikayesi
 }

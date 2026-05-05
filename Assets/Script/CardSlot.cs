@@ -55,13 +55,16 @@ public class CardSlot : MonoBehaviour, IDropHandler
         if (draggable != null && droppedCardDisplay != null)
         {
             // --- FÝZYON (BÝRLEÞME) KONTROLÜ ---
+            // --- FÝZYON (BÝRLEÞME) KONTROLÜ (DÜZELTÝLDÝ) ---
             if (transform.childCount > 0)
             {
-                Transform existingCardTransform = transform.GetChild(0);
-                CardDisplay existingCardDisplay = existingCardTransform.GetComponent<CardDisplay>();
+                // ESKÝ: Transform existingCardTransform = transform.GetChild(0);
+                // YENÝ: Slotun içindeki tüm çocuklarý tara ve üzerinde CardDisplay olan GERÇEK KARTI bul!
+                CardDisplay existingCardDisplay = GetComponentInChildren<CardDisplay>();
 
                 if (existingCardDisplay != null && combatManager != null)
                 {
+                    Transform existingCardTransform = existingCardDisplay.transform;
                     FusionRecipe recipe = combatManager.CheckFusion(existingCardDisplay.cardData, droppedCardDisplay.cardData);
 
                     if (recipe != null)

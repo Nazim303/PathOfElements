@@ -63,4 +63,10 @@ public class CardData : ScriptableObject
     [Header("Support Settings")]
     public SupportEffect supportEffect;
     public int supportValue;
+
+   
+
+    [Header("Journal Info")]
+    [TextArea(5, 10)] // Inspector'da büyük bir metin kutusu açar (5-10 satýr)
+    public string journalDescription; // Günlükte görünen uzun hikaye
 }

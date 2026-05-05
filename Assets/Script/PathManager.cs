@@ -6,22 +6,23 @@ public class PathManager : MonoBehaviour
     public static PathManager instance;
 
     [Header("Canvases / Panels")]
-    public GameObject mapPanel;         // Harita Ekraný
-    public GameObject combatPanel;      // Savaþ Ekraný (Mevcut oyunun)
-    public GameObject divinerPanel;        // Can Yenileme Ekraný
-    public GameObject shopPanel; // --- YENÝ: Inspector'da Shop Panelini ata ---
-    public GameObject companionPanel; // --- YENÝ ---
-    // Ýleride: public GameObject shopPanel;
+    public GameObject mapPanel;
+    public GameObject combatPanel;
+    public GameObject divinerPanel;
+    public GameObject shopPanel;
+    public GameObject companionPanel;
 
-    public MapGenerator mapGenerator; // Inspector'dan baðla
+    public MapGenerator mapGenerator;
 
     [Header("Current State")]
     public MapNode currentNode;
-    public bool isPeekingMap = false; // --- YENÝ: Þu an haritaya sadece bakýyor muyuz? ---
+    public bool isPeekingMap = false;
+
+    // --- KRÝTÝK DÜZELTME: ÇÝFT TIKLAMA VE SPAM KÝLÝDÝ ---
+    public bool isEventActive = false;
 
     [Header("UI Elements")]
-    public GameObject closePeekMapButton; // --- YENÝ: Haritayý kapatma butonu (Sadece Peek modunda görünür) ---
-
+    public GameObject closePeekMapButton;
 
     void Awake()
     {
@@ -30,59 +31,65 @@ public class PathManager : MonoBehaviour
 
     void Start()
     {
-        // Oyunu baþlatýrken haritayý oluþtur
         if (mapGenerator != null)
         {
             mapGenerator.GenerateMap();
         }
 
-        // Önce her þeyi gizle
         mapPanel.SetActive(false);
         combatPanel.SetActive(false);
         if (divinerPanel != null) divinerPanel.SetActive(false);
         if (shopPanel != null) shopPanel.SetActive(false);
         if (companionPanel != null) companionPanel.SetActive(false);
 
-        // --- YENÝ EKLENEN: Baþlangýç destesi seçimini aç ---
         if (StartingDeckManager.instance != null)
         {
             StartingDeckManager.instance.OpenSelection();
         }
         else
         {
-            ShowMap(); // Eðer script sahnede yoksa direkt haritayý aç (Hata önleyici)
+            ShowMap();
         }
     }
 
-    // Haritayý Açar, diðer her þeyi kapatýr
     public void ShowMap()
     {
         isPeekingMap = false;
+
+        // HARÝTAYA DÖNDÜÐÜMÜZDE KÝLÝDÝ AÇIYORUZ
+        isEventActive = false;
+
         mapPanel.SetActive(true);
         combatPanel.SetActive(false);
         if (divinerPanel != null) divinerPanel.SetActive(false);
         if (shopPanel != null) shopPanel.SetActive(false);
         if (companionPanel != null) companionPanel.SetActive(false);
 
-        // --- YENÝ: Normal harita seçimindeysek kapatma butonunu gizle ---
         if (closePeekMapButton != null) closePeekMapButton.SetActive(false);
     }
 
-    // Düðüme týklandýðýnda çalýþýr
     public void OnNodeSelected(MapNode node)
     {
+        // --- KRÝTÝK KONTROL ---
+        // Eðer zaten bir düðüme týklandýysa ve etkinlik açýlýyorsa, ekstra týklamalarý reddet!
+        if (isEventActive)
+        {
+            Debug.Log("[SÝSTEM] Çift týklama engellendi! Zaten bir patikaya giriliyor.");
+            return;
+        }
+
+        // KÝLÝDÝ KAPAT
+        isEventActive = true;
+
         currentNode = node;
         mapPanel.SetActive(false);
 
-        // --- DÜZELTME: Görünen türe deðil, GERÇEK türe (realPathType) bak ---
-        // Mystery düðümüne týklanýnca içindeki (örn: Shop) çalýþacak.
-        // Normal düðümlerde zaten ikisi aynýdýr.
         switch (node.realPathType)
         {
             case PathType.Combat:
             case PathType.Elite:
             case PathType.Boss:
-                StartCombat(node.realPathType); // Boss ise ona göre zorluk ayarlarýz
+                StartCombat(node.realPathType);
                 break;
 
             case PathType.Diviner:
@@ -96,9 +103,6 @@ public class PathManager : MonoBehaviour
             case PathType.Companion:
                 StartCompanionEvent();
                 break;
-
-                // Mystery case'ine gerek yok çünkü realPathType asla Mystery olmaz, 
-                // Mystery setup edilirken içine baþka bir tür atanýr.
         }
     }
 
@@ -109,49 +113,42 @@ public class PathManager : MonoBehaviour
         if (shopPanel != null)
         {
             shopPanel.SetActive(true);
-            // ShopManager'ý tetikle
             ShopManager.instance.OpenShop();
         }
-        Debug.Log("Dükkandasýn. Paraný harca...");
     }
 
     void StartCombat(PathType type)
     {
         combatPanel.SetActive(true);
-
-        // TurnManager'a savaþý baþlatmasýný söyle
-        // (Boss ise ona göre setup yapýlabilir)
         FindObjectOfType<TurnManager>().StartNewBattle(type);
     }
 
     void StartDivinerEvent()
     {
-        // Enerji Bonusu
         if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(2);
 
-        if (divinerPanel != null)
-        {
-            // Paneli DivinerManager kendi içinde açýyor ama garanti olsun
-            // DivinerManager.instance.OpenDivinerEvent();
-        }
-        // Eðer DivinerManager sahnede yoksa hata vermesin diye kontrol et
         if (DivinerManager.instance != null) DivinerManager.instance.OpenDivinerEvent();
     }
 
-    // --- YENÝ: Haritaya sadece göz atmak için ---
+    // Sýnýfýn üst kýsýmlarýna (isPeekingMap altýna) þu deðiþkeni ekle:
+    private bool wasCombatActiveBeforePeek = false;
+
+    // Fonksiyonu tamamen bununla deðiþtir:
     public void ToggleMapOverlay()
     {
         isPeekingMap = !isPeekingMap;
 
         if (isPeekingMap)
         {
+            // --- YENÝ: Haritaya bakarken combat panelini geçici gizle ---
+            wasCombatActiveBeforePeek = combatPanel.activeSelf;
+            if (wasCombatActiveBeforePeek) combatPanel.SetActive(false);
+
             mapPanel.SetActive(true);
             mapPanel.transform.SetAsLastSibling();
 
-            // --- YENÝ: Sadece bakmak için açtýysak, haritayý kapatma butonunu göster ---
             if (closePeekMapButton != null) closePeekMapButton.SetActive(true);
 
-            // Sýradaki patikalarý önizleme için "Görünür" yap (Önceki yazdýðýmýz kod)
             if (currentNode != null && currentNode.nextNodes != null)
             {
                 foreach (MapNode next in currentNode.nextNodes)
@@ -166,7 +163,9 @@ public class PathManager : MonoBehaviour
         }
         else
         {
-            // Harita kapandýðýnda önizleme modunu temizle
+            // --- YENÝ: Haritayý kapatýnca combat panelini geri aç ---
+            if (wasCombatActiveBeforePeek) combatPanel.SetActive(true);
+
             if (currentNode != null && currentNode.nextNodes != null)
             {
                 foreach (MapNode next in currentNode.nextNodes)
@@ -182,12 +181,11 @@ public class PathManager : MonoBehaviour
             if (currentNode != null && !currentNode.isCompleted)
             {
                 mapPanel.SetActive(false);
-
-                // --- YENÝ: Harita kapandýðýnda butonu da gizle ---
                 if (closePeekMapButton != null) closePeekMapButton.SetActive(false);
             }
         }
     }
+
     void StartCompanionEvent()
     {
         if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(2);
@@ -199,21 +197,14 @@ public class PathManager : MonoBehaviour
         }
     }
 
-    // Savaþ veya Olay bitince çaðrýlacak fonksiyon
-    // PathManager.cs içine ekle/güncelle:
-
-
-
-    // Bir düðümü tamamlayýp haritaya dönünce
-    // Bir düðümü tamamlayýp haritaya dönünce
     public void CompleteCurrentNode()
     {
-        ShowMap();
+        // Burada kilit açmamýza gerek yok çünkü alttaki ShowMap() fonksiyonu çaðrýldýðýnda kilit otomatik açýlýyor.
+
         if (currentNode != null)
         {
             currentNode.SetCompleted();
 
-            // Kardeþ düðümleri kapatma mantýðý
             if (mapGenerator != null)
             {
                 List<MapNode> siblingNodes = mapGenerator.GetNodesInLayer(currentNode.gridLayer);
@@ -225,7 +216,6 @@ public class PathManager : MonoBehaviour
                     }
                 }
 
-                // YENÝ: Yollar açýldýðý için renkleri güncelle ??
                 mapGenerator.UpdateAllLineColors();
             }
         }

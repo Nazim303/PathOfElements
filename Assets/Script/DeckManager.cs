@@ -25,6 +25,18 @@ public class DeckManager : MonoBehaviour
 
     public static DeckManager instance;
 
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
         if (handArea != null)

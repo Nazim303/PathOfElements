@@ -1,5 +1,6 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // --- YENÝ: Sahne geçiþleri için gerekli kütüphane ---
+using UnityEngine.SceneManagement;
+using UnityEngine.Video;
 
 public class MainMenuManager : MonoBehaviour
 {
@@ -7,18 +8,84 @@ public class MainMenuManager : MonoBehaviour
     [Tooltip("Oyunun oynandýðý ana sahnenin tam adý (Örn: GameScene)")]
     public string gameSceneName = "Sample Scene";
 
+    [Header("Video Settings")]
+    public VideoPlayer backgroundVideoPlayer;
+    public VideoClip introVideoClip;
+    public VideoClip loopVideoClip;
+
+    // --- YENÝ EKLENEN KISIM ---
+    [Header("UI Settings")]
+    [Tooltip("Ýntro oynarken gizlenecek olan menü butonlarýnýn bulunduðu ana obje (Örn: Buttons Panel)")]
+    public GameObject menuButtonsPanel;
+
+    private static bool hasPlayedIntro = false;
+
+    void Start()
+    {
+        SetupVideoPlayer();
+    }
+
+    void SetupVideoPlayer()
+    {
+        if (backgroundVideoPlayer == null) return;
+
+        // 1. DURUM: Oyun yeni açýldýysa ve intro henüz oynamadýysa
+        if (!hasPlayedIntro && introVideoClip != null)
+        {
+            // --- YENÝ: Ýntro oynarken butonlarý gizle ---
+            if (menuButtonsPanel != null) menuButtonsPanel.SetActive(false);
+
+            backgroundVideoPlayer.clip = introVideoClip;
+            backgroundVideoPlayer.isLooping = false;
+
+            backgroundVideoPlayer.loopPointReached += OnIntroFinished;
+
+            backgroundVideoPlayer.Play();
+        }
+        // 2. DURUM: Oyuncu oyun içinden ana menüye döndüyse (Ýntro zaten oynadýysa)
+        else if (loopVideoClip != null)
+        {
+            // --- YENÝ: Ýntro daha önce izlendiyse butonlarý direkt göster ---
+            if (menuButtonsPanel != null) menuButtonsPanel.SetActive(true);
+
+            PlayLoopVideo();
+        }
+    }
+
+    void OnIntroFinished(VideoPlayer vp)
+    {
+        hasPlayedIntro = true;
+        vp.loopPointReached -= OnIntroFinished;
+
+        // --- YENÝ: Ýntro bittiðinde butonlarý görünür yap ---
+        if (menuButtonsPanel != null) menuButtonsPanel.SetActive(true);
+
+        PlayLoopVideo();
+    }
+
+    void PlayLoopVideo()
+    {
+        if (backgroundVideoPlayer != null && loopVideoClip != null)
+        {
+            backgroundVideoPlayer.clip = loopVideoClip;
+            backgroundVideoPlayer.isLooping = true;
+            backgroundVideoPlayer.Play();
+        }
+    }
+
     public void StartGame()
     {
-        // Paneli kapatmak yerine direkt ana oyun sahnesini yüklüyoruz
         Debug.Log("Oyun sahnesine geçiliyor...");
         SceneManager.LoadScene(gameSceneName);
     }
 
-    // --- ÝLERÝDE EKLENECEK GÜNLÜK (JOURNAL) ÝÇÝN HAZIRLIK ---
     public void OpenJournal()
     {
-        // Bu fonksiyonu þimdiden yazdýk, ileride Journal panelini buraya baðlayacaðýz.
-        Debug.Log("Günlük (Journal) sayfasý açýlýyor... (Sistem hazýrlandýðýnda çalýþacak)");
+        Debug.Log("Günlük açýlýyor...");
+        if (JournalManager.instance != null)
+        {
+            JournalManager.instance.OpenJournal();
+        }
     }
 
     public void QuitGame()

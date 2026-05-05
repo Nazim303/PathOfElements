@@ -89,11 +89,20 @@ public class CompanionEvent : MonoBehaviour
     {
         Debug.Log($"[DEBUG] Süzülme Animasyonu Baþlýyor: {selectedCard.cardName}");
 
-        // 1. Lock buttons to prevent spam clicks
+        // 1. Lock AND Hide the unselected buttons to prevent spam clicks and clean the UI
         foreach (Transform child in cardsContainer)
         {
             Button btn = child.GetComponent<Button>();
-            if (btn != null) btn.interactable = false;
+            if (btn != null)
+            {
+                btn.interactable = false;
+            }
+
+            // YENÝ: Seçilmeyen diðer kartlarý anýnda görünmez yap
+            if (child != startTransform)
+            {
+                child.gameObject.SetActive(false);
+            }
         }
         if (skipButton != null) skipButton.interactable = false;
 
@@ -106,59 +115,64 @@ public class CompanionEvent : MonoBehaviour
             yield break;
         }
 
-        // --- CRITICAL FIX: Find the Canvas and make it the parent ---
         Canvas mainCanvas = GetComponentInParent<Canvas>();
         if (mainCanvas == null)
         {
-            // Fallback if the script isn't under a Canvas for some reason
             mainCanvas = FindObjectOfType<Canvas>();
         }
 
-        // Instantiate under the Canvas, NOT 'this.transform'
         GameObject flyingCard = Instantiate(prefabToUse, mainCanvas.transform);
 
         // Match the starting position and scale of the clicked button
         flyingCard.transform.position = startTransform.position;
-
-        // We use localScale here, but because it's under a Canvas now, it won't explode.
-        // We match it to the prefab's default scale just to be safe.
         flyingCard.transform.localScale = prefabToUse.transform.localScale;
+        // Start rotation flat
+        Quaternion startRot = flyingCard.transform.rotation;
 
-        flyingCard.transform.SetAsLastSibling(); // Bring to the very front
+        flyingCard.transform.SetAsLastSibling();
 
-        // --- Remove Draggable ---
         if (flyingCard.GetComponent<Draggable>() != null) Destroy(flyingCard.GetComponent<Draggable>());
 
-        // Disable Raycasts so it doesn't block the mouse
         CanvasGroup flyCG = flyingCard.GetComponent<CanvasGroup>();
         if (flyCG == null) flyCG = flyingCard.AddComponent<CanvasGroup>();
         flyCG.blocksRaycasts = false;
 
-        // Load visual data into the dummy card
         CardDisplay display = flyingCard.GetComponent<CardDisplay>();
         if (display != null) display.LoadCard(selectedCard);
 
-        // Make the original clicked button transparent
         CanvasGroup originalCG = startTransform.GetComponent<CanvasGroup>();
         if (originalCG == null) originalCG = startTransform.gameObject.AddComponent<CanvasGroup>();
         originalCG.alpha = 0f;
 
-        // 3. The Flying Animation (Position and Scale)
+        // 3. The Flying Animation (Position, Scale, AND Rotation)
         float t = 0;
         Vector3 startPos = flyingCard.transform.position;
         Vector3 targetPos = deckIconPoint != null ? deckIconPoint.position : startPos;
-        Vector3 startScale = flyingCard.transform.localScale;
+
+        // Slightly enlarge at the start, then shrink to zero
+        Vector3 startScale = new Vector3(1.5f, 1.5f, 1.5f);
         Vector3 targetScale = Vector3.zero;
+
+        // The rotation goal (flipping the card)
+        Quaternion targetRot = Quaternion.Euler(0, 0, 180);
 
         while (t < 1)
         {
             t += Time.deltaTime / flyDuration;
-            float smoothT = t * t * (3f - 2f * t);
+
+            // A slightly more dynamic curve: Fast start, slow finish
+            float smoothT = 1f - Mathf.Pow(1f - t, 3f);
 
             if (flyingCard != null)
             {
+                // Lerp Position
                 flyingCard.transform.position = Vector3.Lerp(startPos, targetPos, smoothT);
+
+                // Lerp Scale
                 flyingCard.transform.localScale = Vector3.Lerp(startScale, targetScale, smoothT);
+
+                // Lerp Rotation (Spins as it flies)
+                flyingCard.transform.rotation = Quaternion.Lerp(startRot, targetRot, smoothT);
             }
             yield return null;
         }

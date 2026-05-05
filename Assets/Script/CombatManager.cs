@@ -246,15 +246,18 @@ public class CombatManager : MonoBehaviour
     }
 
 
-    // --- GÜNCELLENEN FONKSÝYON: UÇAN KUYRUKLU MERMÝ SÝSTEMÝ ---
-    // --- GÜNCELLENEN FONKSÝYON: SENKRONÝZE HASAR VE IMPACT SÝSTEMÝ ---
+   // --- GÜNCELLENEN FONKSÝYON: CANVAS ÝÇÝNDE UÇAN MERMÝLER ---
     IEnumerator PlaySpellEffects(Transform startTransform, List<EnemyDisplay> targets, CardData cardData)
     {
         if (targets == null || targets.Count == 0 || startTransform == null || cardData == null) yield break;
 
+        // --- KRÝTÝK ÇÖZÜM: Game Manager'ý deðil, Canvas'ý bul ve parent yap! ---
+        Canvas mainCanvas = FindObjectOfType<Canvas>();
+        Transform vfxParent = mainCanvas != null ? mainCanvas.transform : transform;
+
         Color elementColor = GetElementColor(cardData.element);
 
-        // 1. KARTIN PARLAMASI (M_MasterCard Flash)
+        // 1. KARTIN PARLAMASI 
         CardDisplay display = startTransform.GetComponent<CardDisplay>();
         if (display != null && display.artImage != null)
         {
@@ -276,9 +279,13 @@ public class CombatManager : MonoBehaviour
         GameObject charge = null;
         if (spellChargePrefab != null)
         {
-            charge = Instantiate(spellChargePrefab, transform);
+            charge = Instantiate(spellChargePrefab, vfxParent); // Artýk Canvas'ta oluþuyor
             charge.transform.position = startTransform.position;
             charge.transform.localScale = Vector3.one;
+
+            Vector3 chargePos = charge.transform.localPosition;
+            chargePos.z = -50f; // Öne itele
+            charge.transform.localPosition = chargePos;
 
             SetParticleColor(charge, elementColor);
             BringEffectToFront(charge);
@@ -287,7 +294,7 @@ public class CombatManager : MonoBehaviour
         }
         if (charge != null) Destroy(charge);
 
-        // 2. YENÝ MERMÝ MANTIÐI: Uçan Kuyruklar
+        // 2. MERMÝ MANTIÐI
         GameObject vfxPrefabToUse = GetAttackVFXPrefab(cardData.element, cardData.cardPower);
         List<GameObject> spawnedAttacks = new List<GameObject>();
         List<Vector3> startPositions = new List<Vector3>();
@@ -301,9 +308,13 @@ public class CombatManager : MonoBehaviour
                 {
                     Transform targetCenter = target.visualRoot != null ? target.visualRoot : target.transform;
 
-                    GameObject attackVFX = Instantiate(vfxPrefabToUse, transform);
+                    GameObject attackVFX = Instantiate(vfxPrefabToUse, vfxParent); // Artýk Canvas'ta oluþuyor
                     attackVFX.transform.position = startTransform.position;
                     attackVFX.transform.localScale = Vector3.one;
+
+                    Vector3 atkPos = attackVFX.transform.localPosition;
+                    atkPos.z = -50f; // Öne itele
+                    attackVFX.transform.localPosition = atkPos;
 
                     BringEffectToFront(attackVFX);
 
@@ -313,7 +324,6 @@ public class CombatManager : MonoBehaviour
                 }
             }
 
-            // --- MERMÝLERÝ DÜÞMANA UÇUR ---
             float moveT = 0;
             while (moveT < 1)
             {
@@ -328,17 +338,13 @@ public class CombatManager : MonoBehaviour
                 yield return null;
             }
 
-            // HEDEFE ULAÞTI!
-            // Oyunu durdurmuyoruz (yield YOK). Mermilere "0.5 saniye sonra kendi kendinizi silin" diyoruz.
-            // Bu sayede arkadan gelen kuyruklarý anýnda yok olmaz, yavaþça erir.
             foreach (var attack in spawnedAttacks)
             {
                 if (attack != null) Destroy(attack, 0.5f);
             }
         }
 
-        // 3. 3 SEVÝYELÝ IMPACT (Patlama) 
-        // Kod bekleme yapmadýðý için mermi hedefe vardýðý AN burasý çalýþýr!
+        // 3. IMPACT (Patlama) 
         GameObject impactPrefabToUse = GetImpactVFXPrefab(cardData.element, cardData.cardPower);
         if (impactPrefabToUse != null)
         {
@@ -348,18 +354,19 @@ public class CombatManager : MonoBehaviour
                 {
                     Transform targetCenter = target.visualRoot != null ? target.visualRoot : target.transform;
 
-                    GameObject impact = Instantiate(impactPrefabToUse, transform);
+                    GameObject impact = Instantiate(impactPrefabToUse, vfxParent); // Artýk Canvas'ta oluþuyor
                     impact.transform.position = targetCenter.position;
                     impact.transform.localScale = Vector3.one;
+
+                    Vector3 impPos = impact.transform.localPosition;
+                    impPos.z = -50f; // Öne itele
+                    impact.transform.localPosition = impPos;
 
                     BringEffectToFront(impact);
                     Destroy(impact, 1f);
                 }
             }
         }
-
-        // Fonksiyon tam burada bitiyor. 
-        // CombatManager anýnda hasarý uygulayýp düþmanýn titreme (TakeDamage) animasyonunu tetikleyecek!
     }
 
     public IEnumerator OnAttackPhase()
@@ -713,20 +720,40 @@ public class CombatManager : MonoBehaviour
         if (PlayerManager.instance != null) PlayerManager.instance.AddGold(enemy.enemyData.goldReward);
         activeEnemies.Remove(enemy);
 
+        // --- KRÝTÝK ÇÖZÜM: Game Manager'ý deðil, Canvas'ý bul ve parent yap! ---
+        Canvas mainCanvas = FindObjectOfType<Canvas>();
+        Transform vfxParent = mainCanvas != null ? mainCanvas.transform : transform;
+
         // 1. Orijinal Yanma/Erime Efekti
         if (enemyDeathEffectPrefab != null)
         {
-            GameObject effect = Instantiate(enemyDeathEffectPrefab, enemy.transform.position, Quaternion.identity);
+            GameObject effect = Instantiate(enemyDeathEffectPrefab, vfxParent);
+            effect.transform.position = enemy.transform.position;
+            effect.transform.localScale = Vector3.one;
+
+            // Öne itele
+            Vector3 pos = effect.transform.localPosition;
+            pos.z = -50f;
+            effect.transform.localPosition = pos;
+
             BringEffectToFront(effect);
             Destroy(effect, 2f);
         }
 
-        // 2. YENÝ: Ekstra Duman Efekti
+        // 2. Ekstra Duman Efekti
         if (enemySmokeDeathPrefab != null)
         {
-            GameObject smokeEffect = Instantiate(enemySmokeDeathPrefab, enemy.transform.position, Quaternion.identity);
+            GameObject smokeEffect = Instantiate(enemySmokeDeathPrefab, vfxParent);
+            smokeEffect.transform.position = enemy.transform.position;
+            smokeEffect.transform.localScale = Vector3.one;
+
+            // Öne itele
+            Vector3 pos = smokeEffect.transform.localPosition;
+            pos.z = -50f;
+            smokeEffect.transform.localPosition = pos;
+
             BringEffectToFront(smokeEffect);
-            Destroy(smokeEffect, 2.5f); // Duman biraz daha uzun kalabilir
+            Destroy(smokeEffect, 2.5f);
         }
 
         StartCoroutine(enemy.DieAnimationAndDestroy());
@@ -814,6 +841,7 @@ public class CombatManager : MonoBehaviour
     }
 
     // --- YENÝ: DISSOLVE EFEKTÝ VE KART YANMASI ---
+    // --- YENÝ: DISSOLVE EFEKTÝ VE KART YANMASI ---
     IEnumerator FizzleCardRoutine(int slotIndex, Transform cardTransform, CardData card)
     {
         Debug.Log($"Yetersiz Enerji! {card.cardName} yanarak kül oluyor...");
@@ -821,54 +849,39 @@ public class CombatManager : MonoBehaviour
         CardDisplay display = cardTransform.GetComponent<CardDisplay>();
         Material dissolveMat = null;
 
-        // 1. Arkadaþýnýn Notu: Shader Instance (Kopya) Alýmý
         if (display != null && display.artImage != null)
         {
-            // Tüm kartlar ayný anda erimesin diye materyalin KOPYASINI oluþturuyoruz
             dissolveMat = new Material(display.artImage.material);
             display.artImage.material = dissolveMat;
 
-            // Eðer çerçevenin de erimesini istersen:
             if (display.banderimage != null) display.banderimage.material = dissolveMat;
         }
 
         // 2. Burning (Yanma) Partikülünü Yarat
-        // 2. Burning (Yanma) Partikülünü Yarat
         GameObject burningEffect = null;
         if (dissolveBurningPrefab != null)
         {
-            // YENÝ: Sadece parent (cardTransform) vererek yaratýyoruz
+            // Sadece bir kere, ölen kartýn içine (çocuk olarak) yaratýyoruz!
             burningEffect = Instantiate(dissolveBurningPrefab, cardTransform);
 
-            // YENÝ: Kartýn tam merkezine oturtuyoruz
-            burningEffect.transform.localPosition = Vector3.zero;
-
-            // KRÝTÝK ÇÖZÜM: Embers (kývýlcýmlar) parçacýklarýnýn düz bir çizgiye ezilmesini engeller!
+            // Merkeze al ve arkada kalmasýn diye Z eksenini -50'ye itele
+            burningEffect.transform.localPosition = new Vector3(0, 0, -50f);
             burningEffect.transform.localScale = Vector3.one;
 
             BringEffectToFront(burningEffect);
         }
 
-        if (dissolveBurningPrefab != null)
-        {
-            burningEffect = Instantiate(dissolveBurningPrefab, cardTransform.position, Quaternion.identity, cardTransform);
-            BringEffectToFront(burningEffect); // YENÝ EKLENDÝ
-        }
-
         // 3. Titreme ve Erime Döngüsü
         Vector3 basePos = cardTransform.localPosition;
-        float duration = 1.0f; // Erimeyi görebilmek için 1 saniye verdik
+        float duration = 1.0f;
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
-            // Titre
             cardTransform.localPosition = basePos + new Vector3(Mathf.Sin(elapsed * 50f) * 3f, 0, 0);
 
-            // Eri (Shader Graph'taki _DissolveAmount parametresini 0'dan 1'e çekiyoruz)
             if (dissolveMat != null)
             {
-                // Not: Shader'da özelliðin adý "_DissolveAmount" ise bu çalýþýr. Farklýysa ismini ona göre güncelle.
                 dissolveMat.SetFloat("_DissolveAmount", elapsed / duration);
             }
 
@@ -878,7 +891,6 @@ public class CombatManager : MonoBehaviour
 
         if (burningEffect != null) Destroy(burningEffect);
 
-        // 4. Ýskartaya yolla ve objeyi sil (Artýk küçülüp uçmasýna gerek yok, eridi bitti!)
         DeckManager dm = FindObjectOfType<DeckManager>();
         if (dm != null) dm.AddToDiscard(card);
         Destroy(cardTransform.gameObject);

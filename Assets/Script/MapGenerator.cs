@@ -6,13 +6,13 @@ public class MapGenerator : MonoBehaviour
 {
     [Header("Config")]
     public GameObject nodePrefab;
-    public GameObject linePrefab; // --- YENÝ: Düðümler arasýna çizilecek çizgi prefabý ---
+    public GameObject linePrefab;
     public Transform mapContainer;
-    public Transform lineContainer; // --- YENÝ: Çizgilerin kalabalýk yapmamasý için ayrý klasör ---
+    public Transform lineContainer;
     public int mapLength = 10;
 
     [Header("Line Settings")]
-    public float dotSpacing = 25f; // Kesik çizgiler (noktalar) arasýndaki boþluk mesafesi
+    public float dotSpacing = 25f;
 
     [Header("Visual Settings")]
     public float startXPadding = 200f;
@@ -37,8 +37,8 @@ public class MapGenerator : MonoBehaviour
     [Header("Layout Settings")]
     public float xSpacing = 200f;
     public float ySpacing = 150f;
-    public int minNodesPerLayer = 2; // --- YENÝ: Katman baþýna en az düðüm ---
-    public int maxNodesPerLayer = 4; // --- YENÝ: Katman baþýna en fazla düðüm ---
+    public int minNodesPerLayer = 2;
+    public int maxNodesPerLayer = 4;
 
     private List<List<MapNode>> mapGrid = new List<List<MapNode>>();
 
@@ -47,18 +47,16 @@ public class MapGenerator : MonoBehaviour
         // 1. Temizlik
         foreach (Transform child in mapContainer)
         {
-            // Eðer çocuk obje LineContainer DEÐÝLSE sil (Böylece klasörümüz korunur)
             if (child != lineContainer) Destroy(child.gameObject);
         }
 
         if (lineContainer != null)
         {
-            // Klasörün içindeki eski çizgileri/noktalarý sil
             foreach (Transform child in lineContainer) Destroy(child.gameObject);
         }
         mapGrid.Clear();
 
-        // 2. Düðümleri (Nodes) Oluþtur
+        // 2. Düðümleri (Nodes) Oluþtur - TÜR ATAMASI YAPMADAN
         for (int i = 0; i < mapLength; i++)
         {
             List<MapNode> currentLayerNodes = new List<MapNode>();
@@ -66,10 +64,7 @@ public class MapGenerator : MonoBehaviour
 
             for (int j = 0; j < nodeCount; j++)
             {
-                // Y ekseninde (yukarýdan aþaðýya) düðümleri ortalayarak diz
                 float yPos = (j - (nodeCount - 1) / 2f) * ySpacing;
-
-                // --- X ekseninde biraz zikzak/rastgelelik katalým (Doðal dursun) ---
                 float randomXOffset = (i > 0 && i < mapLength - 1) ? Random.Range(-20f, 20f) : 0f;
                 float xPos = (i * xSpacing) + startXPadding + randomXOffset;
 
@@ -81,73 +76,148 @@ public class MapGenerator : MonoBehaviour
                 nodeScript.parentNodes = new List<MapNode>();
                 nodeScript.gridLayer = i;
 
-                // Tür Belirleme
-                PathType type = GetRandomPathType(i);
-
-                if (type == PathType.Mystery)
-                {
-                    PathType hiddenType = GetRandomPathType(i, true);
-                    nodeScript.SetupMystery(hiddenType, mysterySprite);
-                }
-                else
-                {
-                    nodeScript.pathType = type;
-                    nodeScript.realPathType = type;
-                    nodeScript.SetIcon(GetIconForType(type));
-                }
-
-                // Sadece Ýlk katman (Layer 0) açýk baþlar
-                if (i == 0) nodeScript.UnlockNode();
-                else nodeScript.isLocked = true;
-
-                nodeScript.UpdateVisuals();
                 currentLayerNodes.Add(nodeScript);
             }
             mapGrid.Add(currentLayerNodes);
         }
 
-        // 3. Düðümleri Birbirine Baðla (Slay the Spire Mantýðý)
+        // 3. Düðümleri Birbirine Baðla
         ConnectLayers();
 
-        // 4. Ýlerisi olmayan kör düðümleri temizle veya zorla baðla
+        // 4. Kör düðümleri düzelt
         FixDeadEnds();
 
-        // 5. Çizgileri Çiz
+        // 5. YENÝ: BAÐLANTILARA GÖRE KONTROLLÜ TÜR ATAMASI YAP
+        AssignPathTypes();
+
+        // 6. Çizgileri Çiz
         DrawConnections();
     }
 
     int GetNodeCountForLayer(int layerIndex)
     {
-        // Ýlk ve son katman (Boss) her zaman 1 düðüm olur
         if (layerIndex == 0) return 1;
         if (layerIndex == mapLength - 1) return 1;
-
-        // Ara katmanlar 2 ile 4 arasýnda rastgele oluþur
         return Random.Range(minNodesPerLayer, maxNodesPerLayer + 1);
     }
 
-    PathType GetRandomPathType(int layerIndex, bool excludeMystery = false)
+    // --- YENÝ: DÝNAMÝK TÜR ATAMA SÝSTEMÝ ---
+    void AssignPathTypes()
     {
-        if (layerIndex == 0) return PathType.Combat;
-        if (layerIndex == mapLength - 1) return PathType.Boss;
+        // Her düðümün arkasýnda kaç tane aralýksýz "Savaþ Dýþý" patika býraktýðýný tutar
+        Dictionary<MapNode, int> nonCombatStreaks = new Dictionary<MapNode, int>();
 
-        int currentMysteryChance = excludeMystery ? 0 : mysteryChance;
-        int total = combatChance + eliteChance + shopChance + divinerChance + companionChance + currentMysteryChance;
-
-        int rand = Random.Range(0, total);
-
-        if (rand < combatChance) return PathType.Combat; rand -= combatChance;
-        if (rand < eliteChance) return PathType.Elite; rand -= eliteChance;
-        if (rand < shopChance) return PathType.Shop; rand -= shopChance;
-
-        if (rand < divinerChance)
+        for (int i = 0; i < mapLength; i++)
         {
-            if (layerIndex < mapLength - 2 && layerIndex > 1) return PathType.Diviner;
-            else return PathType.Combat;
-        }
-        rand -= divinerChance;
+            foreach (MapNode node in mapGrid[i])
+            {
+                if (i == 0)
+                {
+                    node.pathType = PathType.Combat;
+                    node.realPathType = PathType.Combat;
+                    node.SetIcon(combatSprite);
+                    nonCombatStreaks[node] = 0;
+                    node.UnlockNode();
+                }
+                else if (i == mapLength - 1)
+                {
+                    node.pathType = PathType.Boss;
+                    node.realPathType = PathType.Boss;
+                    node.SetIcon(bossSprite);
+                    nonCombatStreaks[node] = 0;
+                    node.isLocked = true;
+                }
+                else
+                {
+                    bool forceCombat = false;
+                    List<PathType> parentTypes = new List<PathType>();
+                    int maxParentStreak = 0;
 
-        if (rand < companionChance) return PathType.Companion; rand -= companionChance;
+                    // Bu düðüme gelen yollarýn (Ebeveynlerin) geçmiþini oku
+                    foreach (MapNode parent in node.parentNodes)
+                    {
+                        parentTypes.Add(parent.realPathType);
+                        int pStreak = nonCombatStreaks.ContainsKey(parent) ? nonCombatStreaks[parent] : 0;
+                        if (pStreak > maxParentStreak) maxParentStreak = pStreak;
+                    }
+
+                    // KURAL 2: Eðer bu yola gelene kadar 2 kere üst üste savaþ dýþý (Shop, Diviner vb) girildiyse, SAVAÞI ZORUNLU KIL!
+                    if (maxParentStreak >= 2) forceCombat = true;
+
+                    // Türü Zar Atarak Belirle
+                    PathType rolledType = RollPathType(parentTypes, forceCombat, i);
+
+                    if (rolledType == PathType.Mystery)
+                    {
+                        // Gizemli kutunun içindekini de kurallara göre belirle
+                        PathType hidden = RollPathType(parentTypes, forceCombat, i, true);
+                        node.SetupMystery(hidden, mysterySprite);
+
+                        // Gizli olan þey Combat ise seriyi boz (0'la), deðilse seriyi artýr
+                        nonCombatStreaks[node] = (hidden == PathType.Combat || hidden == PathType.Elite) ? 0 : (maxParentStreak + 1);
+                    }
+                    else
+                    {
+                        node.pathType = rolledType;
+                        node.realPathType = rolledType;
+                        node.SetIcon(GetIconForType(rolledType));
+
+                        // Rolled type combat ise seriyi sýfýrla, deðilse artýr
+                        nonCombatStreaks[node] = (rolledType == PathType.Combat || rolledType == PathType.Elite) ? 0 : (maxParentStreak + 1);
+                    }
+
+                    node.isLocked = true;
+                }
+
+                node.UpdateVisuals();
+            }
+        }
+    }
+
+    // --- YENÝ: AÐIRLIKLI VE KONTROLLÜ ZAR ATMA SÝSTEMÝ ---
+    PathType RollPathType(List<PathType> excludeTypes, bool forceCombat, int layerIndex, bool excludeMystery = false)
+    {
+        int cWeight = combatChance;
+        int eWeight = eliteChance;
+        int sWeight = shopChance;
+        int dWeight = divinerChance;
+        int compWeight = companionChance;
+        int mWeight = (excludeMystery || forceCombat) ? 0 : mysteryChance;
+
+        if (forceCombat)
+        {
+            // Kural: Savaþ zorunluysa, diðer her þeyin ihtimalini 0'a çek
+            sWeight = 0; dWeight = 0; compWeight = 0; mWeight = 0;
+        }
+        else
+        {
+            // KURAL 1: Ard arda ayný "Savaþ Dýþý" patikanýn gelmesini engelle. 
+            // Örneðin bir önceki düðüm Shop ise, ihtimalini 0'a çek.
+            if (excludeTypes.Contains(PathType.Shop)) sWeight = 0;
+            if (excludeTypes.Contains(PathType.Diviner)) dWeight = 0;
+            if (excludeTypes.Contains(PathType.Companion)) compWeight = 0;
+            if (excludeTypes.Contains(PathType.Mystery)) mWeight = 0;
+
+            // Not: Savaþ veya Elite ard arda gelebilir, roguelike mantýðýnda bu normaldir.
+        }
+
+        // Diviner sadece haritanýn orta katmanlarýnda çýkmalý
+        if (layerIndex <= 1 || layerIndex >= mapLength - 2) dWeight = 0;
+
+        // Kalan ihtimalleri topla
+        int totalWeight = cWeight + eWeight + sWeight + dWeight + compWeight + mWeight;
+
+        // Failsafe (Eðer her þey 0 olduysa güvenli liman olarak Combat ver)
+        if (totalWeight <= 0) return PathType.Combat;
+
+        // Dinamik zar atýþý
+        int rand = Random.Range(0, totalWeight);
+
+        if (rand < cWeight) return PathType.Combat; rand -= cWeight;
+        if (rand < eWeight) return PathType.Elite; rand -= eWeight;
+        if (rand < sWeight) return PathType.Shop; rand -= sWeight;
+        if (rand < dWeight) return PathType.Diviner; rand -= dWeight;
+        if (rand < compWeight) return PathType.Companion; rand -= compWeight;
 
         return PathType.Mystery;
     }
@@ -167,7 +237,6 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    // --- YENÝ: SLAY THE SPIRE BAÐLANTI ALGORÝTMASI ---
     void ConnectLayers()
     {
         for (int i = 0; i < mapGrid.Count - 1; i++)
@@ -175,20 +244,14 @@ public class MapGenerator : MonoBehaviour
             List<MapNode> currentLayer = mapGrid[i];
             List<MapNode> nextLayer = mapGrid[i + 1];
 
-            // Her katmandan sonraki katmana mantýklý bir bað kur
             for (int c = 0; c < currentLayer.Count; c++)
             {
-                // Bulunduðumuz düðümün (c), bir sonraki katmandaki hedef (target) sýrasý
-                // Basitçe: Yukarýdaki yukarýya, aþaðýdaki aþaðýya meyillidir
                 int targetIndex = Mathf.Clamp(Mathf.RoundToInt((float)c / currentLayer.Count * nextLayer.Count), 0, nextLayer.Count - 1);
-
                 Connect(currentLayer[c], nextLayer[targetIndex]);
 
-                // Bazen fazladan bir yol (çapraz) yarat (%30 Ýhtimal)
                 if (Random.value < 0.3f)
                 {
                     int extraIndex = targetIndex + (Random.value > 0.5f ? 1 : -1);
-                    // Çapraz baðýn dýþarý taþmamasýný kontrol et
                     if (extraIndex >= 0 && extraIndex < nextLayer.Count)
                     {
                         Connect(currentLayer[c], nextLayer[extraIndex]);
@@ -196,12 +259,10 @@ public class MapGenerator : MonoBehaviour
                 }
             }
 
-            // Geriye dönük kontrol: Sonraki katmanda HÝÇ ebeveyni olmayan (Havada kalan) düðüm var mý?
             for (int n = 0; n < nextLayer.Count; n++)
             {
                 if (nextLayer[n].parentNodes.Count == 0)
                 {
-                    // Havada kalmýþ! Ona en yakýn mantýklý ebeveyni zorla baðla
                     int parentIndex = Mathf.Clamp(Mathf.RoundToInt((float)n / nextLayer.Count * currentLayer.Count), 0, currentLayer.Count - 1);
                     Connect(currentLayer[parentIndex], nextLayer[n]);
                 }
@@ -211,14 +272,12 @@ public class MapGenerator : MonoBehaviour
 
     void FixDeadEnds()
     {
-        // Boss hariç hiçbir düðümün "Ýlerisi (nextNodes)" boþ olmamalý.
         for (int i = 0; i < mapGrid.Count - 1; i++)
         {
             foreach (MapNode node in mapGrid[i])
             {
                 if (node.nextNodes.Count == 0)
                 {
-                    // Çýkmaz sokak oldu! Hemen bir sonraki katmandan rastgele birine baðla
                     List<MapNode> nextLayer = mapGrid[i + 1];
                     Connect(node, nextLayer[Random.Range(0, nextLayer.Count)]);
                 }
@@ -229,13 +288,10 @@ public class MapGenerator : MonoBehaviour
     void Connect(MapNode from, MapNode to)
     {
         if (from == null || to == null) return;
-
-        // Zaten baðlýlarsa bir daha baðlama
         if (!from.nextNodes.Contains(to)) from.nextNodes.Add(to);
         if (!to.parentNodes.Contains(from)) to.parentNodes.Add(from);
     }
 
-    // --- YENÝ: DÜÐÜMLER ARASINA ÇÝZGÝ ÇÝZME ---
     void DrawConnections()
     {
         if (linePrefab == null || lineContainer == null) return;
@@ -244,20 +300,18 @@ public class MapGenerator : MonoBehaviour
         {
             foreach (MapNode node in layer)
             {
-                node.lineDots.Clear(); // Önce hafýzayý temizle
+                node.lineDots.Clear();
 
                 foreach (MapNode nextNode in node.nextNodes)
                 {
-                    // Artýk RectTransform deðil, direkt Düðümleri (Node) gönderiyoruz
                     CreateLineBetween(node, nextNode);
                 }
             }
         }
 
-        UpdateAllLineColors(); // Harita ilk oluþtuðunda renkleri ayarla
+        UpdateAllLineColors();
     }
 
-    
     void CreateLineBetween(MapNode startNode, MapNode endNode)
     {
         RectTransform start = startNode.GetComponent<RectTransform>();
@@ -267,12 +321,9 @@ public class MapGenerator : MonoBehaviour
         float distance = diff.magnitude;
         Vector2 direction = diff.normalized;
 
-        // --- YENÝ KUSURSUZ DAÐILIM MANTIÐI ---
-        // Toplam mesafeye tahmini kaç nokta sýðacaðýný yuvarlayarak buluyoruz
         int dotCount = Mathf.RoundToInt(distance / dotSpacing);
-        if (dotCount < 2) dotCount = 2; // Çok yakýnsalar bile en az 1 nokta çizilsin
+        if (dotCount < 2) dotCount = 2;
 
-        // Noktalar arasý "gerçek" mesafeyi hesaplýyoruz ki sonda boþluk kalmasýn
         float exactSpacing = distance / dotCount;
 
         List<Image> dots = new List<Image>();
@@ -282,7 +333,6 @@ public class MapGenerator : MonoBehaviour
             GameObject dotObj = Instantiate(linePrefab, lineContainer);
             RectTransform dotRect = dotObj.GetComponent<RectTransform>();
 
-            // Sabit 25 birim yerine exactSpacing kullanýyoruz, böylece noktalar tam düðümün dibinde biter
             Vector2 dotPosition = start.anchoredPosition + (direction * (i * exactSpacing));
             dotRect.anchoredPosition = dotPosition;
 
@@ -306,26 +356,20 @@ public class MapGenerator : MonoBehaviour
                     MapNode targetNode = kvp.Key;
                     List<Image> dots = kvp.Value;
 
-                    // --- DÜZELTÝLEN AKTÝF YOL KURALI ---
                     bool isPathActive = false;
 
-                    // 1. KURAL: Bir yolun parlamasý için kesinlikle BAÞLANGIÇ noktasýndan (node) geçmiþ olmalýyýz!
                     if (node.isCompleted)
                     {
-                        // 2. KURAL: Eðer baþlangýçtan geçmiþsek;
                         if (targetNode.isCompleted)
                         {
-                            // A) Hedefi de geçmiþiz (Geçmiþte yürüdüðümüz temiz rota)
                             isPathActive = true;
                         }
                         else if (!targetNode.isLocked && !targetNode.isSkipped)
                         {
-                            // B) Hedefi henüz geçmedik ama önümüzde AÇIK bir seçenek olarak duruyor
                             isPathActive = true;
                         }
                     }
 
-                    // Aktifse tam beyaz, kilitliyse/atlanmýþsa koyu gri
                     Color pathColor = isPathActive ? Color.white : new Color(0.2f, 0.2f, 0.2f, 0.4f);
 
                     foreach (Image dot in dots)
