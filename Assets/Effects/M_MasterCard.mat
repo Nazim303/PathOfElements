@@ -42,12 +42,12 @@ Material:
     m_Ints: []
     m_Floats:
     - _DissolveAmount: 0
-    - _EdgeThickness: 0.119
+    - _EdgeThickness: 0.071
     - _FlashAmount: 0
     - _MasterAlpha: 1
-    - _NoiseScale: 200
+    - _NoiseScale: 150
     m_Colors:
-    - _EdgeColor: {r: 1, g: 0.24174622, b: 0, a: 0}
+    - _EdgeColor: {r: 5.992157, g: 0.34121564, b: 0, a: 0}
     - _FlashColor: {r: 0.8962264, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
