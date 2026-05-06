@@ -227,7 +227,7 @@ public class CombatManager : MonoBehaviour
             case ElementType.Fire: return Color.red;
             case ElementType.Water: return Color.blue;
             case ElementType.Earth: return new Color(0.6f, 0.4f, 0.2f); // Kahverengi
-            case ElementType.Air: return Color.cyan;
+            case ElementType.Air: return new Color(0.85f, 0.38f, 0.55f, 0.5f);
             default: return Color.white;
         }
     }

@@ -6661,8 +6661,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -881.4733, y: 395.6582}
-  m_SizeDelta: {x: -1785.59, y: -948.84}
+  m_AnchoredPosition: {x: -879.6899, y: 402.24}
+  m_SizeDelta: {x: -1792.86, y: -948.84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1153678313
 MonoBehaviour:
@@ -9323,7 +9323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hpCost: 5
   burnEffectPrefab: {fileID: 6331653285968185149, guid: 9dbf2547deb26d54d9af35a8e085210f, type: 3}
-  castEffectPrefab: {fileID: 6215019472777364229, guid: ed90f9fa0fc25d345b31780ac1ed13de, type: 3}
+  castEffectPrefab: {fileID: 3869021428130000811, guid: 50ffc14aa3650614a84415c178fd0104, type: 3}
   chamberEffectPrefab: {fileID: 3575400028058931135, guid: 0c23aa97eb54a534b8dc89159d35d8c4, type: 3}
   slotImage: {fileID: 1724505541}
 --- !u!114 &1724505541
@@ -10873,7 +10873,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 2872276d4eaf66140a6a273ea515c2c6, type: 2}
     - {fileID: 11400000, guid: 931836e652e11af4d8fc4c01962badf9, type: 2}
     ultimateDamage: 50
-  dissolveBurningPrefab: {fileID: 6331653285968185149, guid: 9dbf2547deb26d54d9af35a8e085210f, type: 3}
+  dissolveBurningPrefab: {fileID: 6331653285968185149, guid: 9f58d286045412c4498a184e7bcddb4a, type: 3}
   enemySmokeDeathPrefab: {fileID: 6331653285968185149, guid: 9dbf2547deb26d54d9af35a8e085210f, type: 3}
   spellChargePrefab: {fileID: 5473199053397643110, guid: 689e83f9d38bc8444892764765efaa44, type: 3}
   vfx_FireAttack01: {fileID: 3591538052798397685, guid: 7633d275e6ec597499318c34d07509ce, type: 3}
