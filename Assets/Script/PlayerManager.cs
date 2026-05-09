@@ -26,7 +26,7 @@ public class PlayerManager : MonoBehaviour
     [Header("Visual Effects")]
     public Image damageFlashImage;
     public Image healFlashImage;
-
+    public GameObject generalHealVFXPrefab; // --- YENÝ ---
     [Header("Passive Stats")]
     public int bonusDamage = 0;
 
@@ -122,6 +122,20 @@ public class PlayerManager : MonoBehaviour
         if (currentHealth > maxHealth) currentHealth = maxHealth;
         UpdateUI();
         if (healFlashImage != null) StartCoroutine(FlashRoutine(healFlashImage, Color.green));
+
+        // --- YENÝ: ÝYÝLEÞME EFEKTÝ ---
+        if (generalHealVFXPrefab != null)
+        {
+            Canvas canvas = FindObjectOfType<Canvas>();
+            Transform parent = canvas != null ? canvas.transform : transform;
+            GameObject healFX = Instantiate(generalHealVFXPrefab, parent);
+
+            // Ekranýn ortasýnda veya oyuncu profilinde çýksýn
+            healFX.transform.position = healthFillBar.transform.position;
+            healFX.transform.localScale = Vector3.one;
+            healFX.transform.SetAsLastSibling();
+            Destroy(healFX, 2f);
+        }
     }
 
     public void AddGold(int amount)

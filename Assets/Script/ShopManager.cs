@@ -77,6 +77,7 @@ public class ShopManager : MonoBehaviour
         {
             // 1. Parayý düþ
             PlayerManager.instance.AddGold(-item.cost);
+            if (AudioManager.instance != null) AudioManager.instance.PlayPurchase();
 
             // 2. Efekti uygula
             ApplyItemEffect(item);

@@ -78,6 +78,9 @@ public class CombatManager : MonoBehaviour
     public GameObject vfx_EarthImpact03;
     public GameObject vfx_AirImpact03;
 
+    public GameObject ultimateAttackVFX; 
+    public GameObject ultimateImpactVFX;
+
 
 
     // LAG FIX
@@ -324,8 +327,14 @@ public class CombatManager : MonoBehaviour
                 }
             }
 
+          
+
+            // --- YENÝ: UÇUÞ SESÝNÝ OYNAT ---
+            if (AudioManager.instance != null) AudioManager.instance.PlayTrailSound(cardData.element, cardData.cardPower);
+
             float moveT = 0;
             while (moveT < 1)
+                while (moveT < 1)
             {
                 moveT += Time.deltaTime * 6f;
                 for (int i = 0; i < spawnedAttacks.Count; i++)
@@ -355,6 +364,8 @@ public class CombatManager : MonoBehaviour
                     Transform targetCenter = target.visualRoot != null ? target.visualRoot : target.transform;
 
                     GameObject impact = Instantiate(impactPrefabToUse, vfxParent); // Artýk Canvas'ta oluþuyor
+                    // --- YENÝ: ÇARPMA SESÝNÝ OYNAT ---
+                    if (AudioManager.instance != null) AudioManager.instance.PlayImpactSound(cardData.element, cardData.cardPower);
                     impact.transform.position = targetCenter.position;
                     impact.transform.localScale = Vector3.one;
 

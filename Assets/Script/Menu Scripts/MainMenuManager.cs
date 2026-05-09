@@ -19,6 +19,7 @@ public class MainMenuManager : MonoBehaviour
     public GameObject menuButtonsPanel;
 
     private static bool hasPlayedIntro = false;
+    private static bool hasPlayedTutorial = false;
 
     void Start()
     {
@@ -76,7 +77,19 @@ public class MainMenuManager : MonoBehaviour
     public void StartGame()
     {
         Debug.Log("Oyun sahnesine geçiliyor...");
-        SceneManager.LoadScene(gameSceneName);
+        if(hasPlayedTutorial == false)
+        {
+            SceneManager.LoadScene(gameSceneName);
+            hasPlayedTutorial = true;
+        }
+        else
+        {
+            SceneManager.LoadScene("SampleScene");
+
+        }
+       
+
+        
     }
 
     public void OpenJournal()

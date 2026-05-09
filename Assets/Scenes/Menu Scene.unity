@@ -1278,6 +1278,87 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 287065106}
   m_CullTransparentMesh: 1
+--- !u!1 &305737567
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 305737569}
+  - component: {fileID: 305737568}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &305737568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305737567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8377048c4070b94a98e4bdaf175c1b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireTrails:
+  - {fileID: 8300000, guid: f11effe775f726b4884a923af5cbf8db, type: 3}
+  - {fileID: 8300000, guid: 16bfadb272c14ec418aeffb75181230f, type: 3}
+  - {fileID: 8300000, guid: 21ec03e21b57f4f4f9c26d23575c0e1e, type: 3}
+  fireImpacts:
+  - {fileID: 8300000, guid: 402d7db228e65ca42b92f02ba824588f, type: 3}
+  - {fileID: 8300000, guid: f0f93446024273248ad29a889d301754, type: 3}
+  - {fileID: 8300000, guid: 20c5b6ac9dbf7b04995b2191c382edf4, type: 3}
+  waterTrails:
+  - {fileID: 8300000, guid: 08a918f7336b0584daec9d0b7a639b17, type: 3}
+  - {fileID: 8300000, guid: b0928bf042ec3df48a6bcbb58c90fd61, type: 3}
+  - {fileID: 8300000, guid: c408223e48a7614479d3b8cc95f259ab, type: 3}
+  waterImpacts:
+  - {fileID: 8300000, guid: 543430e4112429f44a32470455596e6d, type: 3}
+  - {fileID: 8300000, guid: 69a5cb73b977af946929484a2e0e156f, type: 3}
+  - {fileID: 8300000, guid: f5edaf54df824aa4db727cd599e83853, type: 3}
+  earthTrails:
+  - {fileID: 8300000, guid: b3e07633812fa024383537bd02c109c9, type: 3}
+  - {fileID: 8300000, guid: 90864748bc812c74fa40fe0167a8d2c2, type: 3}
+  - {fileID: 8300000, guid: f0155c02e2d576442b4457b6b36b924c, type: 3}
+  earthImpacts:
+  - {fileID: 8300000, guid: 6447a1e854e3b7c4da91f1929b15286d, type: 3}
+  - {fileID: 8300000, guid: 73a743164b88c544bb541b7a4228e7ca, type: 3}
+  - {fileID: 8300000, guid: 2e67bbc6db1259544a794377a1534973, type: 3}
+  airTrails:
+  - {fileID: 8300000, guid: 228c021ed6a86164694635da10ebe563, type: 3}
+  - {fileID: 8300000, guid: 836357b58403e33459a02c7e02886539, type: 3}
+  - {fileID: 8300000, guid: d04f6f59433244e40a330a7daa4d39fb, type: 3}
+  airImpacts:
+  - {fileID: 8300000, guid: be56cda50fedf78498348d8eea618b68, type: 3}
+  - {fileID: 8300000, guid: 85168d0ea16b4dc40ad950e53088328a, type: 3}
+  - {fileID: 8300000, guid: 47238e7d9e68873418e24052bcae81e3, type: 3}
+  enemyDissolve: {fileID: 8300000, guid: 609c4e19863aa84448c8f10edcb6d5b1, type: 3}
+  cardDissolve: {fileID: 8300000, guid: 3da1bfc648408c54a960e251ad177797, type: 3}
+  cardPaper: {fileID: 8300000, guid: 516bf866e47b5c84eae3a644a9f72f91, type: 3}
+  purchaseSound: {fileID: 8300000, guid: aa850f67bd6a3464e8d3a412d7f073ec, type: 3}
+  clickSound: {fileID: 8300000, guid: 05b46462614a8004eadadb79f5c67d8b, type: 3}
+--- !u!4 &305737569
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305737567}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1150.8901, y: 644.0375, z: -0.03766477}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &320817111
 GameObject:
   m_ObjectHideFlags: 0
@@ -3589,7 +3670,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cca33ea392757648aeb4f997392be17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameSceneName: SampleScene
+  gameSceneName: NewTutorialScene
   backgroundVideoPlayer: {fileID: 223068554}
   introVideoClip: {fileID: 32900000, guid: a757d8d55175bfc4a82b183f90be8edf, type: 3}
   loopVideoClip: {fileID: 32900000, guid: b16a74e1450125442b380b3af1d2fe7d, type: 3}
@@ -4860,7 +4941,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0.522
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -6071,10 +6152,15 @@ MonoBehaviour:
   allEnemies:
   - {fileID: 11400000, guid: eaba77f43718ff444a45ed14ac6bd492, type: 2}
   - {fileID: 11400000, guid: cc59007bbbf27a347864746cbe2dc387, type: 2}
+  - {fileID: 11400000, guid: efe19fd7707f8dc4bbb073f3f14e8fa7, type: 2}
+  - {fileID: 11400000, guid: 6c9ade6d6c100f34bb565ef16a022a6a, type: 2}
   - {fileID: 11400000, guid: 1785a4779e7d4234ab1ea2bd870deebd, type: 2}
-  - {fileID: 11400000, guid: eaba77f43718ff444a45ed14ac6bd492, type: 2}
-  - {fileID: 11400000, guid: eaba77f43718ff444a45ed14ac6bd492, type: 2}
-  - {fileID: 11400000, guid: eaba77f43718ff444a45ed14ac6bd492, type: 2}
+  - {fileID: 11400000, guid: 4ae97a78411630842a886d5e9a5f42d6, type: 2}
+  - {fileID: 11400000, guid: c1f2b3741806c844eb1fd5ccfde9874f, type: 2}
+  - {fileID: 11400000, guid: 0c897f74a5ce99449a1415cbc016ab7a, type: 2}
+  - {fileID: 11400000, guid: 576aa33c174a38e4587f98d49612e147, type: 2}
+  - {fileID: 11400000, guid: 8d9c721ba0ea71b48b220eeae7d2a2df, type: 2}
+  - {fileID: 11400000, guid: 1125e0e210458c1489dc6e4b5d6288f4, type: 2}
   allCards:
   - {fileID: 11400000, guid: d3253855476f76144b5dc6cbfb6b6d38, type: 2}
   - {fileID: 11400000, guid: ec219fcb1e84d434396abedea50f6d42, type: 2}
@@ -6149,7 +6235,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.184021, y: -4.102173}
+  m_AnchoredPosition: {x: -0.18408203, y: -4.102173}
   m_SizeDelta: {x: 33.3005, y: 46.6829}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2002520195
@@ -6472,3 +6558,4 @@ SceneRoots:
   - {fileID: 912870890}
   - {fileID: 223068555}
   - {fileID: 1939370105}
+  - {fileID: 305737569}

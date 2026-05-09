@@ -199,6 +199,7 @@ public class DeckManager : MonoBehaviour
 
     IEnumerator AnimateFlyToHand(GameObject flyingCard, GameObject targetCard, CanvasGroup targetCG)
     {
+        if (AudioManager.instance != null) AudioManager.instance.PlayCardPaper();
         float duration = 0.5f;
         float t = 0;
 
@@ -331,6 +332,7 @@ public class DeckManager : MonoBehaviour
     // --- YENÝ: Kartý iskartaya uçuran ortak fonksiyon ---
     public IEnumerator AnimateCardToDiscard(GameObject cardObj)
     {
+        if (AudioManager.instance != null) AudioManager.instance.PlayCardPaper();
         if (cardObj == null) yield break;
 
         // Kartýn UI'da her þeyin üstünde görünmesi için Canvas'a taþý

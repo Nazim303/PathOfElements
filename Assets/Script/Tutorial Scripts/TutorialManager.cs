@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using  UnityEngine.SceneManagement;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -25,15 +26,30 @@ public class TutorialManager : MonoBehaviour
     public CardData fusionCardB;        // Fizyon Tarifindeki 2. Kart
 
     private bool isStepCompleted = false;
+    private bool isTutoComplated =false;
 
     void Awake()
     {
         if (instance == null) instance = this;
     }
 
+    private void Update()
+    {
+        if (isTutoComplated == true)
+        {
+            SceneManager.LoadScene("SampleScene");
+
+        }
+    }
+
     void Start()
     {
         StartCoroutine(TutorialRoutine());
+    }
+
+    public void SkipTuto()
+    {
+        SceneManager.LoadScene("SampleScene");
     }
 
     IEnumerator TutorialRoutine()
@@ -44,14 +60,14 @@ public class TutorialManager : MonoBehaviour
         // AÞAMA 1 & 2: DESTE SEÇÝMÝ VE HARÝTA
         // ==========================================
         isStepCompleted = false;
-        popupUI.Show("Hoþ Geldin!", "Bu öðreticide oyunun temel mekaniklerini güvenli bir ortamda öðreneceðiz.\n\nÖncelikle kendi desteni oluþturmalýsýn. Açýk olan kartlardan 12 tanesini seçerek 'Belirle' butonuna bas.", () => { isStepCompleted = true; });
+        popupUI.Show("Welcome!", "In this tutorial, we will learn the basic mechanics of the game in a safe environment.\n\nFirst, you must create your own deck. Choose 12 cards from the face-up cards and press the 'Select' button.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => PathManager.instance.mapPanel.activeSelf);
 
         yield return new WaitForSeconds(0.5f);
         isStepCompleted = false;
-        popupUI.Show("Patikalar", "Harika bir deste kurdun!\n\nEðitim boyunca sadece Savaþ (Kýlýç) patikalarýna gireceðiz. Ýlk antrenmanýmýz için kýlýç ikonlu düðüme týkla.", () => { isStepCompleted = true; });
+        popupUI.Show("Phats", "You've put together a fantastic deck!\n\nDuring training, we will only enter the Combat (Sword) paths. Click on the sword icon knot for our first training session.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => PathManager.instance.combatPanel.activeSelf);
@@ -61,7 +77,7 @@ public class TutorialManager : MonoBehaviour
         // ==========================================
         yield return new WaitForSeconds(2.0f);
         isStepCompleted = false;
-        popupUI.Show("Savaþýn Temelleri", "Karþýnda bir Antrenman Bebeði var. O bir Ateþ elementi ve sana saldýramaz.\n\nBir kartý boþ bir slota sürükle ve sol alttaki enerjinin azaldýðýný gör. Ardýndan saðdaki 'SALDIR' butonuna basarak turunu bitir.", () => { isStepCompleted = true; });
+        popupUI.Show("Fundamentals of War", "You are facing a Training Baby. It is a Fire element card and cannot attack you.\n\nDrag a card to an empty slot and watch the energy decrease in the bottom left. Then press the 'ATTACK' button on the right to end your turn.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         TurnManager tm = FindObjectOfType<TurnManager>();
@@ -80,7 +96,7 @@ public class TutorialManager : MonoBehaviour
         dm.DrawCard(2);
 
         isStepCompleted = false;
-        popupUI.Show("Element Pusulasý", "Elementlerin birbirine üstünlüðü vardýr.\nSu > Ateþ > Doða (Toprak) > Hava > Su\n\nDüþmanýmýz ATEÞ elementinde. Elindeki SU kartý ona 2 kat hasar vururken, TOPRAK kartý zayýf kalýp yarým hasar vuracaktýr.\n\nFarký görmek için Su kartýný oyna ve saldýr!", () => { isStepCompleted = true; });
+        popupUI.Show("Elemental Compass", "Some elements have a superiority over others.\nWater > Fire > Nature (Earth) > Air > Water\n\nOur enemy is of the FIRE element. Their WATER card will deal double damage, while their EARTH card will be weaker, dealing half damage.\n\nPlay the Water card and attack to see the difference!", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => tm.state == BattleState.ENEMYTURN);
@@ -96,7 +112,7 @@ public class TutorialManager : MonoBehaviour
 
         if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(5);
         isStepCompleted = false;
-        popupUI.Show("Tam Kombo Zamaný!", "Eðer 4 slota da AYNI elementten kart koyarsan 'Tam Kombo' tetiklenir ve tüm düþmanlara Alan Hasarý (AOE) vurursun.\n\nElindeki 4 kartý da masaya yerleþtir ve gücü hisset!", () => { isStepCompleted = true; });
+        popupUI.Show("It's Combo Time!", "If you place cards of the SAME element in all 4 slots, a 'Full Combo' will be triggered, dealing Area of ??Effect (AOE) damage to all enemies.\n\nPlace all four cards you have on the table and feel the power!", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => tm.state == BattleState.ENEMYTURN);
@@ -114,7 +130,7 @@ public class TutorialManager : MonoBehaviour
         dm.DrawCard(2);
 
         isStepCompleted = false;
-        popupUI.Show("Destek (Support) Kartlarý", "Sýrada Destek Kartlarý var!\n\nBu kartlar saldýrý yapmazlar, ancak sana anlýk avantajlar (Kalkan, Can, Ekstra Kart vb.) saðlarlar. Bir destek kartýný oynamak için onu ekranýn saðýndaki 'Feda (Exchange)' yuvasýna býrakmalýsýn.\n\nNormal kartlarýn aksine, destek kartlarýný buraya atmak senden can (HP) götürmez!\n\nHemen elindeki destek kartlarýný Exchange yuvasýna sürükle ve etkilerini gör. Ardýndan turunu bitir.", () => { isStepCompleted = true; });
+        popupUI.Show("Support Cards", "Next up are Support Cards!\n\nThese cards don't attack, but they provide you with temporary advantages (Shield, Health, Extra Card, etc.). To play a support card, you must drop it into the 'Exchange' slot on the right side of the screen.\n\nUnlike normal cards, dropping support cards here doesn't reduce your health (HP)!\n\nImmediately drag your support cards to the Exchange slot and see their effects. Then end your turn.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => tm.state == BattleState.ENEMYTURN);
@@ -129,7 +145,7 @@ public class TutorialManager : MonoBehaviour
         dm.DrawCard(2);
 
         isStepCompleted = false;
-        popupUI.Show("Alan Kontrolü (Terrain)", "Bazý çok özel Destek Kartlarý, savaþ alanýnýn zeminini kendi elementlerine göre deðiþtirebilir!\n\nÖnce elindeki Zemin Destek kartýný 'Feda (Exchange)' alanýna sürükle. Zemin deðiþtikten sonra, zeminle ayný elementte olan diðer saldýrý kartýný normal bir slota oynayarak ekstra 'Zemin Sinerjisi' hasarý vur!", () => { isStepCompleted = true; });
+        popupUI.Show("Terrain Control", "Some very special Support Cards can change the battlefield's ground to match their element!\n\nFirst, drag your Ground Support card to the 'Exchange' area. After the ground changes, play another attack card of the same element as the ground into a normal slot to deal extra 'Ground Synergy' damage!", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => tm.state == BattleState.ENEMYTURN);
@@ -151,7 +167,7 @@ public class TutorialManager : MonoBehaviour
         }
 
         isStepCompleted = false;
-        popupUI.Show("Fizyon (Birleþtirme)", "Ýþte son ve en güçlü mekaniðimiz!\n\nBazý uyumlu kartlarý masada üst üste koyarak o savaþlýk güçlü ve yepyeni kartlar yaratabilirsin.\n\nÞimdi bir kartý boþ slota koy, ardýndan diðer kartý sürükleyip doðrudan ONUN ÜSTÜNE býrak. Çýkan yeni fizyon kartýyla son saldýrýyý yap ve savaþý bitir!", () => { isStepCompleted = true; });
+        popupUI.Show("Fusion (Merging)", "Here's our final and most powerful mechanic!\n\nBy stacking some compatible cards on the table, you can create powerful, brand-new cards for that battle.\n\nNow place a card in an empty slot, then drag and drop another card directly on top of it. Unleash the final attack with the resulting new fusion card and end the battle!", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         // Savaþýn KAZANILMASINI bekle
@@ -173,19 +189,21 @@ public class TutorialManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         isStepCompleted = false;
-        popupUI.Show("Savaþ Bitti!", "Harika iþ çýkardýn, Antrenman Bebeðini yendin!\n\nSýradaki patika bir 'Taverna (Yoldaþ)' patikasý. Haritada açýlan yeni patikaya týklayarak Taverna'ya gir.", () => { isStepCompleted = true; });
+        popupUI.Show("The War is Over!", "Great job, you beat Training Baby!\n\nThe next trail is a 'Taverna (Companion)' trail. Click on the new trail that opens on the map to enter the Taverna.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => PathManager.instance.companionPanel != null && PathManager.instance.companionPanel.activeSelf);
 
-        // ==========================================
-        // AÞAMA 10: KART KÝLÝDÝ AÇMA VE YOLDAÞLAR
-        // ==========================================
+   
         yield return new WaitForSeconds(0.5f);
         isStepCompleted = false;
-        popupUI.Show("Taverna: Yeni Kartlar ve Yoldaþlar", "Tavernada karþýna desteni güçlendirecek rastgele 3 seçenek çýkar.\n\nEðer seçtiðin kart bir 'Yoldaþ (Companion)' kartýysa, bu sadece 1 savaþýnda sana yardým eder ve destende ayný anda en fazla 1 yoldaþ tutabilirsin.\n\nEðer normal bir saldýrý/þifa kartýysa, kilidi açýlýr ve kalýcý olarak destene eklenir!\n\nBir kart seçerek eðitimini tamamla.", () => { isStepCompleted = true; });
+        popupUI.Show("Tavern: New Cards and Companions", "In the tavern, you'll be presented with 3 random options to strengthen your deck.\n\nIf the card you choose is a 'Companion' card, it will only help you in 1 battle, and you can only keep a maximum of 1 companion in your deck at a time.\n\nIf it's a regular attack/healing card, it will be unlocked and permanently added to your deck!\n\nComplete your tutorial by choosing a card.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
+
+        yield return new WaitForSeconds(0.5f);
+        isTutoComplated = false;
+        popupUI.Show("Tutorial is anded" , "Now you transfering to game" ,() => { isTutoComplated = true; });
         Debug.Log("--- TUTORIAL BÝTTÝ ---");
     }
 }

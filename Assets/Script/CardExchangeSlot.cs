@@ -18,6 +18,9 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
 
     private Material instancedMaterial;
     private GameObject activeChamberEffect; // Yaratýlan efekti hafýzada tutarýz
+    // --- YENÝ: ÖZEL BÜYÜ EFEKTLERÝ ---
+    public GameObject castWaterHealPrefab;
+    public GameObject castBloodTransferPrefab;
 
     void Start()
     {
@@ -137,16 +140,33 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
 
     void ApplySupportEffect(CardData card, DeckManager dm, GameObject playedCardObj)
     {
-        // (Burasý ayný kalacak)
         switch (card.supportEffect)
         {
             case SupportEffect.DrawExtraCards: dm.DrawCard(card.supportValue, playedCardObj); break;
             case SupportEffect.DiscardHandAndDraw: dm.DiscardHandAndDrawNew(card.supportValue, playedCardObj); break;
             case SupportEffect.GainGold: if (PlayerManager.instance != null) PlayerManager.instance.AddGold(card.supportValue); break;
-            case SupportEffect.HealPlayer: if (PlayerManager.instance != null) PlayerManager.instance.Heal(card.supportValue); break;
+            case SupportEffect.HealPlayer:
+                if (PlayerManager.instance != null) PlayerManager.instance.Heal(card.supportValue);
+
+                // --- YENÝ: Su Ýyileþtirmesi ise Özel Efekt Çýkar ---
+                if (card.element == ElementType.Water && castWaterHealPrefab != null)
+                {
+                    GameObject fx = Instantiate(castWaterHealPrefab, transform.position, Quaternion.identity, transform.root);
+                    fx.transform.SetAsLastSibling();
+                    Destroy(fx, 2f);
+                }
+                break;
             case SupportEffect.GainEnergy: if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(card.supportValue); break;
             case SupportEffect.GainShield: if (PlayerManager.instance != null) PlayerManager.instance.AddShield(card.supportValue); break;
             case SupportEffect.ChangeTerrain: if (TerrainManager.instance != null) TerrainManager.instance.ChangeTerrain(card.element); break;
+        }
+
+        // --- YENÝ: KAN TRANSFERÝ EFEKTÝ (Eðer HalveEnemyHealth vs varsa) ---
+        if (card.specialEffect == SpecialEffect.HalveEnemyHealth && castBloodTransferPrefab != null)
+        {
+            GameObject fx = Instantiate(castBloodTransferPrefab, transform.position, Quaternion.identity, transform.root);
+            fx.transform.SetAsLastSibling();
+            Destroy(fx, 2f);
         }
     }
 

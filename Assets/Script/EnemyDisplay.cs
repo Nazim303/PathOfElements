@@ -146,6 +146,7 @@ public class EnemyDisplay : MonoBehaviour
         float t = 0;
         float duration = 1.0f; // Erime süresi (1 saniye)
         Vector3 startPos = target.localPosition;
+        if (AudioManager.instance != null) AudioManager.instance.PlayEnemyDissolve();
 
         while (t < 1)
         {
