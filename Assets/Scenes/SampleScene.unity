@@ -6089,10 +6089,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d3c7aabdbc66de74b84d0c2542dc5008, type: 2}
   - {fileID: 11400000, guid: e65a5d31a1dd73f4bab5c47f6e1eba1d, type: 2}
   - {fileID: 11400000, guid: 2b62766d479c1bf48839bae0e0853b07, type: 2}
-  - {fileID: 11400000, guid: 42d8ca317f959414e889c6f4f6edf904, type: 2}
   - {fileID: 11400000, guid: af4c87556f0b59a428c922ccd67c03ff, type: 2}
   - {fileID: 11400000, guid: 2872276d4eaf66140a6a273ea515c2c6, type: 2}
-  - {fileID: 11400000, guid: 931836e652e11af4d8fc4c01962badf9, type: 2}
   - {fileID: 11400000, guid: 40ea60c7632d23f49b4eba863d0005ec, type: 2}
   - {fileID: 11400000, guid: 8ffe3bc1b27098c409c91670900942b1, type: 2}
   maxHandSize: 6
@@ -6101,6 +6099,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 69a9ba446351cfa4d9029e6c249cbea5, type: 2}
   - {fileID: 11400000, guid: 4cf4f709a4919db46ae1c18b42cdb294, type: 2}
   - {fileID: 11400000, guid: 7d20544f1369e0849b43cc8514eea1c9, type: 2}
+  - {fileID: 11400000, guid: 931836e652e11af4d8fc4c01962badf9, type: 2}
+  - {fileID: 11400000, guid: 42d8ca317f959414e889c6f4f6edf904, type: 2}
   discardPile: []
   handArea: {fileID: 2057802003}
   cardPrefab: {fileID: 5556082629489027912, guid: 77686d45a12ea3541b7a2786770d63d8, type: 3}
@@ -6977,7 +6977,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -879.6899, y: 402.24}
+  m_AnchoredPosition: {x: -879.68994, y: 402.24}
   m_SizeDelta: {x: -1792.86, y: -948.84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1153678313
@@ -7381,7 +7381,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -767.8632, y: 407.8482}
+  m_AnchoredPosition: {x: -767.8633, y: 407.8482}
   m_SizeDelta: {x: -1501.74, y: -870.81}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1257903238
@@ -8409,6 +8409,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8377048c4070b94a98e4bdaf175c1b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMixer: {fileID: 24100000, guid: 6775dbde257cb7041944292b46f374c8, type: 2}
+  mapBGM: {fileID: 8300000, guid: d493430ccac7dfe469f63796ed6a0bc9, type: 3}
+  normalCombatBGM: {fileID: 8300000, guid: 8373ac10a6760be46aaa2dd78c100b38, type: 3}
+  eliteCombatBGM: {fileID: 8300000, guid: 9bc0d654bc9582c42978f0c7c656300c, type: 3}
+  bossCombatBGM: {fileID: 8300000, guid: 9e0ffc428e63d784cbb019a8b1fb43c8, type: 3}
   fireTrails:
   - {fileID: 8300000, guid: f11effe775f726b4884a923af5cbf8db, type: 3}
   - {fileID: 8300000, guid: 16bfadb272c14ec418aeffb75181230f, type: 3}
@@ -8446,6 +8451,12 @@ MonoBehaviour:
   cardPaper: {fileID: 8300000, guid: 516bf866e47b5c84eae3a644a9f72f91, type: 3}
   purchaseSound: {fileID: 8300000, guid: aa850f67bd6a3464e8d3a412d7f073ec, type: 3}
   clickSound: {fileID: 8300000, guid: 05b46462614a8004eadadb79f5c67d8b, type: 3}
+  greedSFX: {fileID: 8300000, guid: 6583ba44243f8f44494e8d306578d466, type: 3}
+  gamblingSFX: {fileID: 8300000, guid: 7f13ea0b9de1b4248bbc12b7c2374153, type: 3}
+  exchangeSFX: {fileID: 8300000, guid: c54c548d078ebfc42bd7a01aabe61d97, type: 3}
+  enemyAttackSFX: {fileID: 8300000, guid: cacee05d5357e2542a1c6374301a22a0, type: 3}
+  hexodiaAttackSFX: {fileID: 8300000, guid: 99c2d880639688a4aa5be53f9e7df387, type: 3}
+  healSFX: {fileID: 8300000, guid: 37be972d55dffbe4d97e36201e185dd6, type: 3}
 --- !u!1 &1377222553
 GameObject:
   m_ObjectHideFlags: 0
@@ -11492,7 +11503,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: af4c87556f0b59a428c922ccd67c03ff, type: 2}
     - {fileID: 11400000, guid: 2872276d4eaf66140a6a273ea515c2c6, type: 2}
     - {fileID: 11400000, guid: 931836e652e11af4d8fc4c01962badf9, type: 2}
-    ultimateDamage: 50
+    ultimateDamage: 30
   dissolveBurningPrefab: {fileID: 6331653285968185149, guid: 9f58d286045412c4498a184e7bcddb4a, type: 3}
   enemySmokeDeathPrefab: {fileID: 6331653285968185149, guid: 9dbf2547deb26d54d9af35a8e085210f, type: 3}
   spellChargePrefab: {fileID: 5473199053397643110, guid: 689e83f9d38bc8444892764765efaa44, type: 3}
@@ -11597,6 +11608,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 69a9ba446351cfa4d9029e6c249cbea5, type: 2}
   - {fileID: 11400000, guid: 4cf4f709a4919db46ae1c18b42cdb294, type: 2}
   - {fileID: 11400000, guid: 7d20544f1369e0849b43cc8514eea1c9, type: 2}
+  - {fileID: 11400000, guid: 931836e652e11af4d8fc4c01962badf9, type: 2}
+  - {fileID: 11400000, guid: 42d8ca317f959414e889c6f4f6edf904, type: 2}
   cardsContainer: {fileID: 1802274270}
   choiceButtonPrefab: {fileID: 5235284110883186351, guid: 4a913772ef2130743bdbfacc467611ae, type: 3}
   choiceSupportButtonPrefab: {fileID: 5235284110883186351, guid: b78fd02542dc8c64ab3ec0f1ad71add2, type: 3}
@@ -11625,7 +11638,7 @@ MonoBehaviour:
   dotSpacing: 25
   startXPadding: 200
   combatSprite: {fileID: -1482510244612873774, guid: c3b64c1c71005764ba7ac9456741e58e, type: 3}
-  eliteSprite: {fileID: 1504126589690493344, guid: 6700cfe450b57e64bb12bda8ee58f0b2, type: 3}
+  eliteSprite: {fileID: -7260354897193667908, guid: 184790e79882a3d4d869f1f1f0b8e987, type: 3}
   shopSprite: {fileID: 8832136723943634096, guid: 742f7f59fabc4934da45b8a63a6f1235, type: 3}
   divinerSprite: {fileID: -6145595513955519242, guid: 2bcf4497b63feee49b659d8361a2f083, type: 3}
   bossSprite: {fileID: -6248741079362886434, guid: 5ead1c84e55ef72438cbb5f5b56e01d4, type: 3}

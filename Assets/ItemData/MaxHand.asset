@@ -15,7 +15,7 @@ MonoBehaviour:
   itemName: Gambler's Hand
   icon: {fileID: 0}
   description: Increase Max Hand Size +2
-  cost: 10
+  cost: 25
   effectType: 4
-  effectValue: 3
+  effectValue: 2
   rewardCard: {fileID: 0}

@@ -62,9 +62,22 @@ public class TurnManager : MonoBehaviour
         currentBattleType = battleType;
 
         // Yazýyý Türe Göre Ayarla
-        if (battleType == PathType.Boss) SetTurnText("BOSS FIGHT!");
-        else if (battleType == PathType.Elite) SetTurnText("ELITE COMBAT!"); // YENÝ: Elite için özel yazý
-        else SetTurnText("PREPARÝNG FOR WAR...");
+        // Yazýyý ve Müziði Türe Göre Ayarla
+        if (battleType == PathType.Boss)
+        {
+            SetTurnText("BOSS FIGHT!");
+            if (AudioManager.instance != null) AudioManager.instance.PlayBGM(AudioManager.instance.bossCombatBGM);
+        }
+        else if (battleType == PathType.Elite)
+        {
+            SetTurnText("ELITE COMBAT!");
+            if (AudioManager.instance != null) AudioManager.instance.PlayBGM(AudioManager.instance.eliteCombatBGM);
+        }
+        else
+        {
+            SetTurnText("PREPARÝNG FOR WAR...");
+            if (AudioManager.instance != null) AudioManager.instance.PlayBGM(AudioManager.instance.normalCombatBGM);
+        }
 
         // 1. Temizlik
         if (combatManager != null) StartCoroutine(combatManager.DestroyPlayedCards());
@@ -231,6 +244,10 @@ public class TurnManager : MonoBehaviour
             else
             {
                 yield return StartCoroutine(enemy.AttackAnimation());
+
+                // --- YENÝ: DÜÞMAN SALDIRI SESÝ ---
+                if (AudioManager.instance != null) AudioManager.instance.PlayEnemyAttack();
+
                 if (PlayerManager.instance != null)
                 {
                     PlayerManager.instance.TakeDamage(enemy.enemyData.damage);

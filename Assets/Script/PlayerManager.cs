@@ -130,6 +130,8 @@ public class PlayerManager : MonoBehaviour
             Transform parent = canvas != null ? canvas.transform : transform;
             GameObject healFX = Instantiate(generalHealVFXPrefab, parent);
 
+            if (AudioManager.instance != null) AudioManager.instance.PlayHeal();
+
             // Ekranýn ortasýnda veya oyuncu profilinde çýksýn
             healFX.transform.position = healthFillBar.transform.position;
             healFX.transform.localScale = Vector3.one;

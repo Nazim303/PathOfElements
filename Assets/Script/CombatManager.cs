@@ -431,6 +431,8 @@ public class CombatManager : MonoBehaviour
         {
             Debug.Log($"?? {activeUltimate.comboName} UYANDI! ??");
 
+            if (AudioManager.instance != null) AudioManager.instance.PlayHexodiaAttack();
+
             float animT = 0;
             List<Vector3> originalPosList = new List<Vector3>();
             List<Vector3> punchPosList = new List<Vector3>();
@@ -899,6 +901,8 @@ public class CombatManager : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        if (AudioManager.instance != null) AudioManager.instance.PlayCardDissolve();
 
         if (burningEffect != null) Destroy(burningEffect);
 

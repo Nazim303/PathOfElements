@@ -98,10 +98,14 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             CombatManager cm = FindObjectOfType<CombatManager>();
             if (cm != null) cm.ClearSlot(oldSlot.slotIndex);
         }
+        // --- YENÝ: KART YUVAYA GÝRÝÞ/EXCHANGE SESÝ ---
+        if (AudioManager.instance != null) AudioManager.instance.PlayExchange();
 
         // --- FEDA DURUMLARI ---
+
         if (cardDisplay.cardData.isElementalModifier)
         {
+
             int penaltyCost = hpCost * 2;
             if (PlayerManager.instance.currentHealth <= penaltyCost) return;
 
@@ -142,19 +146,19 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
     {
         switch (card.supportEffect)
         {
-            case SupportEffect.DrawExtraCards: dm.DrawCard(card.supportValue, playedCardObj); break;
-            case SupportEffect.DiscardHandAndDraw: dm.DiscardHandAndDrawNew(card.supportValue, playedCardObj); break;
-            case SupportEffect.GainGold: if (PlayerManager.instance != null) PlayerManager.instance.AddGold(card.supportValue); break;
-            case SupportEffect.HealPlayer:
-                if (PlayerManager.instance != null) PlayerManager.instance.Heal(card.supportValue);
+            case SupportEffect.DrawExtraCards:
+                dm.DrawCard(card.supportValue, playedCardObj);
+                if (AudioManager.instance != null) AudioManager.instance.PlayGambling(); // YENÝ (Kumar/Þans Sesi)
+                break;
 
-                // --- YENÝ: Su Ýyileþtirmesi ise Özel Efekt Çýkar ---
-                if (card.element == ElementType.Water && castWaterHealPrefab != null)
-                {
-                    GameObject fx = Instantiate(castWaterHealPrefab, transform.position, Quaternion.identity, transform.root);
-                    fx.transform.SetAsLastSibling();
-                    Destroy(fx, 2f);
-                }
+            case SupportEffect.DiscardHandAndDraw:
+                dm.DiscardHandAndDrawNew(card.supportValue, playedCardObj);
+                if (AudioManager.instance != null) AudioManager.instance.PlayGambling(); // YENÝ
+                break;
+
+            case SupportEffect.GainGold:
+                if (PlayerManager.instance != null) PlayerManager.instance.AddGold(card.supportValue);
+                if (AudioManager.instance != null) AudioManager.instance.PlayGreed(); // YENÝ (Açgözlülük/Altýn Sesi)
                 break;
             case SupportEffect.GainEnergy: if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(card.supportValue); break;
             case SupportEffect.GainShield: if (PlayerManager.instance != null) PlayerManager.instance.AddShield(card.supportValue); break;

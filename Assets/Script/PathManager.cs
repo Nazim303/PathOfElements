@@ -59,6 +59,8 @@ public class PathManager : MonoBehaviour
         // HARÝTAYA DÖNDÜÐÜMÜZDE KÝLÝDÝ AÇIYORUZ
         isEventActive = false;
 
+        if (AudioManager.instance != null) AudioManager.instance.PlayBGM(AudioManager.instance.mapBGM);
+
         mapPanel.SetActive(true);
         combatPanel.SetActive(false);
         if (divinerPanel != null) divinerPanel.SetActive(false);

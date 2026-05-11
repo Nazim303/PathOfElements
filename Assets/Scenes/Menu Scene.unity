@@ -1307,6 +1307,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8377048c4070b94a98e4bdaf175c1b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainMixer: {fileID: 24100000, guid: 6775dbde257cb7041944292b46f374c8, type: 2}
+  mapBGM: {fileID: 8300000, guid: d493430ccac7dfe469f63796ed6a0bc9, type: 3}
+  normalCombatBGM: {fileID: 8300000, guid: 8373ac10a6760be46aaa2dd78c100b38, type: 3}
+  eliteCombatBGM: {fileID: 8300000, guid: 9bc0d654bc9582c42978f0c7c656300c, type: 3}
+  bossCombatBGM: {fileID: 8300000, guid: 9e0ffc428e63d784cbb019a8b1fb43c8, type: 3}
   fireTrails:
   - {fileID: 8300000, guid: f11effe775f726b4884a923af5cbf8db, type: 3}
   - {fileID: 8300000, guid: 16bfadb272c14ec418aeffb75181230f, type: 3}
@@ -1344,6 +1349,12 @@ MonoBehaviour:
   cardPaper: {fileID: 8300000, guid: 516bf866e47b5c84eae3a644a9f72f91, type: 3}
   purchaseSound: {fileID: 8300000, guid: aa850f67bd6a3464e8d3a412d7f073ec, type: 3}
   clickSound: {fileID: 8300000, guid: 05b46462614a8004eadadb79f5c67d8b, type: 3}
+  greedSFX: {fileID: 8300000, guid: 6583ba44243f8f44494e8d306578d466, type: 3}
+  gamblingSFX: {fileID: 8300000, guid: 7f13ea0b9de1b4248bbc12b7c2374153, type: 3}
+  exchangeSFX: {fileID: 8300000, guid: c54c548d078ebfc42bd7a01aabe61d97, type: 3}
+  enemyAttackSFX: {fileID: 8300000, guid: cacee05d5357e2542a1c6374301a22a0, type: 3}
+  hexodiaAttackSFX: {fileID: 8300000, guid: 99c2d880639688a4aa5be53f9e7df387, type: 3}
+  healSFX: {fileID: 8300000, guid: 37be972d55dffbe4d97e36201e185dd6, type: 3}
 --- !u!4 &305737569
 Transform:
   m_ObjectHideFlags: 0
@@ -3670,7 +3681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cca33ea392757648aeb4f997392be17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameSceneName: NewTutorialScene
+  gameSceneName: SampleScene
   backgroundVideoPlayer: {fileID: 223068554}
   introVideoClip: {fileID: 32900000, guid: a757d8d55175bfc4a82b183f90be8edf, type: 3}
   loopVideoClip: {fileID: 32900000, guid: b16a74e1450125442b380b3af1d2fe7d, type: 3}
