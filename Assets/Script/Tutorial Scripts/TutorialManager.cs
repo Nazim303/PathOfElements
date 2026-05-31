@@ -33,22 +33,26 @@ public class TutorialManager : MonoBehaviour
         if (instance == null) instance = this;
     }
 
-    private void Update()
-    {
-        if (isTutoComplated == true)
-        {
-            SceneManager.LoadScene("SampleScene");
-
-        }
-    }
 
     void Start()
     {
         StartCoroutine(TutorialRoutine());
     }
 
+
+    private void Update()
+    {
+        if (isTutoComplated == true)
+        {
+            isTutoComplated = false; // KRÝTÝK: Sahnenin üst üste yüklenmesini engeller
+            Time.timeScale = 1f;     // KRÝTÝK: Zamanýn donuk kalmasýný engeller
+            SceneManager.LoadScene("SampleScene");
+        }
+    }
+
     public void SkipTuto()
     {
+        Time.timeScale = 1f; // KRÝTÝK: Zamaný normale döndür
         SceneManager.LoadScene("SampleScene");
     }
 

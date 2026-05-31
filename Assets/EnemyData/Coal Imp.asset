@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
   m_Name: Coal Imp
   m_EditorClassIdentifier: 
-  enemyName: Coal Imp
+  enemyName: Fire Arrows
   maxHealth: 22
   element: 1
-  enemyArt: {fileID: 6718269103739047429, guid: 6cda45018c6ca534998983cc850cb31c, type: 3}
+  enemyArt: {fileID: -2008628063574409962, guid: cc7fcf0b638cfb84481d90ddaaa4531b, type: 3}
   enemybander: {fileID: 1440195006959441090, guid: 6f901bdcd466c5049ba3a3050c210949, type: 3}
   damage: 9
   goldReward: 7
+  journalDescription: 

@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Boss_Protector
   maxHealth: 150
   element: 3
-  enemyArt: {fileID: -7944239912979293664, guid: 1c90c774af7b53e438af0ab155a5cf40, type: 3}
+  enemyArt: {fileID: -2424553518018739129, guid: fcc8b12b44d23c648823cb8d407e36b4, type: 3}
   enemybander: {fileID: -5544542530636854122, guid: fa01ea136791dd84980dbfebcac81d6b, type: 3}
   damage: 15
   goldReward: 25

@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
   m_Name: Ice Witch
   m_EditorClassIdentifier: 
-  enemyName: Ice Witch
+  enemyName: Gao
   maxHealth: 35
-  element: 2
-  enemyArt: {fileID: -3360203840903212233, guid: 384c58857c8799145b35fd07cb984c7b, type: 3}
-  enemybander: {fileID: -4179425161918205984, guid: 68e365159cbff1a4685c611e86bd5831, type: 3}
+  element: 3
+  enemyArt: {fileID: -4541346624449750865, guid: 5b6f614e2aacacd45b4bb86dadcd55e1, type: 3}
+  enemybander: {fileID: -5544542530636854122, guid: fa01ea136791dd84980dbfebcac81d6b, type: 3}
   damage: 9
   goldReward: 12
+  journalDescription: 

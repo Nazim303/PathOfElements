@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: Healing Water
   m_EditorClassIdentifier: 
   cardName: Healing Water
-  cardArt: {fileID: 3268949355143398380, guid: b867422f734a7974ba19d20211addb3c, type: 3}
+  cardArt: {fileID: -5629764385055494699, guid: 2320a4b4816ff794ca92aa3f7db55284, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
   description: 
   cardType: 1
   element: 2
   baseDamage: 15
   healAmount: 15
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 2
   supportEffect: 0
   supportValue: 0
+  journalDescription: 

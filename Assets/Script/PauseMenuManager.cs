@@ -68,8 +68,10 @@ public class PauseMenuManager : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
-        // Zamaný normale döndürmeyi unutmamalýyýz, yoksa ana menü donuk kalýr!
         Time.timeScale = 1f;
+
+        // --- YENÝ EKLENEN SATIR: Ana menüye dönerken savaþ müziðini kapat ---
+        if (AudioManager.instance != null) AudioManager.instance.StopBGM();
 
         Debug.Log("Ana Menüye dönülüyor...");
         SceneManager.LoadScene(mainMenuSceneName);

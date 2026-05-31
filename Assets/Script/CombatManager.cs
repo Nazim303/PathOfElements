@@ -730,7 +730,13 @@ public class CombatManager : MonoBehaviour
 
     void EnemyDie(EnemyDisplay enemy)
     {
-        if (PlayerManager.instance != null) PlayerManager.instance.AddGold(enemy.enemyData.goldReward);
+        if (PlayerManager.instance != null)
+        {
+            PlayerManager.instance.AddGold(enemy.enemyData.goldReward);
+            // --- YENÝ: Düþman öldürme skorunu artýr ---
+            PlayerManager.instance.enemiesDefeated++;
+        }
+
         activeEnemies.Remove(enemy);
 
         // --- KRÝTÝK ÇÖZÜM: Game Manager'ý deðil, Canvas'ý bul ve parent yap! ---

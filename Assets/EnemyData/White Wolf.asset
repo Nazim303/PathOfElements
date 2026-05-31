@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
   m_Name: White Wolf
   m_EditorClassIdentifier: 
-  enemyName: White Wolf
+  enemyName: Marauders
   maxHealth: 25
-  element: 2
-  enemyArt: {fileID: 3303787451017639340, guid: 1efa6c2587a763a4fbbcb88bdbcb74c7, type: 3}
-  enemybander: {fileID: -4179425161918205984, guid: 68e365159cbff1a4685c611e86bd5831, type: 3}
+  element: 3
+  enemyArt: {fileID: -8143660819039066808, guid: 22e2804885a615841bd320f166d4d9e9, type: 3}
+  enemybander: {fileID: -5544542530636854122, guid: fa01ea136791dd84980dbfebcac81d6b, type: 3}
   damage: 6
   goldReward: 3
+  journalDescription: 

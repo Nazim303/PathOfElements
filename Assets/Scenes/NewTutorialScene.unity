@@ -1790,6 +1790,7 @@ MonoBehaviour:
   shieldFillBar: {fileID: 2018740446}
   damageFlashImage: {fileID: 2098578593}
   healFlashImage: {fileID: 2098578593}
+  generalHealVFXPrefab: {fileID: 0}
   bonusDamage: 0
 --- !u!1 &284738225
 GameObject:
@@ -2369,6 +2370,8 @@ MonoBehaviour:
   castEffectPrefab: {fileID: 3869021428130000811, guid: 50ffc14aa3650614a84415c178fd0104, type: 3}
   chamberEffectPrefab: {fileID: 3575400028058931135, guid: 0c23aa97eb54a534b8dc89159d35d8c4, type: 3}
   slotImage: {fileID: 412846653}
+  castWaterHealPrefab: {fileID: 0}
+  castBloodTransferPrefab: {fileID: 0}
 --- !u!114 &412846653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5690,6 +5693,8 @@ MonoBehaviour:
   vfx_WaterImpact03: {fileID: 4879057562312275501, guid: a1fd29c7ae1b6bc429edf71e1169bdaa, type: 3}
   vfx_EarthImpact03: {fileID: 6617444679625668709, guid: bbe355692eddd5149988159ca8676186, type: 3}
   vfx_AirImpact03: {fileID: 2599203492160366187, guid: 950813531b7200247965e9efc38d7291, type: 3}
+  ultimateAttackVFX: {fileID: 0}
+  ultimateImpactVFX: {fileID: 0}
 --- !u!114 &819168405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5707,9 +5712,9 @@ MonoBehaviour:
   cardPrefab: {fileID: 4135328098752103673, guid: 70662405ba121ac4d92f4e8b29d3567a, type: 3}
   continueButton: {fileID: 35412967}
   cardBackSprite: {fileID: -7074630741205569540, guid: 9f2d5b6e6af678d4daac786063a2570c, type: 3}
-  tarotCombatSprite: {fileID: -6171727975145453602, guid: 6cfce7a90f7f0c74eb35799a60055d9f, type: 3}
-  tarotCompanionSprite: {fileID: 566996531620178079, guid: c87e0e9adc22e944baaddd701703ba91, type: 3}
-  tarotShopSprite: {fileID: -4931049636826251025, guid: 42a8332427558934e935a416d3be541a, type: 3}
+  tarotCombatSprite: {fileID: 8337425925932992441, guid: a9d8a4366ee406044baba16f81bb796c, type: 3}
+  tarotCompanionSprite: {fileID: 566996531620178079, guid: cba8e61632c4c5b4984d4673aa32b3d0, type: 3}
+  tarotShopSprite: {fileID: 4737039758819348743, guid: 51fde6dbe902ede468174dda2ec30267, type: 3}
   mapCombatIcon: {fileID: -1482510244612873774, guid: c3b64c1c71005764ba7ac9456741e58e, type: 3}
   mapCompanionIcon: {fileID: 3737897332693287829, guid: 1c166a9403f2f874bad36c0ce302b49f, type: 3}
   mapShopIcon: {fileID: 8832136723943634096, guid: 742f7f59fabc4934da45b8a63a6f1235, type: 3}
@@ -8234,7 +8239,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e65a5d31a1dd73f4bab5c47f6e1eba1d, type: 2}
   - {fileID: 11400000, guid: 2b62766d479c1bf48839bae0e0853b07, type: 2}
   - {fileID: 11400000, guid: 8ffe3bc1b27098c409c91670900942b1, type: 2}
-  - {fileID: 11400000, guid: 4b86b2626663f724aa8507e117a40267, type: 2}
   - {fileID: 11400000, guid: 285b1424d34ea4842b701c6ff657b200, type: 2}
   - {fileID: 11400000, guid: fb8869029fa3b08449f74dea744679b2, type: 2}
   maxHandSize: 6

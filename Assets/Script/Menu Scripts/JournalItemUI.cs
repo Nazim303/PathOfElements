@@ -37,7 +37,7 @@ public class JournalItemUI : MonoBehaviour
         if (!string.IsNullOrEmpty(enemy.journalDescription))
             itemDescription = enemy.journalDescription;
         else
-            itemDescription = "Bu varlýk hakkýnda pek bir þey bilinmiyor...";
+            itemDescription = "Not much is known about this entity...";
 
         if (iconImage != null) iconImage.sprite = itemArt;
 

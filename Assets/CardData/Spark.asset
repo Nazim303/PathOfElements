@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: Spark
   m_EditorClassIdentifier: 
   cardName: Spark
-  cardArt: {fileID: 4641428447314951278, guid: d2d42f22d7a243948a08cadaca72c1c2, type: 3}
+  cardArt: {fileID: -3414685646930808390, guid: e77e16c6369358142a141e32b5a79158, type: 3}
   cardbander: {fileID: -6889857487880924528, guid: 1828523002e97944b8014fc218db0d6a, type: 3}
   description: 
   cardType: 0
   element: 1
   baseDamage: 5
   healAmount: 0
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 1
   supportEffect: 0
   supportValue: 0
+  journalDescription: 

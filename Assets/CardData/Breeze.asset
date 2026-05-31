@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: Breeze
   m_EditorClassIdentifier: 
   cardName: Breeze
-  cardArt: {fileID: -5818968488010580517, guid: 17ed7ae2176c9d24da47a83857b81024, type: 3}
+  cardArt: {fileID: -3357456237637211654, guid: fb61b3cd04ec64f489d4351f0618a6d1, type: 3}
   cardbander: {fileID: 3970667679311140378, guid: ca29aabeb6032604eab4f881dfcc8333, type: 3}
   description: Air attack card
   cardType: 0
   element: 4
   baseDamage: 6
   healAmount: 0
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 1
   supportEffect: 0
   supportValue: 0
+  journalDescription: 

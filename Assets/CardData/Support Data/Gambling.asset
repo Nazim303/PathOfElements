@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: Gambling
   m_EditorClassIdentifier: 
   cardName: Gambling
-  cardArt: {fileID: -1744033376873275585, guid: 4796a039733befa4dbe384c636d2906b, type: 3}
+  cardArt: {fileID: -4793679837526635205, guid: c5ae04a8742ea49479060e4b212e96bd, type: 3}
   cardbander: {fileID: 3280247252720426850, guid: a9c49fd53ecd9444b88c5be8f15c6d57, type: 3}
   description: 'Use it in card exchange slot '
   cardType: 3
   element: 0
   baseDamage: 0
   healAmount: 0
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 0
   supportEffect: 1
   supportValue: 4
+  journalDescription: 

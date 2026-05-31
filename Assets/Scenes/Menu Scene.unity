@@ -1345,13 +1345,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 85168d0ea16b4dc40ad950e53088328a, type: 3}
   - {fileID: 8300000, guid: 47238e7d9e68873418e24052bcae81e3, type: 3}
   enemyDissolve: {fileID: 8300000, guid: 609c4e19863aa84448c8f10edcb6d5b1, type: 3}
-  cardDissolve: {fileID: 8300000, guid: 3da1bfc648408c54a960e251ad177797, type: 3}
+  cardDissolve: {fileID: 8300000, guid: 609c4e19863aa84448c8f10edcb6d5b1, type: 3}
   cardPaper: {fileID: 8300000, guid: 516bf866e47b5c84eae3a644a9f72f91, type: 3}
   purchaseSound: {fileID: 8300000, guid: aa850f67bd6a3464e8d3a412d7f073ec, type: 3}
   clickSound: {fileID: 8300000, guid: 05b46462614a8004eadadb79f5c67d8b, type: 3}
   greedSFX: {fileID: 8300000, guid: 6583ba44243f8f44494e8d306578d466, type: 3}
-  gamblingSFX: {fileID: 8300000, guid: 7f13ea0b9de1b4248bbc12b7c2374153, type: 3}
-  exchangeSFX: {fileID: 8300000, guid: c54c548d078ebfc42bd7a01aabe61d97, type: 3}
+  gamblingSFX: {fileID: 8300000, guid: e29e5ed9362e8274a9b07c60af46e3e5, type: 3}
+  exchangeSFX: {fileID: 8300000, guid: 8f2f201cdfb58934c95029ae540e8f2d, type: 3}
   enemyAttackSFX: {fileID: 8300000, guid: cacee05d5357e2542a1c6374301a22a0, type: 3}
   hexodiaAttackSFX: {fileID: 8300000, guid: 99c2d880639688a4aa5be53f9e7df387, type: 3}
   healSFX: {fileID: 8300000, guid: 37be972d55dffbe4d97e36201e185dd6, type: 3}

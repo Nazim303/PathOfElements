@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Quake
   m_EditorClassIdentifier: 
   cardName: Quake
-  cardArt: {fileID: -2932612526820762341, guid: 0a4613eb41be8f4408cf4a9b3b2c4afd, type: 3}
+  cardArt: {fileID: -1816015570539651540, guid: 7bc7d0f212ea3784c9528d3e36f785f6, type: 3}
   cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
   description: 
   cardType: 0
@@ -26,3 +26,4 @@ MonoBehaviour:
   energyCost: 2
   supportEffect: 0
   supportValue: 0
+  journalDescription: 

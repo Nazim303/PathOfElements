@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: Magma Worm
   maxHealth: 15
   element: 1
-  enemyArt: {fileID: 5527411088620400319, guid: 49f9f2274d49cbd41bff9fdd4132a25d, type: 3}
+  enemyArt: {fileID: -4308994774900457694, guid: 42f516452486a34468bca5091eff7632, type: 3}
   enemybander: {fileID: 1440195006959441090, guid: 6f901bdcd466c5049ba3a3050c210949, type: 3}
   damage: 7
   goldReward: 4

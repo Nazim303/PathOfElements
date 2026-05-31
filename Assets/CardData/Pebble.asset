@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: Pebble
   m_EditorClassIdentifier: 
   cardName: Pebble
-  cardArt: {fileID: -7521744758332252851, guid: 1273403aa81b4b542b1c06e74473e77b, type: 3}
+  cardArt: {fileID: 2820131925045074649, guid: 7ee0d71e412050b44813f9cd8ab8552d, type: 3}
   cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
   description: 
   cardType: 0
   element: 3
   baseDamage: 7
   healAmount: 0
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 1
   supportEffect: 0
   supportValue: 0
+  journalDescription: 

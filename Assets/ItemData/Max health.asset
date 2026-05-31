@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Max health
   m_EditorClassIdentifier: 
   itemName: Camp Fire
-  icon: {fileID: -811174544131042072, guid: 6296d2d623ef79743b9e20ab4fa13b23, type: 3}
+  icon: {fileID: -34345388537201796, guid: b4d5f60cf4ff4c141b20202f9545c46a, type: 3}
   description: Maximum HP increases by 15
   cost: 30
   effectType: 0

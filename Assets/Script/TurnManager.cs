@@ -75,7 +75,7 @@ public class TurnManager : MonoBehaviour
         }
         else
         {
-            SetTurnText("PREPARÝNG FOR WAR...");
+            SetTurnText("PREPARING FOR BATTLE...");
             if (AudioManager.instance != null) AudioManager.instance.PlayBGM(AudioManager.instance.normalCombatBGM);
         }
 
@@ -183,7 +183,7 @@ public class TurnManager : MonoBehaviour
     void PlayerTurn()
     {
         state = BattleState.PLAYERTURN;
-        SetTurnText("SIRA SÝZDE");
+        SetTurnText("YOUR TURN");
 
         // Enerjiyi Fulle
         if (EnergyManager.instance != null)

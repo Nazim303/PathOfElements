@@ -12,15 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8c332e0445cbb742a19e34357867b49, type: 3}
   m_Name: Mother Nature
   m_EditorClassIdentifier: 
-  cardName: Mother Nature
-  cardArt: {fileID: 7722677761958815681, guid: 02a62df2df196e14394e5dbc17b57e89, type: 3}
+  cardName: Mother of Nature
+  cardArt: {fileID: 1144038027374253279, guid: 8d4decf02e1c7d149a359a8064e16f4e, type: 3}
   cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
   description: a heal card with eath element
   cardType: 1
   element: 3
   baseDamage: 20
   healAmount: 20
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 3
   supportEffect: 0
   supportValue: 0
+  journalDescription: 

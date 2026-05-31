@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: Greed
   m_EditorClassIdentifier: 
   cardName: Greed
-  cardArt: {fileID: -3120302708392793311, guid: 160c848f874a0854f9449dec46ddaf4d, type: 3}
+  cardArt: {fileID: -2308642744850600909, guid: 7ddbad2ca89699c45af0b34b563d36e3, type: 3}
   cardbander: {fileID: 3280247252720426850, guid: a9c49fd53ecd9444b88c5be8f15c6d57, type: 3}
   description: use it in card exchange slot and draw 2 card
   cardType: 3
   element: 0
   baseDamage: 0
   healAmount: 0
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 0
   supportEffect: 0
   supportValue: 2
+  journalDescription: 

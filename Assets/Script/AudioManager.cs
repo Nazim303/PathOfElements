@@ -52,6 +52,18 @@ public class AudioManager : MonoBehaviour
             sfxSource = gameObject.AddComponent<AudioSource>();
             musicSource = gameObject.AddComponent<AudioSource>();
 
+            // --- ÇÖZÜM: Yaratýlan kaynaklarý Mixer kanallarýna baðla ---
+            if (mainMixer != null)
+            {
+                // Unity'nin Mixer içindeki "Music" adlý grubu bulup kaynaða atamasý
+                AudioMixerGroup[] musicGroups = mainMixer.FindMatchingGroups("Music");
+                if (musicGroups.Length > 0) musicSource.outputAudioMixerGroup = musicGroups[0];
+
+                // Unity'nin Mixer içindeki "SFX" adlý grubu bulup kaynaða atamasý
+                AudioMixerGroup[] sfxGroups = mainMixer.FindMatchingGroups("SFX");
+                if (sfxGroups.Length > 0) sfxSource.outputAudioMixerGroup = sfxGroups[0];
+            }
+
             DontDestroyOnLoad(gameObject); // Sahneler arasý silinmesin
         }
         else
@@ -91,6 +103,16 @@ public class AudioManager : MonoBehaviour
         musicSource.volume = volume; // YENÝ: Ses seviyesini kaynaða ata
         musicSource.loop = true;
         musicSource.Play();
+    }
+
+    // Bu fonksiyon çalan BGM'yi (müziði) tamamen kapatýr
+    public void StopBGM()
+    {
+        if (musicSource != null && musicSource.isPlaying)
+        {
+            musicSource.Stop();
+            musicSource.clip = null; // Hafýzayý temizle
+        }
     }
 
     // --- GENEL EFEKTLER ---

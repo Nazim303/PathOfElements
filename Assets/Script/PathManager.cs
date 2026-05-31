@@ -201,7 +201,7 @@ public class PathManager : MonoBehaviour
 
     public void CompleteCurrentNode()
     {
-        // Burada kilit açmamýza gerek yok çünkü alttaki ShowMap() fonksiyonu çaðrýldýðýnda kilit otomatik açýlýyor.
+        if (PlayerManager.instance != null) PlayerManager.instance.pathsCompleted++;
 
         if (currentNode != null)
         {

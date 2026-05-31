@@ -13,14 +13,17 @@ MonoBehaviour:
   m_Name: Strong Magic
   m_EditorClassIdentifier: 
   cardName: Tsunami
-  cardArt: {fileID: 8191787836398006521, guid: 2e4ee35dc1dd24b4c87e7e96c0e19f88, type: 3}
+  cardArt: {fileID: -4205624841535225538, guid: e8ee492fbc5a0ca4cbb37891eab18a73, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
   description: a strong water attack
   cardType: 0
   element: 2
   baseDamage: 22
   healAmount: 0
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 4
   supportEffect: 0
   supportValue: 0
+  journalDescription: 

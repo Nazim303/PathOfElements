@@ -7,6 +7,11 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager instance;
 
+
+    [Header("Run Stats (Oyun Sonu İstatistikleri)")]
+    public int enemiesDefeated = 0;
+    public int pathsCompleted = 0;
+
     [Header("Stats")]
     public int maxHealth = 100;
     public int currentHealth;
@@ -113,6 +118,8 @@ public class PlayerManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             Debug.Log("OYUN BİTTİ! KAYBETTİN.");
+            // --- YENİ: Ölüm Ekranını Çağır ---
+            if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
         }
     }
 
