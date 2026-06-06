@@ -18,27 +18,18 @@ public class CardSlot : MonoBehaviour, IDropHandler
         combatManager = FindObjectOfType<CombatManager>();
     }
 
-    // ==========================================
-    // --- YENÝ: OTONOM TEMÝZLÝK SÝSTEMÝ ---
-    // ==========================================
     void Update()
     {
-        // 1. Sadece "childCount"a bakmýyoruz çünkü VFX de bir obje!
-        // Bunun yerine "Ýçimde gerçek bir CardDisplay (Kart) var mý?" diye kontrol ediyoruz.
         CardDisplay cardInSlot = GetComponentInChildren<CardDisplay>();
 
-        // Eðer yuvada bir kart YOKSA (oyuncu tutup çekmiþse veya feda edilmiþse)
         if (cardInSlot == null)
         {
-            // 1. Arka planda dönen efekti sil
             if (activePlacementVFX != null)
             {
                 Destroy(activePlacementVFX);
                 activePlacementVFX = null;
             }
 
-            // 2. CombatManager'da burasý hala "dolu" görünüyorsa, temizle
-            // Bu sayede enerji hesaplamasý da anýnda güncellenir!
             if (combatManager != null && combatManager.playerSlots[slotIndex] != null)
             {
                 combatManager.ClearSlot(slotIndex);
@@ -55,11 +46,8 @@ public class CardSlot : MonoBehaviour, IDropHandler
         if (draggable != null && droppedCardDisplay != null)
         {
             // --- FÝZYON (BÝRLEÞME) KONTROLÜ ---
-            // --- FÝZYON (BÝRLEÞME) KONTROLÜ (DÜZELTÝLDÝ) ---
             if (transform.childCount > 0)
             {
-                // ESKÝ: Transform existingCardTransform = transform.GetChild(0);
-                // YENÝ: Slotun içindeki tüm çocuklarý tara ve üzerinde CardDisplay olan GERÇEK KARTI bul!
                 CardDisplay existingCardDisplay = GetComponentInChildren<CardDisplay>();
 
                 if (existingCardDisplay != null && combatManager != null)
@@ -78,35 +66,32 @@ public class CardSlot : MonoBehaviour, IDropHandler
             }
 
             // --- NORMAL KART YERLEÞTÝRME ---
-            // Artýk eski slotu burada temizlememize gerek yok, Update fonksiyonu eski slotu otomatik boþaltacak!
             droppedObject.transform.SetParent(this.transform);
 
+            // Kartýn pivot ve çapa ayarlarýný tam merkeze (0.5) kilitliyoruz.
             RectTransform normalRect = droppedObject.GetComponent<RectTransform>();
             normalRect.pivot = new Vector2(0.5f, 0.5f);
             normalRect.anchorMin = new Vector2(0.5f, 0.5f);
             normalRect.anchorMax = new Vector2(0.5f, 0.5f);
-            normalRect.anchoredPosition = Vector2.zero;
+            normalRect.anchoredPosition = Vector2.zero; // Kaymayý önleyen sihirli satýr!
             droppedObject.transform.localRotation = Quaternion.identity;
-
-            float slotScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.cardInSlotScale : 1.5f;
-            droppedObject.transform.localScale = new Vector3(slotScale, slotScale, slotScale);
 
             if (combatManager != null)
             {
                 combatManager.UpdateSlot(slotIndex, droppedCardDisplay.cardData);
             }
 
+            // --- ÇÖZÜM: ÝSÝM HATASI DÜZELTÝLDÝ, ANÝMASYON BURADA BAÞLIYOR ---
+            StartCoroutine(AnimateCardArrival(droppedObject));
+
             // --- KART MASAYA KONDUÐUNDA SÜREKLÝ EFEKT YARAT ---
             if (elementPlacementVFX != null)
             {
-                // Varsa eskiyi sil
                 if (activePlacementVFX != null) Destroy(activePlacementVFX);
 
                 activePlacementVFX = Instantiate(elementPlacementVFX, transform);
                 activePlacementVFX.transform.localPosition = Vector3.zero;
                 activePlacementVFX.transform.localScale = Vector3.one;
-
-                // Efekt Kartýn ARKASINDA dursun diye en baþa atýyoruz
                 activePlacementVFX.transform.SetAsFirstSibling();
 
                 ParticleSystemRenderer[] renderers = activePlacementVFX.GetComponentsInChildren<ParticleSystemRenderer>(true);
@@ -115,7 +100,6 @@ public class CardSlot : MonoBehaviour, IDropHandler
                     r.sortingOrder = 50;
                 }
 
-                // EFEKTÝN RENGÝNÝ KARTIN ELEMENTÝNE GÖRE DEÐÝÞTÝR
                 Color elementColor = GetElementColor(droppedCardDisplay.cardData.element);
                 ParticleSystem[] particles = activePlacementVFX.GetComponentsInChildren<ParticleSystem>(true);
                 foreach (var ps in particles)
@@ -200,7 +184,6 @@ public class CardSlot : MonoBehaviour, IDropHandler
 
         StartCoroutine(AnimateCardArrival(newCardObj));
 
-        // --- FÝZYON BÝTÝNCE YENÝ KART ÝÇÝN ELEMENT EFEKTÝ YARAT ---
         if (elementPlacementVFX != null)
         {
             if (activePlacementVFX != null) Destroy(activePlacementVFX);
@@ -223,21 +206,81 @@ public class CardSlot : MonoBehaviour, IDropHandler
         }
     }
 
+    // --- ÇÖZÜM: MILIMETRIK UI HÝZALAMASI (RectTransform) ---
     IEnumerator AnimateCardArrival(GameObject cardObj)
     {
-        float t = 0;
-        float duration = 0.3f;
-        float targetScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.cardInSlotScale : 1.5f;
+        if (cardObj == null) yield break;
 
-        if (cardObj != null) cardObj.transform.localScale = Vector3.zero;
+        RectTransform rect = cardObj.GetComponent<RectTransform>();
+
+        float t = 0;
+        float duration = 0.25f;
+
+        // --- DÜZELTME: Animasyon süresince geçici dev boyutta baþlasýn ---
+        Vector3 targetPos = Vector3.zero;
+        Vector3 startPos = new Vector3(0, 200f, -100f);
+
+        // Havadayken büyük, yere çarpýnca GlobalScaleManager'ýn istediði boyuta "doðal" düþsün
+        float finalScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.cardInSlotScale : 1.0f;
+        Vector3 targetScaleVec = Vector3.one * finalScale;
+        Vector3 startScaleVec = targetScaleVec * 2.0f;
+
+        Quaternion targetRot = Quaternion.identity;
+        Quaternion startRot = Quaternion.Euler(45f, 0f, -20f);
+
+        if (AudioManager.instance != null) AudioManager.instance.PlayCardPaper();
 
         while (t < 1)
         {
+            if (cardObj == null) yield break;
             t += Time.deltaTime / duration;
-            float smoothT = t * t * (3f - 2f * t);
-            if (cardObj != null) cardObj.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one * targetScale, smoothT);
+            float smoothT = t * t * t;
+
+            rect.anchoredPosition3D = Vector3.Lerp(startPos, targetPos, smoothT);
+            rect.localScale = Vector3.Lerp(startScaleVec, targetScaleVec, smoothT);
+            rect.localRotation = Quaternion.Lerp(startRot, targetRot, smoothT);
+
             yield return null;
         }
-        if (cardObj != null) cardObj.transform.localScale = Vector3.one * targetScale;
+
+        // --- YERE ÇARPMA VE TESLÝM ETME ---
+        if (cardObj != null)
+        {
+            rect.anchoredPosition3D = targetPos;
+            rect.localRotation = targetRot;
+
+            // DÜZELTME: Kartý artýk dev 1.5x'e sabitlemiyoruz!
+            // SquashAndStretch animasyonunu orijinal boyutu üzerinden yapmasý için finalScale'i veriyoruz
+            yield return StartCoroutine(SquashAndStretch(rect, targetScaleVec));
+
+            if (AudioManager.instance != null) AudioManager.instance.PlayImpactSound(ElementType.Earth, 1);
+        }
+    }
+
+    IEnumerator SquashAndStretch(Transform cardTransform, Vector3 originalScale)
+    {
+        if (cardTransform == null) yield break;
+
+        Vector3 squashScale = new Vector3(originalScale.x * 1.15f, originalScale.y * 0.85f, originalScale.z);
+
+        float t = 0;
+        while (t < 1)
+        {
+            if (cardTransform == null) yield break;
+            t += Time.deltaTime / 0.05f;
+            cardTransform.localScale = Vector3.Lerp(originalScale, squashScale, t);
+            yield return null;
+        }
+
+        t = 0;
+        while (t < 1)
+        {
+            if (cardTransform == null) yield break;
+            t += Time.deltaTime / 0.1f;
+            cardTransform.localScale = Vector3.Lerp(squashScale, originalScale, t);
+            yield return null;
+        }
+
+        if (cardTransform != null) cardTransform.localScale = originalScale;
     }
 }

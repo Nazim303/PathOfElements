@@ -1,15 +1,19 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-
 public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Transform originalParent;
-    private Vector3 originalPosition; // Yerel pozisyonu hatýrlamak için
+    private Vector3 originalPosition;
 
     private HandVisualManager visualManager;
+    private float smoothVelocity = 0f;
+
+    // --- YENÝ: Akýcý takip ve fare offset'i için deðiþkenler ---
+    private bool isDragging = false;
+    private Vector3 targetDragPosition;
 
     void Awake()
     {
@@ -20,11 +24,9 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-
         TurnManager tm = FindObjectOfType<TurnManager>();
         if (tm != null && tm.state != BattleState.PLAYERTURN)
         {
-            // Sýra oyuncuda deðilse sürüklemeyi baþlatma
             eventData.pointerDrag = null;
             return;
         }
@@ -32,7 +34,6 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         originalParent = transform.parent;
         originalPosition = rectTransform.anchoredPosition;
 
-        // Visual Manager'ý bul ve bu kartý "Sürükleniyor" olarak iþaretle
         visualManager = GetComponentInParent<HandVisualManager>();
         if (visualManager != null)
         {
@@ -42,60 +43,71 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.6f;
 
-        // Sürüklerken diðer UI'larýn üstünde görünmesi için geçici olarak en dýþa alabilirsin
-        // transform.SetParent(transform.root); // Bu satýr opsiyonel, UI yapýna göre
+        // Baþlangýç hedef noktasýný ayarla
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(
+            rectTransform.parent as RectTransform,
+            eventData.position,
+            eventData.pressEventCamera,
+            out targetDragPosition);
+
+        isDragging = true;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        RectTransform rectTransform = GetComponent<RectTransform>();
-
-        // --- YENÝ EKLENEN ÇEVÝRÝ KODU ---
-        // Farenin piksel koordinatýný, kameranýn render ettiði gerçek dünya koordinatýna çevirir!
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-            rectTransform,
+            rectTransform.parent as RectTransform,
             eventData.position,
-            eventData.pressEventCamera, // Týklamayý algýlayan kamerayý referans alýr
+            eventData.pressEventCamera,
             out Vector3 globalMousePos))
         {
-            // Kartýn Z eksenini (derinliðini) bozmamak için X ve Y'yi f ??????, Z'yi kendi deðerinde býrakýyoruz
-            transform.position = new Vector3(globalMousePos.x, globalMousePos.y, transform.position.z);
+            targetDragPosition = globalMousePos; // Anlýk fare konumunu hedef olarak kaydet
+        }
+
+        // --- YANA YATMA (TILT) EFEKTÝ ---
+        float targetZRotation = eventData.delta.x * -0.25f;
+        targetZRotation = Mathf.Clamp(targetZRotation, -15f, 15f);
+
+        float currentZ = transform.localEulerAngles.z;
+        if (currentZ > 180) currentZ -= 360;
+
+        float newZ = Mathf.SmoothDamp(currentZ, targetZRotation, ref smoothVelocity, 0.05f);
+        transform.localEulerAngles = new Vector3(0, 0, newZ);
+    }
+
+    // --- YENÝ: YUMUÞAK TAKÝP VE FAREDEN KAÇMA (OFFSET) MANTIÐI ---
+    void Update()
+    {
+        if (isDragging)
+        {
+            // Kartý farenin bir miktar yukarýsýnda tut (kart yüksekliðinin %40'ý kadar)
+            // Bu sayede oyuncunun parmaðý/faresi, kartýn açýklamalarýný veya düþmaný kapatmaz.
+            float yOffsetAmount = (rectTransform.rect.height * 0.4f) * transform.lossyScale.y;
+            Vector3 offset = transform.up * yOffsetAmount;
+
+            // Farenin anlýk yerine + offset'e doðru yaylanarak (Lerp) git
+            transform.position = Vector3.Lerp(transform.position, targetDragPosition + offset, Time.deltaTime * 20f);
         }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        isDragging = false;
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
+
+        // Kartý býraktýðýmýzda açýsýný anýnda sýfýrla (dikleþsin)
+        transform.localEulerAngles = Vector3.zero;
 
         if (visualManager != null)
         {
             visualManager.StopDraggingCard();
         }
 
-        // --- KRÝTÝK KONTROL ---
-        // Eðer kartýn ebeveyni hala originalParent ise (yani yeni bir yere býrakýlmadýysa)
-        // VEYA ebeveyni deðiþmiþ olsa bile geçerli bir slot deðilse (boþluða býrakýldýysa)
-
-        // Basit Mantýk: OnDrop (Slot scriptleri) kartýn parent'ýný deðiþtirir.
-        // Eðer parent deðiþmediyse, kart bir slota girmemiþ demektir. Geri dönmeli.
-
         if (transform.parent == originalParent || transform.parent == transform.root)
         {
-            // Eski yerine dön
             transform.SetParent(originalParent);
             rectTransform.anchoredPosition = originalPosition;
-
-            // Eðer HandVisualManager varsa o zaten pozisyonu düzeltecektir, sorun yok.
-        }
-        else
-        {
-            // Kartýn parent'ý deðiþmiþ (yani bir slota girmiþ).
-            // KURAL: Slota giren kart ele dönemez.
-            // Ama zaten OnDrop sadece slotlarda var, HandArea'da yok.
-            // Yani oyuncu kartý slottan alýp HandArea'ya sürüklerse, HandArea'da OnDrop olmadýðý için
-            // parent deðiþmeyecek ve yukarýdaki "if" bloðuna girip slota geri dönecek.
-            // BU ÝSTEDÝÐÝN DAVRANIÞI OTOMATÝK SAÐLAR.
         }
     }
 }

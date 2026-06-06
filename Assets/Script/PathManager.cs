@@ -205,6 +205,13 @@ public class PathManager : MonoBehaviour
 
         if (currentNode != null)
         {
+
+            if (currentNode.realPathType == PathType.Boss)
+            {
+                if (GameOverManager.instance != null) GameOverManager.instance.TriggerVictory();
+                return; // Haritayý açma, kodu burada kes.
+            }
+
             currentNode.SetCompleted();
 
             if (mapGenerator != null)

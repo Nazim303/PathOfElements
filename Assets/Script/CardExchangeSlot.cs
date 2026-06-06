@@ -148,24 +148,42 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
         {
             case SupportEffect.DrawExtraCards:
                 dm.DrawCard(card.supportValue, playedCardObj);
-                if (AudioManager.instance != null) AudioManager.instance.PlayGambling(); // YENÝ (Kumar/Þans Sesi)
+                if (AudioManager.instance != null) AudioManager.instance.PlayGambling();
                 break;
 
             case SupportEffect.DiscardHandAndDraw:
                 dm.DiscardHandAndDrawNew(card.supportValue, playedCardObj);
-                if (AudioManager.instance != null) AudioManager.instance.PlayGambling(); // YENÝ
+                if (AudioManager.instance != null) AudioManager.instance.PlayGambling();
                 break;
 
             case SupportEffect.GainGold:
                 if (PlayerManager.instance != null) PlayerManager.instance.AddGold(card.supportValue);
-                if (AudioManager.instance != null) AudioManager.instance.PlayGreed(); // YENÝ (Açgözlülük/Altýn Sesi)
+                if (AudioManager.instance != null) AudioManager.instance.PlayGreed();
                 break;
+
+            case SupportEffect.HealPlayer:
+                if (PlayerManager.instance != null) PlayerManager.instance.Heal(card.supportValue);
+
+                // --- ÇÖZÜM: KAN TRANSFERÝ VEYA SU ÞÝFASI EFEKTÝ BURADA ÇALIÞACAK ---
+                if (card.element == ElementType.Water && castWaterHealPrefab != null)
+                {
+                    GameObject fx = Instantiate(castWaterHealPrefab, transform.position, Quaternion.identity, transform.root);
+                    fx.transform.SetAsLastSibling();
+                    Destroy(fx, 2f);
+                }
+                else if (castBloodTransferPrefab != null) // Su deðilse Kan Efektini çal!
+                {
+                    GameObject fx = Instantiate(castBloodTransferPrefab, transform.position, Quaternion.identity, transform.root);
+                    fx.transform.SetAsLastSibling();
+                    Destroy(fx, 2f);
+                }
+                break;
+
             case SupportEffect.GainEnergy: if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(card.supportValue); break;
             case SupportEffect.GainShield: if (PlayerManager.instance != null) PlayerManager.instance.AddShield(card.supportValue); break;
             case SupportEffect.ChangeTerrain: if (TerrainManager.instance != null) TerrainManager.instance.ChangeTerrain(card.element); break;
         }
 
-        // --- YENÝ: KAN TRANSFERÝ EFEKTÝ (Eðer HalveEnemyHealth vs varsa) ---
         if (card.specialEffect == SpecialEffect.HalveEnemyHealth && castBloodTransferPrefab != null)
         {
             GameObject fx = Instantiate(castBloodTransferPrefab, transform.position, Quaternion.identity, transform.root);
@@ -173,7 +191,6 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             Destroy(fx, 2f);
         }
     }
-
     IEnumerator CastAndDestroyCard(GameObject cardObj, DeckManager dmRef, bool drawReplacement)
     {
         if (castEffectPrefab != null)

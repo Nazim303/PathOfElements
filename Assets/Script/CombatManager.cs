@@ -489,9 +489,7 @@ public class CombatManager : MonoBehaviour
         }
         else
         {
-            // ========================================================
-            // ?? DURUM B: NORMAL SALDIRI (Ve Element Güçlendiricileri)
-            // ========================================================
+           
             if (isFullCombo) Debug.Log("?? TAM ELEMENTAL KOMBO (AOE) AKTÝF! ??");
             else if (isSplitCombo) Debug.Log("?? AYRIK ÝKÝLÝ KOMBO (SPLIT) AKTÝF! ??");
 
@@ -636,6 +634,11 @@ public class CombatManager : MonoBehaviour
                         else if (card.cardType == CardType.Heal)
                         {
                             if (PlayerManager.instance != null) PlayerManager.instance.Heal(card.healAmount);
+                        }
+                        else if (card.cardType == CardType.Support) // --- YENÝ EKLENEN KORUMA ---
+                        {
+                            Debug.Log($"{card.cardName} bir Destek (Support) kartýdýr ve normal slottan etki etmez! Lütfen Exchange (Feda) yuvasýný kullanýn.");
+                            // Kart çöpe gidecek ama hasar falan vurmayacak.
                         }
                         else
                         {

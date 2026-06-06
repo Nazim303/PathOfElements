@@ -3681,7 +3681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cca33ea392757648aeb4f997392be17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameSceneName: SampleScene
+  gameSceneName: NewTutorialScene
   backgroundVideoPlayer: {fileID: 223068554}
   introVideoClip: {fileID: 32900000, guid: a757d8d55175bfc4a82b183f90be8edf, type: 3}
   loopVideoClip: {fileID: 32900000, guid: b16a74e1450125442b380b3af1d2fe7d, type: 3}
