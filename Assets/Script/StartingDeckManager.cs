@@ -8,20 +8,19 @@ public class StartingDeckManager : MonoBehaviour
     public static StartingDeckManager instance;
 
     [Header("UI References")]
-    public GameObject selectionPanel;         // Ana Panel
-    public Transform availableCardsContainer; // Üst Taraf (Tüm Kartlar)
-    public Transform selectedCardsContainer;  // Alt Taraf (Seçilen 12 Kart)
-    public GameObject cardPrefab;             // Kart Prefabý (DeckManager'daki ile ayný)
-    public Button confirmButton;              // Belirle Butonu
-    public TextMeshProUGUI countText;         // "X / 12" yazýsý
+    public GameObject selectionPanel;
+    public Transform availableCardsContainer;
+    public Transform selectedCardsContainer;
+    public GameObject cardPrefab;
     public GameObject supportCardPrefab;
+    public Button confirmButton;
+    public TextMeshProUGUI countText;
 
     [Header("Settings")]
-    public int requiredCardCount = 12;        // Limitimiz
+    public int requiredCardCount = 12;
 
     private List<CardData> unlockedPool = new List<CardData>();
     private List<CardData> selectedDeck = new List<CardData>();
-
     private DeckManager deckManager;
 
     void Awake() { if (instance == null) instance = this; }
@@ -31,121 +30,97 @@ public class StartingDeckManager : MonoBehaviour
         selectionPanel.SetActive(true);
         deckManager = FindObjectOfType<DeckManager>();
 
-        // 1. DeckManager'daki "All Cards" havuzunu tamamen al
+        // 1. Havuzu doldur ve DeckManager'daki asýl desteyi temizle
         unlockedPool = new List<CardData>(deckManager.allCardsInDeck);
         selectedDeck.Clear();
-
-        // DeckManager'ýn içini boþalt ki sonra biz dolduralým
         deckManager.allCardsInDeck.Clear();
 
-        // --- YENÝ: KAYDEDÝLEN DESTEYÝ YÜKLE ---
-        string savedDeckStr = PlayerPrefs.GetString("LastSelectedDeck", "");
-        if (!string.IsNullOrEmpty(savedDeckStr))
+        // 2. SADECE hafýzada kayýtlý bir deste varsa otomatik yükle
+        string savedDeck = PlayerPrefs.GetString("LastSelectedDeck", "");
+
+        if (!string.IsNullOrEmpty(savedDeck))
         {
-            string[] savedCardNames = savedDeckStr.Split(',');
-
-            foreach (string cName in savedCardNames)
+            string[] savedCardNames = savedDeck.Split(',');
+            foreach (string cardName in savedCardNames)
             {
-                if (string.IsNullOrEmpty(cName)) continue;
+                if (string.IsNullOrEmpty(cardName)) continue;
 
-                // Havuzda bu isimde bir kart var mý bul
-                CardData foundCard = unlockedPool.Find(x => x.cardName == cName);
+                CardData foundCard = unlockedPool.Find(c => c.cardName == cardName);
                 if (foundCard != null)
                 {
-                    // Varsa havuzdan çýkar, seçilenlere otomatik ekle
-                    unlockedPool.Remove(foundCard);
                     selectedDeck.Add(foundCard);
+                    unlockedPool.Remove(foundCard);
                 }
             }
         }
-        // --------------------------------------
+        // Eðer kayýtlý deste yoksa (örn: Tutorial'dan yeni gelmiþse) 
+        // sistem hiçbir þeyi otomatik seçmez, alt taraf boþ kalýr.
 
-        confirmButton.interactable = false;
-        confirmButton.onClick.RemoveAllListeners();
-        confirmButton.onClick.AddListener(ConfirmDeck);
-
-        RefreshUI(); // RefreshUI çalýþýnca butonu da otomatik aktif edecektir (Eðer 12 kart yüklendiyse)
+        RefreshSelectionUI();
     }
 
-    public void AddToDeck(DeckSelectionCard cardUI)
+    public void AddToDeck(DeckSelectionCard cardScript)
     {
-        // 12 limitini geçtiyse ekleme
-        if (selectedDeck.Count >= requiredCardCount) return;
-
-        unlockedPool.Remove(cardUI.myCard);
-        selectedDeck.Add(cardUI.myCard);
-        RefreshUI();
+        if (selectedDeck.Count < requiredCardCount)
+        {
+            selectedDeck.Add(cardScript.myCard);
+            unlockedPool.Remove(cardScript.myCard);
+            RefreshSelectionUI();
+        }
     }
 
-    public void RemoveFromDeck(DeckSelectionCard cardUI)
+    public void RemoveFromDeck(DeckSelectionCard cardScript)
     {
-        selectedDeck.Remove(cardUI.myCard);
-        unlockedPool.Add(cardUI.myCard);
-        RefreshUI();
+        unlockedPool.Add(cardScript.myCard);
+        selectedDeck.Remove(cardScript.myCard);
+        RefreshSelectionUI();
     }
 
-    void RefreshUI()
+    public void RefreshSelectionUI()
     {
-        // Mevcut görselleri temizle
+        // Havuzdaki kartlarý yarat
         foreach (Transform child in availableCardsContainer) Destroy(child.gameObject);
-        foreach (Transform child in selectedCardsContainer) Destroy(child.gameObject);
-
-        // --- Üst Tarafý Doldur ---
         foreach (CardData card in unlockedPool)
         {
-            // Kart türüne göre prefab seçimi
-            GameObject prefabToUse = cardPrefab;
-            if (card.cardType == CardType.Support && supportCardPrefab != null)
-            {
-                prefabToUse = supportCardPrefab;
-            }
-
+            GameObject prefabToUse = (card.cardType == CardType.Support && supportCardPrefab != null) ? supportCardPrefab : cardPrefab;
             GameObject obj = Instantiate(prefabToUse, availableCardsContainer);
             obj.transform.localScale = Vector3.one;
             obj.AddComponent<DeckSelectionCard>().Setup(card, this, false);
         }
 
-        // --- Alt Tarafý Doldur ---
+        // Seçilen kartlarý yarat
+        foreach (Transform child in selectedCardsContainer) Destroy(child.gameObject);
         foreach (CardData card in selectedDeck)
         {
-            // Kart türüne göre prefab seçimi
-            GameObject prefabToUse = cardPrefab;
-            if (card.cardType == CardType.Support && supportCardPrefab != null)
-            {
-                prefabToUse = supportCardPrefab;
-            }
-
+            GameObject prefabToUse = (card.cardType == CardType.Support && supportCardPrefab != null) ? supportCardPrefab : cardPrefab;
             GameObject obj = Instantiate(prefabToUse, selectedCardsContainer);
             obj.transform.localScale = Vector3.one;
             obj.AddComponent<DeckSelectionCard>().Setup(card, this, true);
         }
 
-        // Sayacý ve Butonu güncelle
         if (countText != null) countText.text = $"{selectedDeck.Count} / {requiredCardCount}";
-        confirmButton.interactable = (selectedDeck.Count == requiredCardCount); // Sadece 12 olunca aktifleþir
+        if (confirmButton != null) confirmButton.interactable = (selectedDeck.Count == requiredCardCount);
     }
-    void ConfirmDeck()
+
+    public void ConfirmDeck()
     {
-        // 1. Oyuncunun seçtiði 12 kartý asýl desteye at
         deckManager.allCardsInDeck = new List<CardData>(selectedDeck);
 
-        // --- YENÝ: SEÇÝLEN DESTEYÝ HAFIZAYA KAYDET ---
+        // Seçilen desteyi bir sonraki oyun için hafýzaya kaydet
         string deckToSave = "";
         foreach (CardData card in selectedDeck)
         {
-            deckToSave += card.cardName + ","; // Kart isimlerini virgülle ayýrarak birleþtir
+            deckToSave += card.cardName + ",";
         }
         PlayerPrefs.SetString("LastSelectedDeck", deckToSave);
         PlayerPrefs.Save();
-        // ---------------------------------------------
 
-        // 2. Seçilmeyen dýþlanan kartlarý, Taverna (Companion) havuzuna fýrlat
+        // Dýþlanan kartlarý Taverna (Companion) havuzuna fýrlat
         if (CompanionEvent.instance != null)
         {
             CompanionEvent.instance.allCompanionCards.AddRange(unlockedPool);
         }
 
-        // 3. Paneli kapat ve haritayý aç
         selectionPanel.SetActive(false);
         if (PathManager.instance != null) PathManager.instance.ShowMap();
     }

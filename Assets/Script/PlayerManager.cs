@@ -153,7 +153,7 @@ public class PlayerManager : MonoBehaviour
         UpdateUI();
     }
 
-    void UpdateUI()
+   public  void UpdateUI()
     {
         if (goldText != null) goldText.text = $"{currentGold} G";
         if (shieldText != null) shieldText.gameObject.SetActive(false);

@@ -245,8 +245,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -94.2, y: -140.7}
-  m_SizeDelta: {x: 20.964, y: 22.4938}
+  m_AnchoredPosition: {x: -94.1, y: -144.7}
+  m_SizeDelta: {x: 19.4086, y: 20.5794}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1155446906041727928
 CanvasRenderer:
@@ -278,8 +278,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 987df72e00bb63749922124423942844, type: 2}
-  m_sharedMaterial: {fileID: 6203209605918324484, guid: 987df72e00bb63749922124423942844, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8435c3fc45447944a97d4ab2f844e11d, type: 2}
+  m_sharedMaterial: {fileID: 8554279265097295397, guid: 8435c3fc45447944a97d4ab2f844e11d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -303,7 +303,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 7.3
+  m_fontSize: 9.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -567,8 +567,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 14.3, y: -144.72}
-  m_SizeDelta: {x: 68.3824, y: 14.4545}
+  m_AnchoredPosition: {x: 6.291245, y: -145.7}
+  m_SizeDelta: {x: 60.871, y: 12.8403}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4584538500554996910
 CanvasRenderer:
@@ -600,8 +600,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 987df72e00bb63749922124423942844, type: 2}
-  m_sharedMaterial: {fileID: 6203209605918324484, guid: 987df72e00bb63749922124423942844, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8435c3fc45447944a97d4ab2f844e11d, type: 2}
+  m_sharedMaterial: {fileID: 8554279265097295397, guid: 8435c3fc45447944a97d4ab2f844e11d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -625,7 +625,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 9.4
+  m_fontSize: 11.45
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

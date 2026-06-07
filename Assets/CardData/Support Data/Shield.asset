@@ -20,7 +20,10 @@ MonoBehaviour:
   element: 0
   baseDamage: 0
   healAmount: 0
+  cardPower: 1
+  isElementalModifier: 0
   specialEffect: 0
   energyCost: 0
   supportEffect: 5
-  supportValue: 12
+  supportValue: 8
+  journalDescription: 

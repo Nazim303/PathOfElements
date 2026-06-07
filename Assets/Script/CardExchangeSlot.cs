@@ -98,18 +98,31 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             CombatManager cm = FindObjectOfType<CombatManager>();
             if (cm != null) cm.ClearSlot(oldSlot.slotIndex);
         }
-        // --- YENÝ: KART YUVAYA GÝRÝÞ/EXCHANGE SESÝ ---
+
         if (AudioManager.instance != null) AudioManager.instance.PlayExchange();
 
         // --- FEDA DURUMLARI ---
-
         if (cardDisplay.cardData.isElementalModifier)
         {
-
             int penaltyCost = hpCost * 2;
-            if (PlayerManager.instance.currentHealth <= penaltyCost) return;
 
-            PlayerManager.instance.TakeDamage(penaltyCost);
+            if (PlayerManager.instance.currentHealth < penaltyCost) return;
+
+            // Kalkaný Es Geç - Direkt Candan Düþ
+            PlayerManager.instance.currentHealth -= penaltyCost;
+            if (PlayerManager.instance.currentHealth < 0) PlayerManager.instance.currentHealth = 0;
+            PlayerManager.instance.UpdateUI();
+
+            // --- YENÝ: KAN BEDELÝ ÖDENDÝÐÝNDE EKRAN SALLANSIN ---
+            if (UIShake.instance != null) UIShake.instance.TriggerShake(0.2f, 15f);
+
+            // Ölüm Kontrolü
+            if (PlayerManager.instance.currentHealth <= 0)
+            {
+                if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
+                return;
+            }
+
             dm.AddToDiscard(cardDisplay.cardData);
             DisableCardRaycast(droppedObj);
             StartCoroutine(CastAndDestroyCard(droppedObj, dm, false));
@@ -125,9 +138,23 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
         }
         else
         {
-            if (PlayerManager.instance.currentHealth <= hpCost) return;
+            if (PlayerManager.instance.currentHealth < hpCost) return;
 
-            PlayerManager.instance.TakeDamage(hpCost);
+            // Kalkaný Es Geç - Direkt Candan Düþ
+            PlayerManager.instance.currentHealth -= hpCost;
+            if (PlayerManager.instance.currentHealth < 0) PlayerManager.instance.currentHealth = 0;
+            PlayerManager.instance.UpdateUI();
+
+            // --- YENÝ: KAN BEDELÝ ÖDENDÝÐÝNDE EKRAN SALLANSIN ---
+            if (UIShake.instance != null) UIShake.instance.TriggerShake(0.2f, 15f);
+
+            // Ölüm Kontrolü
+            if (PlayerManager.instance.currentHealth <= 0)
+            {
+                if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
+                return;
+            }
+
             dm.AddToDiscard(cardDisplay.cardData);
             DisableCardRaycast(droppedObj);
             StartCoroutine(CastAndDestroyCard(droppedObj, dm, false));
@@ -135,6 +162,7 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(cardDisplay.cardData.energyCost);
         }
     }
+
 
     void DisableCardRaycast(GameObject obj)
     {
