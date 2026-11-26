@@ -2,15 +2,15 @@ using UnityEngine;
 
 public enum ItemEffectType
 {
-    IncreaseMaxHealth,  // Maksimum canı kalıcı artırır
-    BonusDamage,        // Tüm saldırılara kalıcı hasar ekler
-    FullHeal,           // Canı tamamen doldurur (Tek kullanımlık)
+    IncreaseMaxHealth,  // Maksimum canÄ± kalÄ±cÄ± artÄ±rÄ±r
+    BonusDamage,        // TÃ¼m saldÄ±rÄ±lara kalÄ±cÄ± hasar ekler
+    FullHeal,           // CanÄ± tamamen doldurur (Tek kullanÄ±mlÄ±k)
 
-    // --- YENİ EKLENEN TÜRLER ---
-    IncreaseMaxEnergy,  // Maksimum enerjiyi kalıcı artırır (Çok güçlü)
-    IncreaseMaxHandSize,// Elde tutulabilen maksimum kart sayısını artırır
-    GainGold,           // Parayla para almak? (Belki event'lerde kullanılır)
-    GainCard            // Satın alınınca desteye özel bir kart ekler
+    // --- YENÄ° EKLENEN TÃœRLER ---
+    IncreaseMaxEnergy,  // Maksimum enerjiyi kalÄ±cÄ± artÄ±rÄ±r (Ã‡ok gÃ¼Ã§lÃ¼)
+    IncreaseMaxHandSize,// Elde tutulabilen maksimum kart sayÄ±sÄ±nÄ± artÄ±rÄ±r
+    GainGold,           // Parayla para almak? (Belki event'lerde kullanÄ±lÄ±r)
+    GainCard            // SatÄ±n alÄ±nÄ±nca desteye Ã¶zel bir kart ekler
 }
 
 [CreateAssetMenu(fileName = "New Item", menuName = "Path of Elements/Shop Item")]
@@ -19,12 +19,12 @@ public class ItemData : ScriptableObject
     public string itemName;
     public Sprite icon;
     [TextArea] public string description;
-    public int cost;            // Altın fiyatı
+    public int cost;            // AltÄ±n fiyatÄ±
 
     [Header("Effect Settings")]
     public ItemEffectType effectType;
-    public int effectValue;     // Örn: +10 Max HP, +2 Hasar, +1 Enerji
+    public int effectValue;     // Ã–rn: +10 Max HP, +2 Hasar, +1 Enerji
 
     [Header("Card Reward (If applicable)")]
-    public CardData rewardCard; // Eğer bu eşya bir kart veriyorsa
+    public CardData rewardCard; // EÄŸer bu eÅŸya bir kart veriyorsa
 }

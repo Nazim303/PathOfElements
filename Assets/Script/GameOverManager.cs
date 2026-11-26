@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class GameOverManager : MonoBehaviour
 {
@@ -11,11 +12,11 @@ public class GameOverManager : MonoBehaviour
     public TextMeshProUGUI statsText;
 
     [Header("Victory UI References")]
-    public GameObject victoryPanel;       // --- YENÝ: Kazanma Paneli ---
-    public TextMeshProUGUI victoryStatsText; // --- YENÝ: Kazanma Ýstatistikleri ---
+    public GameObject victoryPanel;       // --- YENÄ°: Kazanma Paneli ---
+    public TextMeshProUGUI victoryStatsText; // --- YENÄ°: Kazanma Ä°statistikleri ---
 
     [Header("Scene Settings")]
-    public string mainMenuSceneName = "MainMenu";
+    public string mainMenuSceneName = "Menu Scene";
 
     void Awake()
     {
@@ -25,7 +26,7 @@ public class GameOverManager : MonoBehaviour
     void Start()
     {
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
-        if (victoryPanel != null) victoryPanel.SetActive(false); // YENÝ
+        if (victoryPanel != null) victoryPanel.SetActive(false); // YENÄ°
     }
 
     // --- KAYBETME DURUMU ---
@@ -37,6 +38,13 @@ public class GameOverManager : MonoBehaviour
         {
             gameOverPanel.SetActive(true);
             gameOverPanel.transform.SetAsLastSibling();
+            gameOverPanel.transform.localScale = Vector3.one * 0.85f;
+            gameOverPanel.transform.DOScale(Vector3.one, 0.35f).SetEase(Ease.OutBack).SetUpdate(true);
+
+            CanvasGroup cg = gameOverPanel.GetComponent<CanvasGroup>();
+            if (cg == null) cg = gameOverPanel.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+            cg.DOFade(1f, 0.3f).SetUpdate(true);
         }
 
         if (AudioManager.instance != null) AudioManager.instance.StopBGM();
@@ -52,19 +60,26 @@ public class GameOverManager : MonoBehaviour
         }
     }
 
-    // --- YENÝ: KAZANMA DURUMU ---
+    // --- YENÄ°: KAZANMA DURUMU ---
     public void TriggerVictory()
     {
-        Time.timeScale = 0f; // Zamaný durdur
+        Time.timeScale = 0f; // ZamanÄ± durdur
 
         if (victoryPanel != null)
         {
             victoryPanel.SetActive(true);
             victoryPanel.transform.SetAsLastSibling();
+            victoryPanel.transform.localScale = Vector3.one * 0.85f;
+            victoryPanel.transform.DOScale(Vector3.one, 0.35f).SetEase(Ease.OutBack).SetUpdate(true);
+
+            CanvasGroup cg = victoryPanel.GetComponent<CanvasGroup>();
+            if (cg == null) cg = victoryPanel.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+            cg.DOFade(1f, 0.3f).SetUpdate(true);
         }
 
         if (AudioManager.instance != null) AudioManager.instance.StopBGM();
-        // Ýstersen buraya AudioManager.instance.PlayVictorySFX(); gibi kutlama sesi ekleyebilirsin
+        // Ä°stersen buraya AudioManager.instance.PlayVictorySFX(); gibi kutlama sesi ekleyebilirsin
 
         int enemies = PlayerManager.instance != null ? PlayerManager.instance.enemiesDefeated : 0;
         int paths = PlayerManager.instance != null ? PlayerManager.instance.pathsCompleted : 0;

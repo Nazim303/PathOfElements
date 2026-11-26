@@ -12,7 +12,7 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public Image artImage;
     public Image banderimage;
     public TextMeshProUGUI damageText;
-    public Image elementIcon; // Ana Element Ýkonu
+    public Image elementIcon; // Ana Element Ä°konu
     public TextMeshProUGUI descriptionText;
 
     public Transform costContainer;
@@ -25,7 +25,7 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // Eðer kart eldeyse (HandArea'nýn çocuðuysa)
+        // EÄŸer kart eldeyse (HandArea'nÄ±n Ã§ocuÄŸuysa)
         HandVisualManager visualManager = GetComponentInParent<HandVisualManager>();
         if (visualManager != null)
         {
@@ -44,33 +44,26 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void LoadCard(CardData data)
     {
+        if (data == null) return;
         this.cardData = data;
 
-        nameText.text = data.cardName;
-        artImage.sprite = data.cardArt;
-        banderimage.sprite = data.cardbander;
+        if (nameText != null) nameText.text = data.cardName;
+        if (artImage != null) artImage.sprite = data.cardArt;
+        if (banderimage != null) banderimage.sprite = data.cardbander;
         if (damageText != null) damageText.text = data.baseDamage.ToString();
 
-        // 1. Önce Element Rengini Belirle
-        Color targetColor = Color.white; // Varsayýlan (None)
-        switch (data.element)
-        {
-            case ElementType.Fire: targetColor = Color.white; break;
-            case ElementType.Water: targetColor = Color.white; break;
-            case ElementType.Earth: targetColor = Color.white; break; // Kahverengi
-            case ElementType.Air: targetColor = Color.white; break;
-            default: targetColor = Color.white; break; // None veya diðerleri için Gri
-        }
+        // 1. Ã–nce Element Rengini Belirle
+        Color targetColor = GetElementColor(data.element);
 
-        // 2. Ana Ýkonu Boya (Döngü dýþýnda, bir kere)
+        // 2. Ana Ä°konu Boya (DÃ¶ngÃ¼ dÄ±ÅŸÄ±nda, bir kere)
         if (elementIcon != null) elementIcon.color = targetColor;
 
         if (descriptionText != null)
         {
-            descriptionText.text = data.description; // CardData'daki yazýyý UI'a aktar
+            descriptionText.text = data.description; // CardData'daki yazÄ±yÄ± UI'a aktar
         }
 
-        // 3. Enerji Ýkonlarýný Oluþtur ve Boya
+        // 3. Enerji Ä°konlarÄ±nÄ± OluÅŸtur ve Boya
         if (costContainer != null && costIconPrefab != null)
         {
             // Eskileri temizle
@@ -82,13 +75,29 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
                 GameObject iconObj = Instantiate(costIconPrefab, costContainer);
                 Image iconImg = iconObj.GetComponent<Image>();
 
-                // --- DÜZELTME BURADA ---
-                // elementIcon.color yerine iconImg.color kullanýyoruz.
+                // --- DÃœZELTME BURADA ---
+                // elementIcon.color yerine iconImg.color kullanÄ±yoruz.
                 if (iconImg != null)
                 {
                     iconImg.color = targetColor;
                 }
             }
+        }
+    }
+
+    public static Color GetElementColor(ElementType type)
+    {
+        switch (type)
+        {
+            case ElementType.Fire: return new Color(1f, 0.28f, 0.22f); // AteÅŸ KÄ±rmÄ±zÄ±
+            case ElementType.Water: return new Color(0.25f, 0.65f, 1f); // Su Mavisi
+            case ElementType.Earth: return new Color(0.55f, 0.78f, 0.3f); // DoÄŸa YeÅŸili
+            case ElementType.Air: return new Color(0.4f, 0.95f, 0.95f); // Hava CamgÃ¶beÄŸi
+            case ElementType.Magma: return new Color(1f, 0.45f, 0.15f); // Magma Turuncu
+            case ElementType.Steam: return new Color(0.75f, 0.85f, 1f); // Buhar
+            case ElementType.Ice: return new Color(0.5f, 0.88f, 1f); // Buz Mavisi
+            case ElementType.Dust: return new Color(0.85f, 0.75f, 0.5f); // Kum / Toz
+            default: return Color.white;
         }
     }
 }

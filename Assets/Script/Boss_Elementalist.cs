@@ -8,27 +8,23 @@ public class Boss_Elementalist : BossBehavior
 
     public override IEnumerator ExecuteBossTurn()
     {
-        // 1. Saldýr
+        // 1. SaldÄ±r
         yield return StartCoroutine(myDisplay.AttackAnimation());
         if (PlayerManager.instance != null)
         {
             PlayerManager.instance.TakeDamage(myDisplay.enemyData.damage);
         }
 
-        // 2. Element Deðiþtir
+        // 2. Element DeÄŸiÅŸtir
         elementIndex++;
         if (elementIndex >= elements.Length) elementIndex = 0;
 
         ElementType newElement = elements[elementIndex];
 
-        // Datayý anlýk deðiþtiriyoruz (ScriptableObject kopyasý üzerinde çalýþtýðýmýz için güvenli)
-        myDisplay.enemyData.element = newElement;
+        // EnemyDisplay Ã¼zerindeki anlÄ±k elementi deÄŸiÅŸtiriyoruz (ScriptableObject asset'ini bozmaz)
+        myDisplay.ChangeElement(newElement);
 
-        // Görsel güncelleme (Renk deðiþimi)
-        // EnemyDisplay içinde UpdateElementVisual public olmalý (Adým 6'da düzelteceðiz)
-        myDisplay.UpdateElementVisual(newElement);
-
-        Debug.Log($"Boss Element Deðiþtirdi: {newElement}");
+        Debug.Log($"Boss Element DeÄŸiÅŸtirdi: {newElement}");
         yield return new WaitForSeconds(1f);
     }
 }

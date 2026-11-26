@@ -18,7 +18,7 @@ public class PathManager : MonoBehaviour
     public MapNode currentNode;
     public bool isPeekingMap = false;
 
-    // --- KRÝTÝK DÜZELTME: ÇÝFT TIKLAMA VE SPAM KÝLÝDÝ ---
+    // --- KRÄ°TÄ°K DÃœZELTME: Ã‡Ä°FT TIKLAMA VE SPAM KÄ°LÄ°DÄ° ---
     public bool isEventActive = false;
 
     [Header("UI Elements")]
@@ -56,7 +56,7 @@ public class PathManager : MonoBehaviour
     {
         isPeekingMap = false;
 
-        // HARÝTAYA DÖNDÜÐÜMÜZDE KÝLÝDÝ AÇIYORUZ
+        // HARÄ°TAYA DÃ–NDÃœÄžÃœMÃœZDE KÄ°LÄ°DÄ° AÃ‡IYORUZ
         isEventActive = false;
 
         if (AudioManager.instance != null) AudioManager.instance.PlayBGM(AudioManager.instance.mapBGM);
@@ -72,15 +72,15 @@ public class PathManager : MonoBehaviour
 
     public void OnNodeSelected(MapNode node)
     {
-        // --- KRÝTÝK KONTROL ---
-        // Eðer zaten bir düðüme týklandýysa ve etkinlik açýlýyorsa, ekstra týklamalarý reddet!
+        // --- KRÄ°TÄ°K KONTROL ---
+        // EÄŸer zaten bir dÃ¼ÄŸÃ¼me tÄ±klandÄ±ysa ve etkinlik aÃ§Ä±lÄ±yorsa, ekstra tÄ±klamalarÄ± reddet!
         if (isEventActive)
         {
-            Debug.Log("[SÝSTEM] Çift týklama engellendi! Zaten bir patikaya giriliyor.");
+            Debug.Log("[SÄ°STEM] Ã‡ift tÄ±klama engellendi! Zaten bir patikaya giriliyor.");
             return;
         }
 
-        // KÝLÝDÝ KAPAT
+        // KÄ°LÄ°DÄ° KAPAT
         isEventActive = true;
 
         currentNode = node;
@@ -122,7 +122,8 @@ public class PathManager : MonoBehaviour
     void StartCombat(PathType type)
     {
         combatPanel.SetActive(true);
-        FindObjectOfType<TurnManager>().StartNewBattle(type);
+        TurnManager tm = TurnManager.instance != null ? TurnManager.instance : FindFirstObjectByType<TurnManager>();
+        if (tm != null) tm.StartNewBattle(type);
     }
 
     void StartDivinerEvent()
@@ -132,17 +133,17 @@ public class PathManager : MonoBehaviour
         if (DivinerManager.instance != null) DivinerManager.instance.OpenDivinerEvent();
     }
 
-    // Sýnýfýn üst kýsýmlarýna (isPeekingMap altýna) þu deðiþkeni ekle:
+    // SÄ±nÄ±fÄ±n Ã¼st kÄ±sÄ±mlarÄ±na (isPeekingMap altÄ±na) ÅŸu deÄŸiÅŸkeni ekle:
     private bool wasCombatActiveBeforePeek = false;
 
-    // Fonksiyonu tamamen bununla deðiþtir:
+    // Fonksiyonu tamamen bununla deÄŸiÅŸtir:
     public void ToggleMapOverlay()
     {
         isPeekingMap = !isPeekingMap;
 
         if (isPeekingMap)
         {
-            // --- YENÝ: Haritaya bakarken combat panelini geçici gizle ---
+            // --- YENÄ°: Haritaya bakarken combat panelini geÃ§ici gizle ---
             wasCombatActiveBeforePeek = combatPanel.activeSelf;
             if (wasCombatActiveBeforePeek) combatPanel.SetActive(false);
 
@@ -165,7 +166,7 @@ public class PathManager : MonoBehaviour
         }
         else
         {
-            // --- YENÝ: Haritayý kapatýnca combat panelini geri aç ---
+            // --- YENÄ°: HaritayÄ± kapatÄ±nca combat panelini geri aÃ§ ---
             if (wasCombatActiveBeforePeek) combatPanel.SetActive(true);
 
             if (currentNode != null && currentNode.nextNodes != null)
@@ -209,7 +210,7 @@ public class PathManager : MonoBehaviour
             if (currentNode.realPathType == PathType.Boss)
             {
                 if (GameOverManager.instance != null) GameOverManager.instance.TriggerVictory();
-                return; // Haritayý açma, kodu burada kes.
+                return; // HaritayÄ± aÃ§ma, kodu burada kes.
             }
 
             currentNode.SetCompleted();

@@ -10,18 +10,18 @@ public class TutorialManager : MonoBehaviour
     [Header("References")]
     public TutorialPopup popupUI;
 
-    [Header("Scripted Cards (Aþama 3-4)")]
-    public CardData waterCard;    // Element döngüsü için (Su)
-    public CardData earthCard;    // Element döngüsü için (Toprak - Zayýf)
-    public CardData comboCard;    // Kombo için (Ayný elementten herhangi bir kart)
+    [Header("Scripted Cards (AÅŸama 3-4)")]
+    public CardData waterCard;    // Element dÃ¶ngÃ¼sÃ¼ iÃ§in (Su)
+    public CardData earthCard;    // Element dÃ¶ngÃ¼sÃ¼ iÃ§in (Toprak - ZayÄ±f)
+    public CardData comboCard;    // Kombo iÃ§in (AynÄ± elementten herhangi bir kart)
 
-    [Header("Scripted Cards (Aþama 5 - Support)")]
-    public CardData supportCard1; // Örn: Heal veya Draw yapan bir destek kartý
-    public CardData supportCard2; // Örn: Gain Shield yapan bir destek kartý
+    [Header("Scripted Cards (AÅŸama 5 - Support)")]
+    public CardData supportCard1; // Ã–rn: Heal veya Draw yapan bir destek kartÄ±
+    public CardData supportCard2; // Ã–rn: Gain Shield yapan bir destek kartÄ±
 
-    [Header("Scripted Cards (Aþama 6-7)")]
-    public CardData terrainSupportCard; // Zemin deðiþtiren destek kartý
-    public CardData terrainAttackCard;  // Zeminle ayný elementte saldýrý kartý
+    [Header("Scripted Cards (AÅŸama 6-7)")]
+    public CardData terrainSupportCard; // Zemin deÄŸiÅŸtiren destek kartÄ±
+    public CardData terrainAttackCard;  // Zeminle aynÄ± elementte saldÄ±rÄ± kartÄ±
     public CardData fusionCardA;        // Fizyon Tarifindeki 1. Kart
     public CardData fusionCardB;        // Fizyon Tarifindeki 2. Kart
 
@@ -44,15 +44,15 @@ public class TutorialManager : MonoBehaviour
     {
         if (isTutoComplated == true)
         {
-            isTutoComplated = false; // KRÝTÝK: Sahnenin üst üste yüklenmesini engeller
-            Time.timeScale = 1f;     // KRÝTÝK: Zamanýn donuk kalmasýný engeller
+            isTutoComplated = false; // KRÄ°TÄ°K: Sahnenin Ã¼st Ã¼ste yÃ¼klenmesini engeller
+            Time.timeScale = 1f;     // KRÄ°TÄ°K: ZamanÄ±n donuk kalmasÄ±nÄ± engeller
             SceneManager.LoadScene("SampleScene");
         }
     }
 
     public void SkipTuto()
     {
-        Time.timeScale = 1f; // KRÝTÝK: Zamaný normale döndür
+        Time.timeScale = 1f; // KRÄ°TÄ°K: ZamanÄ± normale dÃ¶ndÃ¼r
         SceneManager.LoadScene("SampleScene");
     }
 
@@ -61,7 +61,7 @@ public class TutorialManager : MonoBehaviour
         yield return null;
 
         // ==========================================
-        // AÞAMA 1 & 2: DESTE SEÇÝMÝ VE HARÝTA
+        // AÅžAMA 1 & 2: DESTE SEÃ‡Ä°MÄ° VE HARÄ°TA
         // ==========================================
         isStepCompleted = false;
         popupUI.Show("Welcome!", "In this tutorial, we will learn the basic mechanics of the game in a safe environment.\n\nFirst, you must create your own deck. Choose 12 cards from the face-up cards and press the 'Select' button.", () => { isStepCompleted = true; });
@@ -71,28 +71,36 @@ public class TutorialManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         isStepCompleted = false;
-        popupUI.Show("Phats", "You've put together a fantastic deck!\n\nDuring training, we will only enter the Combat (Sword) paths. Click on the sword icon knot for our first training session.", () => { isStepCompleted = true; });
+        popupUI.Show("Paths", "You've put together a fantastic deck!\n\nDuring training, we will only enter the Combat (Sword) paths. Click on the sword icon node for our first training session.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => PathManager.instance.combatPanel.activeSelf);
 
         // ==========================================
-        // AÞAMA 3: SAVAÞIN TEMELLERÝ (RAUNT 1)
+        // AÅžAMA 3: SAVAÅžIN TEMELLERÄ° (RAUNT 1)
         // ==========================================
         yield return new WaitForSeconds(2.0f);
+
+        TurnManager tm = TurnManager.instance != null ? TurnManager.instance : FindFirstObjectByType<TurnManager>();
+        DeckManager dm = DeckManager.instance != null ? DeckManager.instance : FindFirstObjectByType<DeckManager>();
+        CombatManager cm = CombatManager.instance != null ? CombatManager.instance : FindFirstObjectByType<CombatManager>();
+
+        // Erken aÅŸamalarda kuklanÄ±n Ã¶lÃ¼p tutorial'Ä± kilitlemesini Ã¶nlemek iÃ§in canÄ±nÄ± gÃ¼venceye alÄ±yoruz
+        if (cm != null && cm.activeEnemies.Count > 0)
+        {
+            cm.activeEnemies[0].currentHealth = 999;
+            cm.activeEnemies[0].UpdateHealthUI(999);
+        }
+
         isStepCompleted = false;
         popupUI.Show("Fundamentals of War", "You are facing a Training Baby. It is a Fire element card and cannot attack you.\n\nDrag a card to an empty slot and watch the energy decrease in the bottom left. Then press the 'ATTACK' button on the right to end your turn.", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
-
-        TurnManager tm = FindObjectOfType<TurnManager>();
-        DeckManager dm = FindObjectOfType<DeckManager>();
-        CombatManager cm = FindObjectOfType<CombatManager>();
 
         yield return new WaitUntil(() => tm.state == BattleState.ENEMYTURN);
         yield return new WaitUntil(() => tm.state == BattleState.PLAYERTURN);
 
         // ==========================================
-        // AÞAMA 4: ELEMENT PUSULASI (RAUNT 2)
+        // AÅžAMA 4: ELEMENT PUSULASI (RAUNT 2)
         // ==========================================
         yield return new WaitForSeconds(1.0f);
         dm.DiscardHand(); dm.drawPile.Clear(); dm.discardPile.Clear();
@@ -107,7 +115,7 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitUntil(() => tm.state == BattleState.PLAYERTURN);
 
         // ==========================================
-        // AÞAMA 5: KOMBO SÝSTEMÝ (RAUNT 3)
+        // AÅžAMA 5: KOMBO SÄ°STEMÄ° (RAUNT 3)
         // ==========================================
         yield return new WaitForSeconds(1.0f);
         dm.DiscardHand(); dm.drawPile.Clear(); dm.discardPile.Clear();
@@ -116,19 +124,19 @@ public class TutorialManager : MonoBehaviour
 
         if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(5);
         isStepCompleted = false;
-        popupUI.Show("It's Combo Time!", "If you place cards of the SAME element in all 4 slots, a 'Full Combo' will be triggered, dealing Area of ??Effect (AOE) damage to all enemies.\n\nPlace all four cards you have on the table and feel the power!", () => { isStepCompleted = true; });
+        popupUI.Show("It's Combo Time!", "If you place cards of the SAME element in all 4 slots, a 'Full Combo' will be triggered, dealing Area of Effect (AOE) damage to all enemies.\n\nPlace all four cards you have on the table and feel the power!", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         yield return new WaitUntil(() => tm.state == BattleState.ENEMYTURN);
         yield return new WaitUntil(() => tm.state == BattleState.PLAYERTURN);
 
         // ==========================================
-        // AÞAMA 6: DESTEK KARTLARI VE FEDA (RAUNT 4)
+        // AÅžAMA 6: DESTEK KARTLARI VE FEDA (RAUNT 4)
         // ==========================================
         yield return new WaitForSeconds(1.0f);
         dm.DiscardHand(); dm.drawPile.Clear(); dm.discardPile.Clear();
 
-        // Oyuncuya iki tane destek kartý verelim
+        // Oyuncuya iki tane destek kartÄ± verelim
         dm.drawPile.Add(supportCard1);
         dm.drawPile.Add(supportCard2);
         dm.DrawCard(2);
@@ -141,7 +149,7 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitUntil(() => tm.state == BattleState.PLAYERTURN);
 
         // ==========================================
-        // AÞAMA 7: ZEMÝN (TERRAIN) MEKANÝÐÝ (RAUNT 5)
+        // AÅžAMA 7: ZEMÄ°N (TERRAIN) MEKANÄ°ÄžÄ° (RAUNT 5)
         // ==========================================
         yield return new WaitForSeconds(1.0f);
         dm.DiscardHand(); dm.drawPile.Clear(); dm.discardPile.Clear();
@@ -156,14 +164,14 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitUntil(() => tm.state == BattleState.PLAYERTURN);
 
         // ==========================================
-        // AÞAMA 8: FÝZYON - BÜYÜK FÝNAL (RAUNT 6)
+        // AÅžAMA 8: FÄ°ZYON - BÃœYÃœK FÄ°NAL (RAUNT 6)
         // ==========================================
         yield return new WaitForSeconds(1.0f);
         dm.DiscardHand(); dm.drawPile.Clear(); dm.discardPile.Clear();
         dm.drawPile.Add(fusionCardA); dm.drawPile.Add(fusionCardB);
         dm.DrawCard(2);
 
-        // Düþmanýn canýný 1'e indirelim
+        // DÃ¼ÅŸmanÄ±n canÄ±nÄ± 1'e indirelim
         if (cm.activeEnemies.Count > 0)
         {
             cm.activeEnemies[0].currentHealth = 1;
@@ -174,15 +182,15 @@ public class TutorialManager : MonoBehaviour
         popupUI.Show("Fusion (Merging)", "Here's our final and most powerful mechanic!\n\nBy stacking some compatible cards on the table, you can create powerful, brand-new cards for that battle.\n\nNow place a card in an empty slot, then drag and drop another card directly on top of it. Unleash the final attack with the resulting new fusion card and end the battle!", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
-        // Savaþýn KAZANILMASINI bekle
+        // SavaÅŸÄ±n KAZANILMASINI bekle
         yield return new WaitUntil(() => tm.state == BattleState.WON);
 
         // ==========================================
-        // AÞAMA 9: HARÝTAYA DÖNÜÞ VE TAVERNA HACK'Ý
+        // AÅžAMA 9: HARÄ°TAYA DÃ–NÃœÅž VE TAVERNA HACK'Ä°
         // ==========================================
         yield return new WaitUntil(() => PathManager.instance.mapPanel.activeSelf);
 
-        // KUKLACI HACK'Ý: Sýradaki tüm düðümleri "Companion (Taverna)" türüne çevir
+        // KUKLACI HACK'Ä°: SÄ±radaki tÃ¼m dÃ¼ÄŸÃ¼mleri "Companion (Taverna)" tÃ¼rÃ¼ne Ã§evir
         if (PathManager.instance.currentNode != null && PathManager.instance.currentNode.nextNodes != null)
         {
             foreach (MapNode nextNode in PathManager.instance.currentNode.nextNodes)
@@ -207,7 +215,7 @@ public class TutorialManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         isTutoComplated = false;
-        popupUI.Show("Tutorial is anded" , "Now you transfering to game" ,() => { isTutoComplated = true; });
-        Debug.Log("--- TUTORIAL BÝTTÝ ---");
+        popupUI.Show("Tutorial Completed!", "You have learned the elemental mechanics. Now entering the main game...", () => { isTutoComplated = true; });
+        Debug.Log("--- TUTORIAL BÄ°TTÄ° ---");
     }
 }

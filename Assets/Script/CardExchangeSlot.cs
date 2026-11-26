@@ -11,14 +11,14 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
     [Header("Effects")]
     public GameObject burnEffectPrefab;
     public GameObject castEffectPrefab;
-    public GameObject chamberEffectPrefab; // --- YENÝ: Sürekli dönecek olan Chamber Efekti ---
+    public GameObject chamberEffectPrefab; // --- YENÄ°: SÃ¼rekli dÃ¶necek olan Chamber Efekti ---
 
     [Header("Material (M_MasterCard)")]
     public Image slotImage;
 
     private Material instancedMaterial;
-    private GameObject activeChamberEffect; // Yaratýlan efekti hafýzada tutarýz
-    // --- YENÝ: ÖZEL BÜYÜ EFEKTLERÝ ---
+    private GameObject activeChamberEffect; // YaratÄ±lan efekti hafÄ±zada tutarÄ±z
+    // --- YENÄ°: Ã–ZEL BÃœYÃœ EFEKTLERÄ° ---
     public GameObject castWaterHealPrefab;
     public GameObject castBloodTransferPrefab;
 
@@ -33,26 +33,26 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
                 instancedMaterial.SetFloat("_Intensity", 0f);
         }
 
-        // --- YENÝ: OYUN BAÞLARKEN CHAMBER EFEKTÝNÝ YARAT VE LOOPA SOK ---
+        // --- YENÄ°: OYUN BAÅžLARKEN CHAMBER EFEKTÄ°NÄ° YARAT VE LOOPA SOK ---
         if (chamberEffectPrefab != null)
         {
-            // YENÝ: Sadece parent verdik (transform)
+            // YENÄ°: Sadece parent verdik (transform)
             activeChamberEffect = Instantiate(chamberEffectPrefab, transform);
 
-            // YENÝ: Pozisyonu tam merkeze sabitledik
+            // YENÄ°: Pozisyonu tam merkeze sabitledik
             activeChamberEffect.transform.localPosition = Vector3.zero;
 
-            // KRÝTÝK ÇÖZÜM: UI Canvas'ýn partikülü ezmesini engeller, dikdörtgen þekli korur!
+            // KRÄ°TÄ°K Ã‡Ã–ZÃœM: UI Canvas'Ä±n partikÃ¼lÃ¼ ezmesini engeller, dikdÃ¶rtgen ÅŸekli korur!
             activeChamberEffect.transform.localScale = Vector3.one;
 
-            // Yuvanýn arkasýnda deðil, önünde ama kartýn arkasýnda durmasý için
+            // YuvanÄ±n arkasÄ±nda deÄŸil, Ã¶nÃ¼nde ama kartÄ±n arkasÄ±nda durmasÄ± iÃ§in
             activeChamberEffect.transform.SetAsLastSibling();
 
-            // Sorting Order (Çizim Sýrasý) Yükseltmesi
+            // Sorting Order (Ã‡izim SÄ±rasÄ±) YÃ¼kseltmesi
             ParticleSystemRenderer[] renderers = activeChamberEffect.GetComponentsInChildren<ParticleSystemRenderer>(true);
             foreach (var r in renderers)
             {
-                r.sortingOrder = 50; // Yuvanýn üstünde
+                r.sortingOrder = 50; // YuvanÄ±n Ã¼stÃ¼nde
             }
         }
     }
@@ -80,7 +80,7 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             instancedMaterial.SetFloat("_Intensity", 0f);
         }
 
-        TurnManager tm = FindObjectOfType<TurnManager>();
+        TurnManager tm = TurnManager.instance != null ? TurnManager.instance : FindFirstObjectByType<TurnManager>();
         if (tm != null && tm.state != BattleState.PLAYERTURN) return;
 
         GameObject droppedObj = eventData.pointerDrag;
@@ -89,13 +89,26 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
         CardDisplay cardDisplay = droppedObj.GetComponent<CardDisplay>();
         if (cardDisplay == null) return;
 
-        DeckManager dm = FindObjectOfType<DeckManager>();
+        DeckManager dm = DeckManager.instance != null ? DeckManager.instance : FindFirstObjectByType<DeckManager>();
         if (dm == null) return;
+
+        // --- CAN KONTROLÃœ (Slottan silmeden Ã–NCE kontrol edilir) ---
+        int requiredHp = 0;
+        if (cardDisplay.cardData.cardType != CardType.Support)
+        {
+            requiredHp = cardDisplay.cardData.isElementalModifier ? (hpCost * 2) : hpCost;
+        }
+
+        if (PlayerManager.instance != null && PlayerManager.instance.currentHealth < requiredHp)
+        {
+            Debug.Log("[FEDA HATASI] Yetersiz can! Kart feda edilemez.");
+            return;
+        }
 
         CardSlot oldSlot = droppedObj.transform.parent.GetComponent<CardSlot>();
         if (oldSlot != null)
         {
-            CombatManager cm = FindObjectOfType<CombatManager>();
+            CombatManager cm = CombatManager.instance != null ? CombatManager.instance : FindFirstObjectByType<CombatManager>();
             if (cm != null) cm.ClearSlot(oldSlot.slotIndex);
         }
 
@@ -106,17 +119,15 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
         {
             int penaltyCost = hpCost * 2;
 
-            if (PlayerManager.instance.currentHealth < penaltyCost) return;
-
-            // Kalkaný Es Geç - Direkt Candan Düþ
+            // KalkanÄ± Es GeÃ§ - Direkt Candan DÃ¼ÅŸ
             PlayerManager.instance.currentHealth -= penaltyCost;
             if (PlayerManager.instance.currentHealth < 0) PlayerManager.instance.currentHealth = 0;
             PlayerManager.instance.UpdateUI();
 
-            // --- YENÝ: KAN BEDELÝ ÖDENDÝÐÝNDE EKRAN SALLANSIN ---
+            // --- YENÄ°: KAN BEDELÄ° Ã–DENDÄ°ÄžÄ°NDE EKRAN SALLANSIN ---
             if (UIShake.instance != null) UIShake.instance.TriggerShake(0.2f, 15f);
 
-            // Ölüm Kontrolü
+            // Ã–lÃ¼m KontrolÃ¼
             if (PlayerManager.instance.currentHealth <= 0)
             {
                 if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
@@ -126,6 +137,11 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             dm.AddToDiscard(cardDisplay.cardData);
             DisableCardRaycast(droppedObj);
             StartCoroutine(CastAndDestroyCard(droppedObj, dm, false));
+
+            if (EnergyManager.instance != null)
+            {
+                EnergyManager.instance.GainEnergy(cardDisplay.cardData.energyCost);
+            }
             return;
         }
         else if (cardDisplay.cardData.cardType == CardType.Support)
@@ -138,17 +154,15 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
         }
         else
         {
-            if (PlayerManager.instance.currentHealth < hpCost) return;
-
-            // Kalkaný Es Geç - Direkt Candan Düþ
+            // KalkanÄ± Es GeÃ§ - Direkt Candan DÃ¼ÅŸ
             PlayerManager.instance.currentHealth -= hpCost;
             if (PlayerManager.instance.currentHealth < 0) PlayerManager.instance.currentHealth = 0;
             PlayerManager.instance.UpdateUI();
 
-            // --- YENÝ: KAN BEDELÝ ÖDENDÝÐÝNDE EKRAN SALLANSIN ---
+            // --- YENÄ°: KAN BEDELÄ° Ã–DENDÄ°ÄžÄ°NDE EKRAN SALLANSIN ---
             if (UIShake.instance != null) UIShake.instance.TriggerShake(0.2f, 15f);
 
-            // Ölüm Kontrolü
+            // Ã–lÃ¼m KontrolÃ¼
             if (PlayerManager.instance.currentHealth <= 0)
             {
                 if (GameOverManager.instance != null) GameOverManager.instance.TriggerGameOver();
@@ -192,14 +206,14 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             case SupportEffect.HealPlayer:
                 if (PlayerManager.instance != null) PlayerManager.instance.Heal(card.supportValue);
 
-                // --- ÇÖZÜM: KAN TRANSFERÝ VEYA SU ÞÝFASI EFEKTÝ BURADA ÇALIÞACAK ---
+                // --- Ã‡Ã–ZÃœM: KAN TRANSFERÄ° VEYA SU ÅžÄ°FASI EFEKTÄ° BURADA Ã‡ALIÅžACAK ---
                 if (card.element == ElementType.Water && castWaterHealPrefab != null)
                 {
                     GameObject fx = Instantiate(castWaterHealPrefab, transform.position, Quaternion.identity, transform.root);
                     fx.transform.SetAsLastSibling();
                     Destroy(fx, 2f);
                 }
-                else if (castBloodTransferPrefab != null) // Su deðilse Kan Efektini çal!
+                else if (castBloodTransferPrefab != null) // Su deÄŸilse Kan Efektini Ã§al!
                 {
                     GameObject fx = Instantiate(castBloodTransferPrefab, transform.position, Quaternion.identity, transform.root);
                     fx.transform.SetAsLastSibling();
@@ -226,7 +240,7 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
             GameObject effect = Instantiate(castEffectPrefab, transform.position, Quaternion.identity, transform.root);
             effect.transform.SetAsLastSibling();
             ParticleSystemRenderer[] renderers = effect.GetComponentsInChildren<ParticleSystemRenderer>(true);
-            foreach (var r in renderers) r.sortingOrder = 200; // En önde patlasýn
+            foreach (var r in renderers) r.sortingOrder = 200; // En Ã¶nde patlasÄ±n
             Destroy(effect, 2f);
         }
 

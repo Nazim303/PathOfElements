@@ -11,7 +11,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     private HandVisualManager visualManager;
     private float smoothVelocity = 0f;
 
-    // --- YENİ: Akıcı takip ve fare offset'i için değişkenler ---
+    // --- YENÄ°: AkÄ±cÄ± takip ve fare offset'i iÃ§in deÄŸiÅŸkenler ---
     private bool isDragging = false;
     private Vector3 targetDragPosition;
 
@@ -24,7 +24,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        TurnManager tm = FindObjectOfType<TurnManager>();
+        TurnManager tm = TurnManager.instance != null ? TurnManager.instance : FindFirstObjectByType<TurnManager>();
         if (tm != null && tm.state != BattleState.PLAYERTURN)
         {
             eventData.pointerDrag = null;
@@ -43,7 +43,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0.6f;
 
-        // Başlangıç hedef noktasını ayarla
+        // BaÅŸlangÄ±Ã§ hedef noktasÄ±nÄ± ayarla
         RectTransformUtility.ScreenPointToWorldPointInRectangle(
             rectTransform.parent as RectTransform,
             eventData.position,
@@ -61,10 +61,10 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             eventData.pressEventCamera,
             out Vector3 globalMousePos))
         {
-            targetDragPosition = globalMousePos; // Anlık fare konumunu hedef olarak kaydet
+            targetDragPosition = globalMousePos; // AnlÄ±k fare konumunu hedef olarak kaydet
         }
 
-        // --- YANA YATMA (TILT) EFEKTİ ---
+        // --- YANA YATMA (TILT) EFEKTÄ° ---
         float targetZRotation = eventData.delta.x * -0.25f;
         targetZRotation = Mathf.Clamp(targetZRotation, -15f, 15f);
 
@@ -75,17 +75,17 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         transform.localEulerAngles = new Vector3(0, 0, newZ);
     }
 
-    // --- YENİ: YUMUŞAK TAKİP VE FAREDEN KAÇMA (OFFSET) MANTIĞI ---
+    // --- YENÄ°: YUMUÅAK TAKÄ°P VE FAREDEN KAÃ‡MA (OFFSET) MANTIÄI ---
     void Update()
     {
         if (isDragging)
         {
-            // Kartı farenin bir miktar yukarısında tut (kart yüksekliğinin %40'ı kadar)
-            // Bu sayede oyuncunun parmağı/faresi, kartın açıklamalarını veya düşmanı kapatmaz.
+            // KartÄ± farenin bir miktar yukarÄ±sÄ±nda tut (kart yÃ¼ksekliÄŸinin %40'Ä± kadar)
+            // Bu sayede oyuncunun parmaÄŸÄ±/faresi, kartÄ±n aÃ§Ä±klamalarÄ±nÄ± veya dÃ¼ÅŸmanÄ± kapatmaz.
             float yOffsetAmount = (rectTransform.rect.height * 0.4f) * transform.lossyScale.y;
             Vector3 offset = transform.up * yOffsetAmount;
 
-            // Farenin anlık yerine + offset'e doğru yaylanarak (Lerp) git
+            // Farenin anlÄ±k yerine + offset'e doÄŸru yaylanarak (Lerp) git
             transform.position = Vector3.Lerp(transform.position, targetDragPosition + offset, Time.deltaTime * 20f);
         }
     }
@@ -96,7 +96,7 @@ public class Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1f;
 
-        // Kartı bıraktığımızda açısını anında sıfırla (dikleşsin)
+        // KartÄ± bÄ±raktÄ±ÄŸÄ±mÄ±zda aÃ§Ä±sÄ±nÄ± anÄ±nda sÄ±fÄ±rla (dikleÅŸsin)
         transform.localEulerAngles = Vector3.zero;
 
         if (visualManager != null)

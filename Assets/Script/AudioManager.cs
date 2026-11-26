@@ -1,12 +1,12 @@
 using UnityEngine;
-using UnityEngine.Audio; // Audio Mixer için gerekli
+using UnityEngine.Audio; // Audio Mixer iÃ§in gerekli
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
 
     [Header("Mixer Settings")]
-    public AudioMixer mainMixer; // Inspector'dan MainMixer'ý buraya sürükle
+    public AudioMixer mainMixer; // Inspector'dan MainMixer'Ä± buraya sÃ¼rÃ¼kle
 
     [Header("Background Musics (BGM)")]
     public AudioClip mapBGM;
@@ -48,23 +48,23 @@ public class AudioManager : MonoBehaviour
         {
             instance = this;
 
-            // SFX ve Müzik için iki ayrý kaynak oluþturuyoruz
+            // SFX ve MÃ¼zik iÃ§in iki ayrÄ± kaynak oluÅŸturuyoruz
             sfxSource = gameObject.AddComponent<AudioSource>();
             musicSource = gameObject.AddComponent<AudioSource>();
 
-            // --- ÇÖZÜM: Yaratýlan kaynaklarý Mixer kanallarýna baðla ---
+            // --- Ã‡Ã–ZÃœM: YaratÄ±lan kaynaklarÄ± Mixer kanallarÄ±na baÄŸla ---
             if (mainMixer != null)
             {
-                // Unity'nin Mixer içindeki "Music" adlý grubu bulup kaynaða atamasý
+                // Unity'nin Mixer iÃ§indeki "Music" adlÄ± grubu bulup kaynaÄŸa atamasÄ±
                 AudioMixerGroup[] musicGroups = mainMixer.FindMatchingGroups("Music");
                 if (musicGroups.Length > 0) musicSource.outputAudioMixerGroup = musicGroups[0];
 
-                // Unity'nin Mixer içindeki "SFX" adlý grubu bulup kaynaða atamasý
+                // Unity'nin Mixer iÃ§indeki "SFX" adlÄ± grubu bulup kaynaÄŸa atamasÄ±
                 AudioMixerGroup[] sfxGroups = mainMixer.FindMatchingGroups("SFX");
                 if (sfxGroups.Length > 0) sfxSource.outputAudioMixerGroup = sfxGroups[0];
             }
 
-            DontDestroyOnLoad(gameObject); // Sahneler arasý silinmesin
+            DontDestroyOnLoad(gameObject); // Sahneler arasÄ± silinmesin
         }
         else
         {
@@ -72,46 +72,54 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // --- SES AYAR (MIXER) KONTROLLERÝ ---
+    // --- SES AYAR (MIXER) KONTROLLERÄ° ---
     public void SetMusicVolume(float volume)
     {
-        if (mainMixer != null) mainMixer.SetFloat("MusicVol", Mathf.Log10(volume) * 20);
+        if (mainMixer != null)
+        {
+            float dB = volume > 0.0001f ? Mathf.Log10(Mathf.Clamp01(volume)) * 20f : -80f;
+            mainMixer.SetFloat("MusicVol", dB);
+        }
     }
 
     public void SetSFXVolume(float volume)
     {
-        if (mainMixer != null) mainMixer.SetFloat("SFXVol", Mathf.Log10(volume) * 20);
+        if (mainMixer != null)
+        {
+            float dB = volume > 0.0001f ? Mathf.Log10(Mathf.Clamp01(volume)) * 20f : -80f;
+            mainMixer.SetFloat("SFXVol", dB);
+        }
     }
 
-    // --- MÜZÝK (BGM) KONTROLÜ ---
-    // --- GÜNCELLENEN MÜZÝK (BGM) KONTROLÜ ---
-    // (float volume = 1f) yazarak bu deðeri opsiyonel yaptýk. 
-    // Sen bir deðer girmezsen %100 (1f) çalacak, girersen senin deðerinde çalacak.
+    // --- MÃœZÄ°K (BGM) KONTROLÃœ ---
+    // --- GÃœNCELLENEN MÃœZÄ°K (BGM) KONTROLÃœ ---
+    // (float volume = 1f) yazarak bu deÄŸeri opsiyonel yaptÄ±k. 
+    // Sen bir deÄŸer girmezsen %100 (1f) Ã§alacak, girersen senin deÄŸerinde Ã§alacak.
     public void PlayBGM(AudioClip bgmClip, float volume = 1f)
     {
         if (bgmClip == null) return;
 
-        // Eðer istenen müzik zaten çalýyorsa baþa sarmamasý için iptal et
+        // EÄŸer istenen mÃ¼zik zaten Ã§alÄ±yorsa baÅŸa sarmamasÄ± iÃ§in iptal et
         if (musicSource.clip == bgmClip && musicSource.isPlaying)
         {
-            // Müzik zaten çalýyorsa sadece ses seviyesini güncelle ve çýk
+            // MÃ¼zik zaten Ã§alÄ±yorsa sadece ses seviyesini gÃ¼ncelle ve Ã§Ä±k
             musicSource.volume = volume;
             return;
         }
 
         musicSource.clip = bgmClip;
-        musicSource.volume = volume; // YENÝ: Ses seviyesini kaynaða ata
+        musicSource.volume = volume; // YENÄ°: Ses seviyesini kaynaÄŸa ata
         musicSource.loop = true;
         musicSource.Play();
     }
 
-    // Bu fonksiyon çalan BGM'yi (müziði) tamamen kapatýr
+    // Bu fonksiyon Ã§alan BGM'yi (mÃ¼ziÄŸi) tamamen kapatÄ±r
     public void StopBGM()
     {
         if (musicSource != null && musicSource.isPlaying)
         {
             musicSource.Stop();
-            musicSource.clip = null; // Hafýzayý temizle
+            musicSource.clip = null; // HafÄ±zayÄ± temizle
         }
     }
 
@@ -122,7 +130,7 @@ public class AudioManager : MonoBehaviour
     public void PlayEnemyDissolve() { if (enemyDissolve != null) sfxSource.PlayOneShot(enemyDissolve); }
     public void PlayCardDissolve() { if (cardDissolve != null) sfxSource.PlayOneShot(cardDissolve); }
 
-    // --- YENÝ EFEKTLER ---
+    // --- YENÄ° EFEKTLER ---
     public void PlayGreed() { if (greedSFX != null) sfxSource.PlayOneShot(greedSFX); }
     public void PlayGambling() { if (gamblingSFX != null) sfxSource.PlayOneShot(gamblingSFX); }
     public void PlayExchange() { if (exchangeSFX != null) sfxSource.PlayOneShot(exchangeSFX); }
@@ -130,7 +138,7 @@ public class AudioManager : MonoBehaviour
     public void PlayHexodiaAttack() { if (hexodiaAttackSFX != null) sfxSource.PlayOneShot(hexodiaAttackSFX); }
     public void PlayHeal() { if (healSFX != null) sfxSource.PlayOneShot(healSFX); }
 
-    // --- ELEMENT EFEKTLERÝ ---
+    // --- ELEMENT EFEKTLERÄ° ---
     public void PlayTrailSound(ElementType element, int powerLevel)
     {
         int index = Mathf.Clamp(powerLevel - 1, 0, 2);

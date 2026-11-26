@@ -2,16 +2,17 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
+using DG.Tweening;
 
 public class TutorialPopup : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject popupPanel;       // Arka planý tamamen kaplayan (týklamalarý engelleyen) yarý saydam panel
-    public TextMeshProUGUI titleText;   // Baþlýk
-    public TextMeshProUGUI messageText; // Açýklama metni
-    public Button continueButton;       // "Anladým / Devam" butonu
+    public GameObject popupPanel;       // Arka planÄ± tamamen kaplayan (tÄ±klamalarÄ± engelleyen) yarÄ± saydam panel
+    public TextMeshProUGUI titleText;   // BaÅŸlÄ±k
+    public TextMeshProUGUI messageText; // AÃ§Ä±klama metni
+    public Button continueButton;       // "AnladÄ±m / Devam" butonu
 
-    private Action onCompleteCallback;  // Butona basýldýðýnda çalýþacak kod
+    private Action onCompleteCallback;  // Butona basÄ±ldÄ±ÄŸÄ±nda Ã§alÄ±ÅŸacak kod
 
     void Awake()
     {
@@ -19,25 +20,52 @@ public class TutorialPopup : MonoBehaviour
         if (continueButton != null) continueButton.onClick.AddListener(ClosePopup);
     }
 
-    // Dýþarýdan çaðrýlacak fonksiyon (Baþlýk, Mesaj ve Butona basýlýnca ne olacaðý)
+    // DÄ±ÅŸarÄ±dan Ã§aÄŸrÄ±lacak fonksiyon (BaÅŸlÄ±k, Mesaj ve Butona basÄ±lÄ±nca ne olacaÄŸÄ±)
     public void Show(string title, string message, Action onComplete = null)
     {
         titleText.text = title;
         messageText.text = message;
         onCompleteCallback = onComplete;
 
-        popupPanel.SetActive(true);
-        popupPanel.transform.SetAsLastSibling(); // En üstte görünsün
+        if (popupPanel != null)
+        {
+            popupPanel.SetActive(true);
+            popupPanel.transform.SetAsLastSibling(); // En Ã¼stte gÃ¶rÃ¼nsÃ¼n
+
+            popupPanel.transform.localScale = Vector3.one * 0.85f;
+            popupPanel.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack).SetUpdate(true);
+
+            CanvasGroup cg = popupPanel.GetComponent<CanvasGroup>();
+            if (cg == null) cg = popupPanel.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+            cg.DOFade(1f, 0.2f).SetUpdate(true);
+        }
     }
 
     void ClosePopup()
     {
-        popupPanel.SetActive(false);
-
-        // Eðer bir callback (devam kodu) verildiyse onu çalýþtýr
-        if (onCompleteCallback != null)
+        if (popupPanel != null)
         {
-            onCompleteCallback.Invoke();
+            CanvasGroup cg = popupPanel.GetComponent<CanvasGroup>();
+            if (cg != null)
+            {
+                cg.DOFade(0f, 0.15f).SetUpdate(true);
+            }
+            popupPanel.transform.DOScale(Vector3.one * 0.85f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true).OnComplete(() =>
+            {
+                popupPanel.SetActive(false);
+                if (onCompleteCallback != null)
+                {
+                    onCompleteCallback.Invoke();
+                }
+            });
+        }
+        else
+        {
+            if (onCompleteCallback != null)
+            {
+                onCompleteCallback.Invoke();
+            }
         }
     }
 }

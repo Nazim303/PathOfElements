@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class EnergyManager : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class EnergyManager : MonoBehaviour
     public TextMeshProUGUI maxEnergyText;
     public Image energyFillBar;
 
-    // --- YENÝ: Anlýk hesaplanan bekleyen harcama ---
+    // --- YENÄ°: AnlÄ±k hesaplanan bekleyen harcama ---
     private int currentPendingCost = 0;
 
     void Awake()
@@ -34,7 +35,7 @@ public class EnergyManager : MonoBehaviour
         currentEnergy += 2;
         if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
 
-        // Tur baþýnda masadaki kartlar silindiði için harcama da sýfýrlanýr
+        // Tur baÅŸÄ±nda masadaki kartlar silindiÄŸi iÃ§in harcama da sÄ±fÄ±rlanÄ±r
         currentPendingCost = 0;
         UpdateUI();
     }
@@ -44,10 +45,16 @@ public class EnergyManager : MonoBehaviour
         if (currentEnergy >= amount)
         {
             currentEnergy -= amount;
-            // Harcama yapýldýkça "bekleyen" maliyeti düþürmeye gerek yok, 
-            // çünkü kartlar oynandýkça slotlardan silinecek ve CombatManager yeniden hesaplayýp 0 gönderecek.
+            // Harcama yapÄ±ldÄ±kÃ§a "bekleyen" maliyeti dÃ¼ÅŸÃ¼rmeye gerek yok, 
+            // Ã§Ã¼nkÃ¼ kartlar oynandÄ±kÃ§a slotlardan silinecek ve CombatManager yeniden hesaplayÄ±p 0 gÃ¶nderecek.
             UpdateUI();
             return true;
+        }
+
+        if (energyText != null)
+        {
+            energyText.transform.DOComplete();
+            energyText.transform.DOShakePosition(0.3f, new Vector3(6f, 0, 0), 10, 90f, false, true);
         }
         return false;
     }
@@ -60,7 +67,7 @@ public class EnergyManager : MonoBehaviour
         UpdateUI();
     }
 
-    // --- YENÝ: Dýþarýdan çaðrýlan "Tahmini Maliyet Göster" fonksiyonu ---
+    // --- YENÄ°: DÄ±ÅŸarÄ±dan Ã§aÄŸrÄ±lan "Tahmini Maliyet GÃ¶ster" fonksiyonu ---
     public void UpdatePendingCost(int cost)
     {
         currentPendingCost = cost;
@@ -68,18 +75,18 @@ public class EnergyManager : MonoBehaviour
     }
 
 
-    // --- YENÝ: Dükkandan veya bir Event'ten Max Enerjiyi kalýcý olarak artýrma ---
+    // --- YENÄ°: DÃ¼kkandan veya bir Event'ten Max Enerjiyi kalÄ±cÄ± olarak artÄ±rma ---
     public void IncreaseMaxEnergy(int amount)
     {
         maxEnergy += amount;
-        currentEnergy += amount; // Yeni gelen enerjiyi anýnda kullanýma sun
+        currentEnergy += amount; // Yeni gelen enerjiyi anÄ±nda kullanÄ±ma sun
         UpdateUI();
-        Debug.Log($"Max Enerji {amount} artýrýldý! Yeni Max: {maxEnergy}");
+        Debug.Log($"Max Enerji {amount} artÄ±rÄ±ldÄ±! Yeni Max: {maxEnergy}");
     }
 
     void UpdateUI()
     {
-        // --- 1. MAX ENERJÝ YAZISI (Sabit Arka Plan) ---
+        // --- 1. MAX ENERJÄ° YAZISI (Sabit Arka Plan) ---
         if (maxEnergyText != null)
         {
             maxEnergyText.text = maxEnergy.ToString();
@@ -88,18 +95,18 @@ public class EnergyManager : MonoBehaviour
       
         if (energyFillBar != null)
         {
-            // Barý Doldur
+            // BarÄ± Doldur
             energyFillBar.fillAmount = (float)currentEnergy / maxEnergy;
 
-            // --- DÜZELTÝLEN MANTIK ---
+            // --- DÃœZELTÄ°LEN MANTIK ---
             RectTransform energyRect = energyFillBar.GetComponent<RectTransform>();
             float barWidth = energyRect.rect.width;
 
-            // YENÝ: Barýn X pozisyonunu hesaba kat
+            // YENÄ°: BarÄ±n X pozisyonunu hesaba kat
             float startX = energyRect.anchoredPosition.x - (barWidth * energyRect.pivot.x);
             float currentEnergyEndX = startX + (barWidth * energyFillBar.fillAmount);
 
-            // Kayan Yazýyý Güncelle ve Pozisyonunu Ayarla
+            // Kayan YazÄ±yÄ± GÃ¼ncelle ve Pozisyonunu Ayarla
             if (energyText != null)
             {
                 if (currentPendingCost > 0)
@@ -111,7 +118,7 @@ public class EnergyManager : MonoBehaviour
                     energyText.text = currentEnergy.ToString();
                 }
 
-                // Yazýyý barýn ucuna it
+                // YazÄ±yÄ± barÄ±n ucuna it
                 RectTransform textRect = energyText.GetComponent<RectTransform>();
                 if (textRect != null)
                 {

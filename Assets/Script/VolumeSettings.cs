@@ -9,19 +9,19 @@ public class VolumeSettings : MonoBehaviour
 
     void Start()
     {
-        // Kayıtlı ses değerlerini yükle (Daha önce kaydedilmemişse varsayılan 0.75f yani %75 yap)
+        // KayÄ±tlÄ± ses deÄŸerlerini yÃ¼kle (Daha Ã¶nce kaydedilmemiÅŸse varsayÄ±lan 0.75f yani %75 yap)
         float savedMusic = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
         float savedSFX = PlayerPrefs.GetFloat("SFXVolume", 0.75f);
 
-        // Slider'ların pozisyonunu kayıtlı değere getir
+        // Slider'larÄ±n pozisyonunu kayÄ±tlÄ± deÄŸere getir
         if (musicSlider != null) musicSlider.value = savedMusic;
         if (sfxSlider != null) sfxSlider.value = savedSFX;
 
-        // Başlangıçta ses seviyelerini AudioManager'a uygula
+        // BaÅŸlangÄ±Ã§ta ses seviyelerini AudioManager'a uygula
         SetMusicVolume(savedMusic);
         SetSFXVolume(savedSFX);
 
-        // Oyuncu Slider'ı sağa sola çektikçe (onValueChanged) fonksiyonları otomatik tetikle
+        // Oyuncu Slider'Ä± saÄŸa sola Ã§ektikÃ§e (onValueChanged) fonksiyonlarÄ± otomatik tetikle
         if (musicSlider != null) musicSlider.onValueChanged.AddListener(SetMusicVolume);
         if (sfxSlider != null) sfxSlider.onValueChanged.AddListener(SetSFXVolume);
     }
@@ -32,7 +32,7 @@ public class VolumeSettings : MonoBehaviour
         {
             AudioManager.instance.SetMusicVolume(value);
         }
-        PlayerPrefs.SetFloat("MusicVolume", value); // Ayarı hafızaya kaydet
+        PlayerPrefs.SetFloat("MusicVolume", value); // AyarÄ± hafÄ±zaya kaydet
     }
 
     public void SetSFXVolume(float value)
@@ -41,6 +41,6 @@ public class VolumeSettings : MonoBehaviour
         {
             AudioManager.instance.SetSFXVolume(value);
         }
-        PlayerPrefs.SetFloat("SFXVolume", value); // Ayarı hafızaya kaydet
+        PlayerPrefs.SetFloat("SFXVolume", value); // AyarÄ± hafÄ±zaya kaydet
     }
 }

@@ -2,10 +2,10 @@ using UnityEngine;
 
 public enum CardType
 {
-    Attack,     // Standart Saldırı
-    Heal,       // Standart Şifa
-    Companion,  // Yoldaş
-    Support     // --- YENİ: Destek Kartı ---
+    Attack,     // Standart SaldÄ±rÄ±
+    Heal,       // Standart Åifa
+    Companion,  // YoldaÅŸ
+    Support     // --- YENÄ°: Destek KartÄ± ---
 }
 
 public enum SpecialEffect
@@ -43,14 +43,14 @@ public class CardData : ScriptableObject
     public int baseDamage;
     public int healAmount;
 
-    // --- YENİ: Kartın Güç Seviyesi (1, 2 veya 3) ---
+    // --- YENÄ°: KartÄ±n GÃ¼Ã§ Seviyesi (1, 2 veya 3) ---
     [Header("Power Level")]
     [Range(1, 3)]
-    [Tooltip("Efekt seviyesini belirler (1=Zayıf, 2=Orta, 3=Güçlü)")]
+    [Tooltip("Efekt seviyesini belirler (1=ZayÄ±f, 2=Orta, 3=GÃ¼Ã§lÃ¼)")]
     public int cardPower = 1;
 
     [Header("Modifier Settings")]
-    [Tooltip("Eğer işaretlenirse, solundaki karta destek çıkar.")]
+    [Tooltip("EÄŸer iÅŸaretlenirse, solundaki karta destek Ã§Ä±kar.")]
     public bool isElementalModifier = false;
 
     [Header("Companion Settings")]
@@ -67,6 +67,6 @@ public class CardData : ScriptableObject
    
 
     [Header("Journal Info")]
-    [TextArea(5, 10)] // Inspector'da büyük bir metin kutusu açar (5-10 satır)
-    public string journalDescription; // Günlükte görünen uzun hikaye
+    [TextArea(5, 10)] // Inspector'da bÃ¼yÃ¼k bir metin kutusu aÃ§ar (5-10 satÄ±r)
+    public string journalDescription; // GÃ¼nlÃ¼kte gÃ¶rÃ¼nen uzun hikaye
 }

@@ -16,7 +16,7 @@ public class JournalItemUI : MonoBehaviour
         itemName = card.cardName;
         itemArt = card.cardArt;
 
-        // EÐER uzun journal yazýsý boþ býrakýlmýþsa, hata vermesin diye normal kýsa yazýyý (description) kullanýr
+        // EÄžER uzun journal yazÄ±sÄ± boÅŸ bÄ±rakÄ±lmÄ±ÅŸsa, hata vermesin diye normal kÄ±sa yazÄ±yÄ± (description) kullanÄ±r
         if (!string.IsNullOrEmpty(card.journalDescription))
             itemDescription = card.journalDescription;
         else
@@ -33,7 +33,7 @@ public class JournalItemUI : MonoBehaviour
         itemName = enemy.enemyName;
         itemArt = enemy.enemyArt;
 
-        // Düþmanýn hikayesi
+        // DÃ¼ÅŸmanÄ±n hikayesi
         if (!string.IsNullOrEmpty(enemy.journalDescription))
             itemDescription = enemy.journalDescription;
         else
@@ -47,7 +47,7 @@ public class JournalItemUI : MonoBehaviour
 
     void OnClickItem()
     {
-        // Týklandýðýnda JournalManager'a bilgileri yolla ve popup'ý aç
+        // TÄ±klandÄ±ÄŸÄ±nda JournalManager'a bilgileri yolla ve popup'Ä± aÃ§
         if (JournalManager.instance != null)
         {
             JournalManager.instance.ShowDetailPopup(itemName, itemArt, itemDescription);

@@ -5,29 +5,29 @@ using System.Collections.Generic;
 public class Boss_Protector : BossBehavior
 {
     [Header("Minion Settings")]
-    public EnemyData minionData; // Inspector'dan atanacak minyon türü
+    public EnemyData minionData; // Inspector'dan atanacak minyon tÃ¼rÃ¼
 
     public override void Setup(CombatManager cm, EnemyDisplay display)
     {
         base.Setup(cm, display);
-        // Savaþ baþlar baþlamaz minyonlarý çaðýr
+        // SavaÅŸ baÅŸlar baÅŸlamaz minyonlarÄ± Ã§aÄŸÄ±r
         StartCoroutine(SpawnMinions());
     }
 
     IEnumerator SpawnMinions()
     {
         // CombatManager'a minyon ekletiyoruz
-        // Not: CombatManager'da AddEnemy fonksiyonu yazacaðýz
+        // Not: CombatManager'da AddEnemy fonksiyonu yazacaÄŸÄ±z
         yield return new WaitForSeconds(0.5f);
         combatManager.SpawnExtraEnemy(minionData);
         yield return new WaitForSeconds(0.3f);
         combatManager.SpawnExtraEnemy(minionData);
-        Debug.Log("Boss koruyucularýný çaðýrdý!");
+        Debug.Log("Boss koruyucularÄ±nÄ± Ã§aÄŸÄ±rdÄ±!");
     }
 
     public override bool IsInvulnerable()
     {
-        // Eðer kendisi dýþýnda baþka düþman varsa ölümsüzdür
+        // EÄŸer kendisi dÄ±ÅŸÄ±nda baÅŸka dÃ¼ÅŸman varsa Ã¶lÃ¼msÃ¼zdÃ¼r
         return combatManager.activeEnemies.Count > 1;
     }
 
@@ -35,10 +35,10 @@ public class Boss_Protector : BossBehavior
     {
         turnCount++;
 
-        // Her 3 turda bir (3, 6, 9...) Ýyileþtirme yapar
+        // Her 3 turda bir (3, 6, 9...) Ä°yileÅŸtirme yapar
         if (turnCount % 3 == 0)
         {
-            Debug.Log("BOSS ÖZEL YETENEK: Kutsal Ýyileþtirme!");
+            Debug.Log("BOSS Ã–ZEL YETENEK: Kutsal Ä°yileÅŸtirme!");
 
             // Efekt (Titre)
             yield return StartCoroutine(myDisplay.AttackAnimation());
@@ -60,7 +60,7 @@ public class Boss_Protector : BossBehavior
         }
         else
         {
-            // Normal Saldýrý
+            // Normal SaldÄ±rÄ±
             yield return StartCoroutine(myDisplay.AttackAnimation());
             if (PlayerManager.instance != null)
             {

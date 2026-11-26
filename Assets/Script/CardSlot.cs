@@ -7,57 +7,69 @@ public class CardSlot : MonoBehaviour, IDropHandler
 {
     public int slotIndex;
     private CombatManager combatManager;
+    private CardDisplay currentCardDisplay;
 
     [Header("Effects")]
     public GameObject elementPlacementVFX;
 
     private GameObject activePlacementVFX;
 
+    public CardDisplay GetCurrentCard() => currentCardDisplay;
+
     void Start()
     {
-        combatManager = FindObjectOfType<CombatManager>();
+        combatManager = CombatManager.instance != null ? CombatManager.instance : FindFirstObjectByType<CombatManager>();
     }
 
     void Update()
     {
-        CardDisplay cardInSlot = GetComponentInChildren<CardDisplay>();
-
-        if (cardInSlot == null)
+        if (currentCardDisplay != null)
         {
-            if (activePlacementVFX != null)
+            if (currentCardDisplay.transform.parent != transform || !currentCardDisplay.gameObject.activeInHierarchy)
             {
-                Destroy(activePlacementVFX);
-                activePlacementVFX = null;
+                ClearCurrentCard();
             }
+        }
+        else if (activePlacementVFX != null || (combatManager != null && combatManager.playerSlots[slotIndex] != null))
+        {
+            ClearCurrentCard();
+        }
+    }
 
-            if (combatManager != null && combatManager.playerSlots[slotIndex] != null)
-            {
-                combatManager.ClearSlot(slotIndex);
-            }
+    public void ClearCurrentCard()
+    {
+        currentCardDisplay = null;
+        if (activePlacementVFX != null)
+        {
+            Destroy(activePlacementVFX);
+            activePlacementVFX = null;
+        }
+
+        if (combatManager != null && combatManager.playerSlots[slotIndex] != null)
+        {
+            combatManager.ClearSlot(slotIndex);
         }
     }
 
     public void OnDrop(PointerEventData eventData)
     {
         GameObject droppedObject = eventData.pointerDrag;
-        Draggable draggable = droppedObject.GetComponent<Draggable>();
-        CardDisplay droppedCardDisplay = droppedObject.GetComponent<CardDisplay>();
+        Draggable draggable = droppedObject != null ? droppedObject.GetComponent<Draggable>() : null;
+        CardDisplay droppedCardDisplay = droppedObject != null ? droppedObject.GetComponent<CardDisplay>() : null;
 
         if (draggable != null && droppedCardDisplay != null)
         {
-            // --- FÝZYON (BÝRLEÞME) KONTROLÜ ---
-            if (transform.childCount > 0)
+            // --- FÄ°ZYON (BÄ°RLEÅžME) KONTROLÃœ ---
+            if (currentCardDisplay != null)
             {
-                CardDisplay existingCardDisplay = GetComponentInChildren<CardDisplay>();
-
-                if (existingCardDisplay != null && combatManager != null)
+                if (combatManager != null)
                 {
-                    Transform existingCardTransform = existingCardDisplay.transform;
-                    FusionRecipe recipe = combatManager.CheckFusion(existingCardDisplay.cardData, droppedCardDisplay.cardData);
+                    Transform existingCardTransform = currentCardDisplay.transform;
+                    FusionRecipe recipe = combatManager.CheckFusion(currentCardDisplay.cardData, droppedCardDisplay.cardData);
 
                     if (recipe != null)
                     {
-                        Debug.Log($"FÝZYON BAÞARILI!");
+                        Debug.Log($"FÄ°ZYON BAÅžARILI!");
                         StartCoroutine(AnimateFusionAndCreateCard(existingCardTransform.gameObject, droppedObject, recipe));
                         return;
                     }
@@ -65,15 +77,16 @@ public class CardSlot : MonoBehaviour, IDropHandler
                 return;
             }
 
-            // --- NORMAL KART YERLEÞTÝRME ---
+            // --- NORMAL KART YERLEÅžTÄ°RME ---
+            currentCardDisplay = droppedCardDisplay;
             droppedObject.transform.SetParent(this.transform);
 
-            // Kartýn pivot ve çapa ayarlarýný tam merkeze (0.5) kilitliyoruz.
+            // KartÄ±n pivot ve Ã§apa ayarlarÄ±nÄ± tam merkeze (0.5) kilitliyoruz.
             RectTransform normalRect = droppedObject.GetComponent<RectTransform>();
             normalRect.pivot = new Vector2(0.5f, 0.5f);
             normalRect.anchorMin = new Vector2(0.5f, 0.5f);
             normalRect.anchorMax = new Vector2(0.5f, 0.5f);
-            normalRect.anchoredPosition = Vector2.zero; // Kaymayý önleyen sihirli satýr!
+            normalRect.anchoredPosition = Vector2.zero; // KaymayÄ± Ã¶nleyen sihirli satÄ±r!
             droppedObject.transform.localRotation = Quaternion.identity;
 
             if (combatManager != null)
@@ -81,10 +94,10 @@ public class CardSlot : MonoBehaviour, IDropHandler
                 combatManager.UpdateSlot(slotIndex, droppedCardDisplay.cardData);
             }
 
-            // --- ÇÖZÜM: ÝSÝM HATASI DÜZELTÝLDÝ, ANÝMASYON BURADA BAÞLIYOR ---
+            // --- Ã‡Ã–ZÃœM: Ä°SÄ°M HATASI DÃœZELTÄ°LDÄ°, ANÄ°MASYON BURADA BAÅžLIYOR ---
             StartCoroutine(AnimateCardArrival(droppedObject));
 
-            // --- KART MASAYA KONDUÐUNDA SÜREKLÝ EFEKT YARAT ---
+            // --- KART MASAYA KONDUÄžUNDA SÃœREKLÄ° EFEKT YARAT ---
             if (elementPlacementVFX != null)
             {
                 if (activePlacementVFX != null) Destroy(activePlacementVFX);
@@ -180,6 +193,7 @@ public class CardSlot : MonoBehaviour, IDropHandler
 
         CardDisplay newCardDisplay = newCardObj.GetComponent<CardDisplay>();
         newCardDisplay.LoadCard(recipe.resultCard);
+        currentCardDisplay = newCardDisplay;
         combatManager.UpdateSlot(slotIndex, recipe.resultCard);
 
         StartCoroutine(AnimateCardArrival(newCardObj));
@@ -206,7 +220,7 @@ public class CardSlot : MonoBehaviour, IDropHandler
         }
     }
 
-    // --- ÇÖZÜM: MILIMETRIK UI HÝZALAMASI (RectTransform) ---
+    // --- Ã‡Ã–ZÃœM: MILIMETRIK UI HÄ°ZALAMASI (RectTransform) ---
     IEnumerator AnimateCardArrival(GameObject cardObj)
     {
         if (cardObj == null) yield break;
@@ -216,11 +230,11 @@ public class CardSlot : MonoBehaviour, IDropHandler
         float t = 0;
         float duration = 0.25f;
 
-        // --- DÜZELTME: Animasyon süresince geçici dev boyutta baþlasýn ---
+        // --- DÃœZELTME: Animasyon sÃ¼resince geÃ§ici dev boyutta baÅŸlasÄ±n ---
         Vector3 targetPos = Vector3.zero;
         Vector3 startPos = new Vector3(0, 200f, -100f);
 
-        // Havadayken büyük, yere çarpýnca GlobalScaleManager'ýn istediði boyuta "doðal" düþsün
+        // Havadayken bÃ¼yÃ¼k, yere Ã§arpÄ±nca GlobalScaleManager'Ä±n istediÄŸi boyuta "doÄŸal" dÃ¼ÅŸsÃ¼n
         float finalScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.cardInSlotScale : 1.0f;
         Vector3 targetScaleVec = Vector3.one * finalScale;
         Vector3 startScaleVec = targetScaleVec * 2.0f;
@@ -243,14 +257,14 @@ public class CardSlot : MonoBehaviour, IDropHandler
             yield return null;
         }
 
-        // --- YERE ÇARPMA VE TESLÝM ETME ---
+        // --- YERE Ã‡ARPMA VE TESLÄ°M ETME ---
         if (cardObj != null)
         {
             rect.anchoredPosition3D = targetPos;
             rect.localRotation = targetRot;
 
-            // DÜZELTME: Kartý artýk dev 1.5x'e sabitlemiyoruz!
-            // SquashAndStretch animasyonunu orijinal boyutu üzerinden yapmasý için finalScale'i veriyoruz
+            // DÃœZELTME: KartÄ± artÄ±k dev 1.5x'e sabitlemiyoruz!
+            // SquashAndStretch animasyonunu orijinal boyutu Ã¼zerinden yapmasÄ± iÃ§in finalScale'i veriyoruz
             yield return StartCoroutine(SquashAndStretch(rect, targetScaleVec));
 
             if (AudioManager.instance != null) AudioManager.instance.PlayImpactSound(ElementType.Earth, 1);

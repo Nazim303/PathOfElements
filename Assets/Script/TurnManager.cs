@@ -7,6 +7,14 @@ public enum BattleState { START, PLAYERTURN, PLAYERATTACK, ENEMYTURN, WON, LOST,
 
 public class TurnManager : MonoBehaviour
 {
+    public static TurnManager instance;
+
+    void Awake()
+    {
+        if (instance == null) instance = this;
+        else if (instance != this) Destroy(gameObject);
+    }
+
     [Header("State Info")]
     public BattleState state;
 
@@ -15,22 +23,22 @@ public class TurnManager : MonoBehaviour
     public DeckManager deckManager;
 
     [Header("Enemy Configuration")]
-    public EnemyData[] allEnemies; // Normal düşmanlar
-    public EnemyData[] bossEnemies; // --- YENİ: Boss listesi ---
+    public EnemyData[] allEnemies; // Normal dÃ¼ÅŸmanlar
+    public EnemyData[] bossEnemies; // --- YENÄ°: Boss listesi ---
 
   
    
-    public int minEnemySpawn = 2; // En az kaç düşman çıksın?
-    public int maxEnemySpawn = 3; // En çok kaç düşman çıksın?
+    public int minEnemySpawn = 2; // En az kaÃ§ dÃ¼ÅŸman Ã§Ä±ksÄ±n?
+    public int maxEnemySpawn = 3; // En Ã§ok kaÃ§ dÃ¼ÅŸman Ã§Ä±ksÄ±n?
     // --------------------------
 
     [Header("UI Feedback")]
     public TextMeshProUGUI turnIndicatorText;
-    public TextMeshProUGUI roundText;     // --- YENİ: Ekranda görünecek Raunt yazısı ---
-    private int currentRound = 1;         // --- YENİ: Arka planda tutulan sayı ---
+    public TextMeshProUGUI roundText;     // --- YENÄ°: Ekranda gÃ¶rÃ¼necek Raunt yazÄ±sÄ± ---
+    private int currentRound = 1;         // --- YENÄ°: Arka planda tutulan sayÄ± ---
 
 
-    // Savaş türünü saklayalım
+    // SavaÅŸ tÃ¼rÃ¼nÃ¼ saklayalÄ±m
     private PathType currentBattleType;
 
     void Start() { }
@@ -44,7 +52,7 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    // --- YENİ: Parametre alıyor ---
+    // --- YENÄ°: Parametre alÄ±yor ---
     public void StartNewBattle(PathType battleType)
     {
         state = BattleState.START;
@@ -54,15 +62,15 @@ public class TurnManager : MonoBehaviour
     IEnumerator SetupBattle(PathType battleType)
     {
 
-        currentRound = 1;       // Savaş başlarken Raunt 1'den başlar
-        UpdateRoundUI();        // Yazıyı günceller
+        currentRound = 1;       // SavaÅŸ baÅŸlarken Raunt 1'den baÅŸlar
+        UpdateRoundUI();        // YazÄ±yÄ± gÃ¼nceller
 
         if (TerrainManager.instance != null) TerrainManager.instance.ResetTerrain();
 
         currentBattleType = battleType;
 
-        // Yazıyı Türe Göre Ayarla
-        // Yazıyı ve Müziği Türe Göre Ayarla
+        // YazÄ±yÄ± TÃ¼re GÃ¶re Ayarla
+        // YazÄ±yÄ± ve MÃ¼ziÄŸi TÃ¼re GÃ¶re Ayarla
         if (battleType == PathType.Boss)
         {
             SetTurnText("BOSS FIGHT!");
@@ -82,56 +90,56 @@ public class TurnManager : MonoBehaviour
         // 1. Temizlik
         if (combatManager != null) StartCoroutine(combatManager.DestroyPlayedCards());
 
-        // 2. Deste Hazırlığı
+        // 2. Deste HazÄ±rlÄ±ÄŸÄ±
         if (deckManager != null) deckManager.InitializeBattle();
 
         yield return new WaitForSeconds(0.5f);
 
-        // 3. Düşman Seçimi (Mantık Değişti)
+        // 3. DÃ¼ÅŸman SeÃ§imi (MantÄ±k DeÄŸiÅŸti)
         List<EnemyData> enemiesToSpawn = new List<EnemyData>();
 
         if (battleType == PathType.Boss)
         {
-            // --- BOSS MANTIĞI ---
+            // --- BOSS MANTIÄI ---
             if (bossEnemies.Length > 0)
             {
                 enemiesToSpawn.Add(bossEnemies[Random.Range(0, bossEnemies.Length)]);
             }
             else
             {
-                Debug.LogError("HATA: Boss Enemies listesi boş!");
+                Debug.LogError("HATA: Boss Enemies listesi boÅŸ!");
             }
         }
         else if (battleType == PathType.Elite)
         {
-            // --- YENİ: ELITE SAVAŞ MANTIĞI ---
-            // Kural: En az 2 düşman çıkacak
-            int enemyCount = Random.Range(2, 4); // 2 veya 3 düşman
+            // --- YENÄ°: ELITE SAVAÅ MANTIÄI ---
+            // Kural: En az 2 dÃ¼ÅŸman Ã§Ä±kacak
+            int enemyCount = Random.Range(2, 4); // 2 veya 3 dÃ¼ÅŸman
 
             for (int i = 0; i < enemyCount; i++)
             {
                 if (allEnemies.Length > 0)
                 {
-                    // Düşmanı seç
+                    // DÃ¼ÅŸmanÄ± seÃ§
                     EnemyData baseEnemy = allEnemies[Random.Range(0, allEnemies.Length)];
 
-                    // Orijinal veriyi bozmamak için kopyasını (Instance) oluşturuyoruz!
+                    // Orijinal veriyi bozmamak iÃ§in kopyasÄ±nÄ± (Instance) oluÅŸturuyoruz!
                     EnemyData eliteEnemy = Instantiate(baseEnemy);
-                    eliteEnemy.name = baseEnemy.name + "_Elite"; // Bellekteki ismini değiştir
+                    eliteEnemy.name = baseEnemy.name + "_Elite"; // Bellekteki ismini deÄŸiÅŸtir
 
-                    // Elite Çarpanları (Orantılı Artış)
+                    // Elite Ã‡arpanlarÄ± (OrantÄ±lÄ± ArtÄ±ÅŸ)
                     eliteEnemy.maxHealth = Mathf.RoundToInt(baseEnemy.maxHealth * 1.5f); // %50 Daha fazla can
                     eliteEnemy.damage = Mathf.RoundToInt(baseEnemy.damage * 1.3f);       // %30 Daha fazla hasar
-                    eliteEnemy.goldReward = Mathf.RoundToInt(baseEnemy.goldReward * 2.0f); // 2 Katı altın ödülü
+                    eliteEnemy.goldReward = Mathf.RoundToInt(baseEnemy.goldReward * 2.0f); // 2 KatÄ± altÄ±n Ã¶dÃ¼lÃ¼
 
                     enemiesToSpawn.Add(eliteEnemy);
                 }
             }
-            Debug.Log($"Elite Savaşı! {enemyCount} adet güçlendirilmiş düşman geliyor.");
+            Debug.Log($"Elite SavaÅŸÄ±! {enemyCount} adet gÃ¼Ã§lendirilmiÅŸ dÃ¼ÅŸman geliyor.");
         }
         else
         {
-            // --- NORMAL SAVAŞ MANTIĞI (Dinamik Zorluk) ---
+            // --- NORMAL SAVAÅ MANTIÄI (Dinamik Zorluk) ---
             int enemyCount = 1;
 
             if (PathManager.instance != null && PathManager.instance.currentNode != null && PathManager.instance.mapGenerator != null)
@@ -142,11 +150,11 @@ public class TurnManager : MonoBehaviour
 
                 if (currentLayer < middleLayer)
                 {
-                    enemyCount = Random.Range(1, 3); // 1 veya 2 düşman
+                    enemyCount = Random.Range(1, 3); // 1 veya 2 dÃ¼ÅŸman
                 }
                 else
                 {
-                    enemyCount = Random.Range(2, 4); // 2 veya 3 düşman
+                    enemyCount = Random.Range(2, 4); // 2 veya 3 dÃ¼ÅŸman
                 }
             }
             else
@@ -165,7 +173,7 @@ public class TurnManager : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // 4. Başlangıç Eli
+        // 4. BaÅŸlangÄ±Ã§ Eli
         if (deckManager != null) deckManager.DrawCard(4);
 
         yield return new WaitForSeconds(1.5f);
@@ -173,8 +181,8 @@ public class TurnManager : MonoBehaviour
         PlayerTurn();
     }
 
-    // ... Kalan fonksiyonlar (PlayerTurn, Attack, EnemyTurn vs.) aynı kalacak ...
-    // Sadece aşağıya kopyalıyorum ki eksik kalmasın:
+    // ... Kalan fonksiyonlar (PlayerTurn, Attack, EnemyTurn vs.) aynÄ± kalacak ...
+    // Sadece aÅŸaÄŸÄ±ya kopyalÄ±yorum ki eksik kalmasÄ±n:
 
     void UpdateRoundUI()
     {
@@ -191,7 +199,7 @@ public class TurnManager : MonoBehaviour
             EnergyManager.instance.RefillEnergy();
         }
 
-        // --- YENİ: Kalkanı Sıfırla (Tur bitince kalkan gider) ---
+        // --- YENÄ°: KalkanÄ± SÄ±fÄ±rla (Tur bitince kalkan gider) ---
         if (PlayerManager.instance != null)
         {
             PlayerManager.instance.ResetShield();
@@ -214,7 +222,7 @@ public class TurnManager : MonoBehaviour
         if (combatManager.activeEnemies.Count == 0)
         {
             state = BattleState.WON;
-            SetTurnText("VİCTORY!");
+            SetTurnText("VICTORY!");
             StartCoroutine(GoToPathSelection());
         }
         else
@@ -245,7 +253,7 @@ public class TurnManager : MonoBehaviour
             {
                 yield return StartCoroutine(enemy.AttackAnimation());
 
-                // --- YENİ: DÜŞMAN SALDIRI SESİ ---
+                // --- YENÄ°: DÃœÅMAN SALDIRI SESÄ° ---
                 if (AudioManager.instance != null) AudioManager.instance.PlayEnemyAttack();
 
                 if (PlayerManager.instance != null)

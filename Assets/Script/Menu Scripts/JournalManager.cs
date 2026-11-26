@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public enum JournalCategory { Elementals, Spells, Notes }
 
@@ -9,22 +10,22 @@ public class JournalManager : MonoBehaviour
 {
     public static JournalManager instance;
 
-    [Header("Veritabaný (Tüm Objeleri Buraya At)")]
+    [Header("VeritabanÄ± (TÃ¼m Objeleri Buraya At)")]
     public List<EnemyData> allEnemies;
     public List<CardData> allCards;
 
     [Header("UI Panelleri")]
     public GameObject journalMainPanel;
-    public Transform gridContainer;      // Izgaranýn olduðu yer
-    public GameObject journalItemPrefab; // Hazýrladýðýmýz küçük kare prefabý
+    public Transform gridContainer;      // IzgaranÄ±n olduÄŸu yer
+    public GameObject journalItemPrefab; // HazÄ±rladÄ±ÄŸÄ±mÄ±z kÃ¼Ã§Ã¼k kare prefabÄ±
 
-    [Header("Detay Popup (Ýkinci Görsel)")]
+    [Header("Detay Popup (Ä°kinci GÃ¶rsel)")]
     public GameObject detailPopupPanel;
     public Image detailImage;
     public TextMeshProUGUI detailTitle;
     public TextMeshProUGUI detailDescription;
 
-    // Anlýk durumlar
+    // AnlÄ±k durumlar
     private JournalCategory currentCategory = JournalCategory.Spells;
     private ElementType currentElement = ElementType.Fire;
 
@@ -39,30 +40,30 @@ public class JournalManager : MonoBehaviour
         journalMainPanel.SetActive(false);
     }
 
-    // --- YENÝ MANTIK: BUTON FONKSÝYONLARI ---
+    // --- YENÄ° MANTIK: BUTON FONKSÄ°YONLARI ---
 
-    // 1. Sadece kategoriyi hafýzaya alýr (Ekraný yenilemez)
+    // 1. Sadece kategoriyi hafÄ±zaya alÄ±r (EkranÄ± yenilemez)
     // 0 = Elementals, 1 = Spells, 2 = Notes
     public void SetCategoryOnly(int categoryIndex)
     {
         currentCategory = (JournalCategory)categoryIndex;
     }
 
-    // 2. Elementi seçer ve KOMBÝNASYONU ekrana basar
+    // 2. Elementi seÃ§er ve KOMBÄ°NASYONU ekrana basar
     public void SetElementAndRefresh(int elementIndex)
     {
         currentElement = (ElementType)elementIndex;
         RefreshGrid();
     }
 
-    // (Opsiyonel) Sadece "Notes" gibi elementsiz bir baþlýða týklanýrsa direkt yenilemek için
+    // (Opsiyonel) Sadece "Notes" gibi elementsiz bir baÅŸlÄ±ÄŸa tÄ±klanÄ±rsa direkt yenilemek iÃ§in
     public void SetCategoryAndRefresh(int categoryIndex)
     {
         currentCategory = (JournalCategory)categoryIndex;
         RefreshGrid();
     }
 
-    // --- LÝSTELEME MANTIÐI ---
+    // --- LÄ°STELEME MANTIÄžI ---
     public void RefreshGrid()
     {
         foreach (Transform child in gridContainer)
@@ -92,7 +93,7 @@ public class JournalManager : MonoBehaviour
         }
         else if (currentCategory == JournalCategory.Notes)
         {
-            Debug.Log("Notes henüz eklenmedi.");
+            Debug.Log("Notes henÃ¼z eklenmedi.");
         }
     }
 
@@ -105,31 +106,82 @@ public class JournalManager : MonoBehaviour
         else if (card != null) itemUI.SetupCard(card);
     }
 
-    // --- DETAY POPUP YÖNETÝMÝ ---
+    // --- DETAY POPUP YÃ–NETÄ°MÄ° ---
     public void ShowDetailPopup(string title, Sprite art, string desc)
     {
-        detailTitle.text = title;
-        detailImage.sprite = art;
-        detailDescription.text = desc;
+        if (detailTitle != null) detailTitle.text = title;
+        if (detailImage != null) detailImage.sprite = art;
+        if (detailDescription != null) detailDescription.text = desc;
 
-        detailPopupPanel.SetActive(true);
-        detailPopupPanel.transform.SetAsLastSibling();
+        if (detailPopupPanel != null)
+        {
+            detailPopupPanel.SetActive(true);
+            detailPopupPanel.transform.SetAsLastSibling();
+
+            CanvasGroup cg = detailPopupPanel.GetComponent<CanvasGroup>();
+            if (cg == null) cg = detailPopupPanel.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+            cg.DOFade(1f, 0.2f);
+
+            detailPopupPanel.transform.localScale = Vector3.one * 0.9f;
+            detailPopupPanel.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack);
+        }
     }
 
     public void CloseDetailPopup()
     {
-        detailPopupPanel.SetActive(false);
+        if (detailPopupPanel != null && detailPopupPanel.activeSelf)
+        {
+            CanvasGroup cg = detailPopupPanel.GetComponent<CanvasGroup>();
+            if (cg != null)
+            {
+                cg.DOFade(0f, 0.15f).OnComplete(() => detailPopupPanel.SetActive(false));
+            }
+            else
+            {
+                detailPopupPanel.SetActive(false);
+            }
+        }
+        else if (detailPopupPanel != null)
+        {
+            detailPopupPanel.SetActive(false);
+        }
     }
 
     public void OpenJournal()
     {
-        journalMainPanel.SetActive(true);
+        if (journalMainPanel != null)
+        {
+            journalMainPanel.SetActive(true);
+            CanvasGroup cg = journalMainPanel.GetComponent<CanvasGroup>();
+            if (cg == null) cg = journalMainPanel.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+            cg.DOFade(1f, 0.25f);
+
+            journalMainPanel.transform.localScale = Vector3.one * 0.95f;
+            journalMainPanel.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack);
+        }
         RefreshGrid();
     }
 
     public void CloseJournal()
     {
-        journalMainPanel.SetActive(false);
         CloseDetailPopup();
+        if (journalMainPanel != null && journalMainPanel.activeSelf)
+        {
+            CanvasGroup cg = journalMainPanel.GetComponent<CanvasGroup>();
+            if (cg != null)
+            {
+                cg.DOFade(0f, 0.2f).OnComplete(() => journalMainPanel.SetActive(false));
+            }
+            else
+            {
+                journalMainPanel.SetActive(false);
+            }
+        }
+        else if (journalMainPanel != null)
+        {
+            journalMainPanel.SetActive(false);
+        }
     }
 }

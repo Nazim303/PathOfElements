@@ -17,7 +17,7 @@ public class MapGenerator : MonoBehaviour
     [Header("Visual Settings")]
     public float startXPadding = 200f;
 
-    // --- GÖRSELLER ---
+    // --- GÃ–RSELLER ---
     public Sprite combatSprite;
     public Sprite eliteSprite;
     public Sprite shopSprite;
@@ -56,7 +56,7 @@ public class MapGenerator : MonoBehaviour
         }
         mapGrid.Clear();
 
-        // 2. Düðümleri (Nodes) Oluþtur - TÜR ATAMASI YAPMADAN
+        // 2. DÃ¼ÄŸÃ¼mleri (Nodes) OluÅŸtur - TÃœR ATAMASI YAPMADAN
         for (int i = 0; i < mapLength; i++)
         {
             List<MapNode> currentLayerNodes = new List<MapNode>();
@@ -81,16 +81,16 @@ public class MapGenerator : MonoBehaviour
             mapGrid.Add(currentLayerNodes);
         }
 
-        // 3. Düðümleri Birbirine Baðla
+        // 3. DÃ¼ÄŸÃ¼mleri Birbirine BaÄŸla
         ConnectLayers();
 
-        // 4. Kör düðümleri düzelt
+        // 4. KÃ¶r dÃ¼ÄŸÃ¼mleri dÃ¼zelt
         FixDeadEnds();
 
-        // 5. YENÝ: BAÐLANTILARA GÖRE KONTROLLÜ TÜR ATAMASI YAP
+        // 5. YENÄ°: BAÄžLANTILARA GÃ–RE KONTROLLÃœ TÃœR ATAMASI YAP
         AssignPathTypes();
 
-        // 6. Çizgileri Çiz
+        // 6. Ã‡izgileri Ã‡iz
         DrawConnections();
     }
 
@@ -101,10 +101,10 @@ public class MapGenerator : MonoBehaviour
         return Random.Range(minNodesPerLayer, maxNodesPerLayer + 1);
     }
 
-    // --- YENÝ: DÝNAMÝK TÜR ATAMA SÝSTEMÝ ---
+    // --- YENÄ°: DÄ°NAMÄ°K TÃœR ATAMA SÄ°STEMÄ° ---
     void AssignPathTypes()
     {
-        // Her düðümün arkasýnda kaç tane aralýksýz "Savaþ Dýþý" patika býraktýðýný tutar
+        // Her dÃ¼ÄŸÃ¼mÃ¼n arkasÄ±nda kaÃ§ tane aralÄ±ksÄ±z "SavaÅŸ DÄ±ÅŸÄ±" patika bÄ±raktÄ±ÄŸÄ±nÄ± tutar
         Dictionary<MapNode, int> nonCombatStreaks = new Dictionary<MapNode, int>();
 
         for (int i = 0; i < mapLength; i++)
@@ -133,7 +133,7 @@ public class MapGenerator : MonoBehaviour
                     List<PathType> parentTypes = new List<PathType>();
                     int maxParentStreak = 0;
 
-                    // Bu düðüme gelen yollarýn (Ebeveynlerin) geçmiþini oku
+                    // Bu dÃ¼ÄŸÃ¼me gelen yollarÄ±n (Ebeveynlerin) geÃ§miÅŸini oku
                     foreach (MapNode parent in node.parentNodes)
                     {
                         parentTypes.Add(parent.realPathType);
@@ -141,19 +141,19 @@ public class MapGenerator : MonoBehaviour
                         if (pStreak > maxParentStreak) maxParentStreak = pStreak;
                     }
 
-                    // KURAL 2: Eðer bu yola gelene kadar 2 kere üst üste savaþ dýþý (Shop, Diviner vb) girildiyse, SAVAÞI ZORUNLU KIL!
+                    // KURAL 2: EÄŸer bu yola gelene kadar 2 kere Ã¼st Ã¼ste savaÅŸ dÄ±ÅŸÄ± (Shop, Diviner vb) girildiyse, SAVAÅžI ZORUNLU KIL!
                     if (maxParentStreak >= 2) forceCombat = true;
 
-                    // Türü Zar Atarak Belirle
+                    // TÃ¼rÃ¼ Zar Atarak Belirle
                     PathType rolledType = RollPathType(parentTypes, forceCombat, i);
 
                     if (rolledType == PathType.Mystery)
                     {
-                        // Gizemli kutunun içindekini de kurallara göre belirle
+                        // Gizemli kutunun iÃ§indekini de kurallara gÃ¶re belirle
                         PathType hidden = RollPathType(parentTypes, forceCombat, i, true);
                         node.SetupMystery(hidden, mysterySprite);
 
-                        // Gizli olan þey Combat ise seriyi boz (0'la), deðilse seriyi artýr
+                        // Gizli olan ÅŸey Combat ise seriyi boz (0'la), deÄŸilse seriyi artÄ±r
                         nonCombatStreaks[node] = (hidden == PathType.Combat || hidden == PathType.Elite) ? 0 : (maxParentStreak + 1);
                     }
                     else
@@ -162,7 +162,7 @@ public class MapGenerator : MonoBehaviour
                         node.realPathType = rolledType;
                         node.SetIcon(GetIconForType(rolledType));
 
-                        // Rolled type combat ise seriyi sýfýrla, deðilse artýr
+                        // Rolled type combat ise seriyi sÄ±fÄ±rla, deÄŸilse artÄ±r
                         nonCombatStreaks[node] = (rolledType == PathType.Combat || rolledType == PathType.Elite) ? 0 : (maxParentStreak + 1);
                     }
 
@@ -174,7 +174,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    // --- YENÝ: AÐIRLIKLI VE KONTROLLÜ ZAR ATMA SÝSTEMÝ ---
+    // --- YENÄ°: AÄžIRLIKLI VE KONTROLLÃœ ZAR ATMA SÄ°STEMÄ° ---
     PathType RollPathType(List<PathType> excludeTypes, bool forceCombat, int layerIndex, bool excludeMystery = false)
     {
         int cWeight = combatChance;
@@ -186,31 +186,31 @@ public class MapGenerator : MonoBehaviour
 
         if (forceCombat)
         {
-            // Kural: Savaþ zorunluysa, diðer her þeyin ihtimalini 0'a çek
+            // Kural: SavaÅŸ zorunluysa, diÄŸer her ÅŸeyin ihtimalini 0'a Ã§ek
             sWeight = 0; dWeight = 0; compWeight = 0; mWeight = 0;
         }
         else
         {
-            // KURAL 1: Ard arda ayný "Savaþ Dýþý" patikanýn gelmesini engelle. 
-            // Örneðin bir önceki düðüm Shop ise, ihtimalini 0'a çek.
+            // KURAL 1: Ard arda aynÄ± "SavaÅŸ DÄ±ÅŸÄ±" patikanÄ±n gelmesini engelle. 
+            // Ã–rneÄŸin bir Ã¶nceki dÃ¼ÄŸÃ¼m Shop ise, ihtimalini 0'a Ã§ek.
             if (excludeTypes.Contains(PathType.Shop)) sWeight = 0;
             if (excludeTypes.Contains(PathType.Diviner)) dWeight = 0;
             if (excludeTypes.Contains(PathType.Companion)) compWeight = 0;
             if (excludeTypes.Contains(PathType.Mystery)) mWeight = 0;
 
-            // Not: Savaþ veya Elite ard arda gelebilir, roguelike mantýðýnda bu normaldir.
+            // Not: SavaÅŸ veya Elite ard arda gelebilir, roguelike mantÄ±ÄŸÄ±nda bu normaldir.
         }
 
-        // Diviner sadece haritanýn orta katmanlarýnda çýkmalý
+        // Diviner sadece haritanÄ±n orta katmanlarÄ±nda Ã§Ä±kmalÄ±
         if (layerIndex <= 1 || layerIndex >= mapLength - 2) dWeight = 0;
 
         // Kalan ihtimalleri topla
         int totalWeight = cWeight + eWeight + sWeight + dWeight + compWeight + mWeight;
 
-        // Failsafe (Eðer her þey 0 olduysa güvenli liman olarak Combat ver)
+        // Failsafe (EÄŸer her ÅŸey 0 olduysa gÃ¼venli liman olarak Combat ver)
         if (totalWeight <= 0) return PathType.Combat;
 
-        // Dinamik zar atýþý
+        // Dinamik zar atÄ±ÅŸÄ±
         int rand = Random.Range(0, totalWeight);
 
         if (rand < cWeight) return PathType.Combat; rand -= cWeight;

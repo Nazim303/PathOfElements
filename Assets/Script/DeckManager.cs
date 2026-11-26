@@ -19,7 +19,7 @@ public class DeckManager : MonoBehaviour
     public GameObject supportCardPrefab;
     [Header("Visuals")]
     public Transform deckDrawPoint;
-    public Transform discardPoint; // --- YENÝ: Ýskarta destesinin ekrandaki konumu ---
+    public Transform discardPoint; // --- YENÄ°: Ä°skarta destesinin ekrandaki konumu ---
 
     private Canvas mainCanvas;
 
@@ -49,19 +49,19 @@ public class DeckManager : MonoBehaviour
     {
         drawPile.Clear();
         discardPile.Clear();
-        // DiscardHand(); // Bunu kapalý tutuyoruz (El koruma için)
+        // DiscardHand(); // Bunu kapalÄ± tutuyoruz (El koruma iÃ§in)
 
         List<CardData> tempMasterDeck = new List<CardData>(allCardsInDeck);
         List<CardData> cardsInHand = new List<CardData>();
 
-        // Eldeki kartlarý koru
+        // Eldeki kartlarÄ± koru
         foreach (Transform child in handArea)
         {
             CardDisplay display = child.GetComponent<CardDisplay>();
             if (display != null && display.cardData != null) cardsInHand.Add(display.cardData);
         }
 
-        // Eldekileri desteden düþ
+        // Eldekileri desteden dÃ¼ÅŸ
         foreach (CardData handCard in cardsInHand)
         {
             if (tempMasterDeck.Contains(handCard)) tempMasterDeck.Remove(handCard);
@@ -69,15 +69,15 @@ public class DeckManager : MonoBehaviour
 
         drawPile = tempMasterDeck;
 
-        // 1. Desteyi Karýþtýr (Normal prosedür)
+        // 1. Desteyi KarÄ±ÅŸtÄ±r (Normal prosedÃ¼r)
         ShuffleDrawPile();
 
-        // 2. --- YENÝ: YOLDAÞ KARTI KONTROLÜ ---
-        // Karýþtýrma bitti ama Yoldaþ kartý her zaman en üstte (ilk çekilecek) olmalý.
-        // Desteyi tara, Companion bulursan en baþa taþý.
+        // 2. --- YENÄ°: YOLDAÅž KARTI KONTROLÃœ ---
+        // KarÄ±ÅŸtÄ±rma bitti ama YoldaÅŸ kartÄ± her zaman en Ã¼stte (ilk Ã§ekilecek) olmalÄ±.
+        // Desteyi tara, Companion bulursan en baÅŸa taÅŸÄ±.
         CardData companionCard = null;
 
-        // Tersten veya düzden arayabiliriz, ilk bulduðumuzu alalým
+        // Tersten veya dÃ¼zden arayabiliriz, ilk bulduÄŸumuzu alalÄ±m
         foreach (CardData c in drawPile)
         {
             if (c.cardType == CardType.Companion)
@@ -89,16 +89,16 @@ public class DeckManager : MonoBehaviour
 
         if (companionCard != null)
         {
-            drawPile.Remove(companionCard); // Aradan çýkar
+            drawPile.Remove(companionCard); // Aradan Ã§Ä±kar
             drawPile.Insert(0, companionCard); // En tepeye koy
-            Debug.Log($"Savaþ Baþladý: {companionCard.cardName} (Yoldaþ) destenin en tepesine taþýndý!");
+            Debug.Log($"SavaÅŸ BaÅŸladÄ±: {companionCard.cardName} (YoldaÅŸ) destenin en tepesine taÅŸÄ±ndÄ±!");
         }
         // -------------------------------------
 
-        // Önizlemeyi güncelle (Artýk en baþta Yoldaþ görünecek)
+        // Ã–nizlemeyi gÃ¼ncelle (ArtÄ±k en baÅŸta YoldaÅŸ gÃ¶rÃ¼necek)
        
 
-        if (allCardsInDeck.Count == 0) Debug.LogError("HATA: Ana Deste Boþ!");
+        if (allCardsInDeck.Count == 0) Debug.LogError("HATA: Ana Deste BoÅŸ!");
     }
 
     public void ShuffleDrawPile()
@@ -140,22 +140,22 @@ public class DeckManager : MonoBehaviour
             CardData cardToDraw = drawPile[0];
             drawPile.RemoveAt(0);
 
-            GameObject prefabToUse = cardPrefab; // Varsayýlan normal kart
+            GameObject prefabToUse = cardPrefab; // VarsayÄ±lan normal kart
 
             if (cardToDraw.cardType == CardType.Support && supportCardPrefab != null)
             {
-                prefabToUse = supportCardPrefab; // Destek kartýysa özel prefabý kullan
+                prefabToUse = supportCardPrefab; // Destek kartÄ±ysa Ã¶zel prefabÄ± kullan
             }
 
 
             if (prefabToUse != null)
             {
-                // 1. GERÇEK KART (HandArea içinde)
+                // 1. GERÃ‡EK KART (HandArea iÃ§inde)
                 GameObject realCard = Instantiate(prefabToUse, handArea);
 
-                // --- DÜZELTME: Prefabýn orijinal scale'ini koru ---
-                // Layout Group bazen scale'i bozabilir, emin olmak için prefab scale'i tekrar atayabilirsin ama
-                // genelde Instantiate sonrasý dokunmazsak doðru kalýr.
+                // --- DÃœZELTME: PrefabÄ±n orijinal scale'ini koru ---
+                // Layout Group bazen scale'i bozabilir, emin olmak iÃ§in prefab scale'i tekrar atayabilirsin ama
+                // genelde Instantiate sonrasÄ± dokunmazsak doÄŸru kalÄ±r.
                 // realCard.transform.localScale = cardPrefab.transform.localScale; 
 
                 CardDisplay realDisplay = realCard.GetComponent<CardDisplay>();
@@ -168,7 +168,7 @@ public class DeckManager : MonoBehaviour
               
                 yield return new WaitForEndOfFrame();
 
-                // 2. UÇAN KART
+                // 2. UÃ‡AN KART
                 GameObject flyingCard = Instantiate(prefabToUse, mainCanvas.transform);
 
                 RectTransform flyRect = flyingCard.GetComponent<RectTransform>();
@@ -181,7 +181,7 @@ public class DeckManager : MonoBehaviour
                 if (flyCG == null) flyCG = flyingCard.AddComponent<CanvasGroup>();
                 flyCG.blocksRaycasts = false;
 
-                // Küçük baþla
+                // KÃ¼Ã§Ã¼k baÅŸla
                 flyingCard.transform.localScale = Vector3.zero;
                 flyingCard.transform.rotation = Quaternion.Euler(0, 0, 90f);
 
@@ -206,11 +206,11 @@ public class DeckManager : MonoBehaviour
         Vector3 startPos = flyingCard.transform.position;
         Quaternion startRot = flyingCard.transform.rotation;
 
-        Vector3 startScale = Vector3.zero; // Baþlangýç (Yoktan var olma)
+        Vector3 startScale = Vector3.zero; // BaÅŸlangÄ±Ã§ (Yoktan var olma)
 
-        // --- DÜZELTME BURADA ---
-        // Hedef boyut (1,1,1) deðil, gerçek kartýn o anki boyutu olmalý!
-        // targetCard handArea içinde olduðu için doðru boyuttadýr.
+        // --- DÃœZELTME BURADA ---
+        // Hedef boyut (1,1,1) deÄŸil, gerÃ§ek kartÄ±n o anki boyutu olmalÄ±!
+        // targetCard handArea iÃ§inde olduÄŸu iÃ§in doÄŸru boyuttadÄ±r.
         Vector3 targetScale = targetCard.transform.localScale;
 
         while (t < 1)
@@ -227,7 +227,7 @@ public class DeckManager : MonoBehaviour
             flyingCard.transform.position = Vector3.Lerp(startPos, targetPos, smoothT);
             flyingCard.transform.rotation = Quaternion.Lerp(startRot, targetRot, smoothT);
 
-            // Hedef boyuta (targetScale) doðru büyü
+            // Hedef boyuta (targetScale) doÄŸru bÃ¼yÃ¼
             flyingCard.transform.localScale = Vector3.Lerp(startScale, targetScale, smoothT);
 
             yield return null;
@@ -236,7 +236,7 @@ public class DeckManager : MonoBehaviour
         if (targetCard != null)
         {
             targetCG.alpha = 1f;
-            targetCG.blocksRaycasts = true; // YENÝ: Uçuþ bitti, artýk mouse ile tutulabilir!
+            targetCG.blocksRaycasts = true; // YENÄ°: UÃ§uÅŸ bitti, artÄ±k mouse ile tutulabilir!
         }
 
         Destroy(flyingCard);
@@ -254,8 +254,8 @@ public class DeckManager : MonoBehaviour
         if (card.cardType != CardType.Companion) discardPile.Add(card);
     }
 
-    // --- YENÝ FONKSÝYON ---
-    // Companion Event'ten veya baþka bir yerden kart kazanýldýðýnda çaðrýlýr
+    // --- YENÄ° FONKSÄ°YON ---
+    // Companion Event'ten veya baÅŸka bir yerden kart kazanÄ±ldÄ±ÄŸÄ±nda Ã§aÄŸrÄ±lÄ±r
     public void AddCardFromEvent(CardData newCard)
     {
         if (newCard.cardType == CardType.Companion)
@@ -268,30 +268,30 @@ public class DeckManager : MonoBehaviour
                     allCardsInDeck.RemoveAt(i);
             }
 
-            // Ana desteye ekle (Kayýt için)
+            // Ana desteye ekle (KayÄ±t iÃ§in)
             allCardsInDeck.Add(newCard);
 
-            // Ve hemen kullanýlabilmesi için Çekme Destesinin EN TEPESÝNE koy!
+            // Ve hemen kullanÄ±labilmesi iÃ§in Ã‡ekme Destesinin EN TEPESÄ°NE koy!
             drawPile.Insert(0, newCard);
 
-            Debug.Log($"Yoldaþ {newCard.cardName} alýndý ve destenin en tepesine koyuldu!");
+            Debug.Log($"YoldaÅŸ {newCard.cardName} alÄ±ndÄ± ve destenin en tepesine koyuldu!");
 
           
         }
         else
         {
             // >>> SENARYO 2: NORMAL KART (Unlock) <<<
-            // Kural: Bu kart artýk destenin kalýcý bir üyesi olur.
-            // Sýnýrsýz sayýda eklenebilir (Ayný karttan 2-3 tane olabilir).
+            // Kural: Bu kart artÄ±k destenin kalÄ±cÄ± bir Ã¼yesi olur.
+            // SÄ±nÄ±rsÄ±z sayÄ±da eklenebilir (AynÄ± karttan 2-3 tane olabilir).
 
             allCardsInDeck.Add(newCard);
 
-            // Savaþýn ortasýnda olduðumuz için bu kartý hemen çekme destesine de ekleyelim mi?
-            // Genelde "Shuffle" edilerek araya karýþýr.
+            // SavaÅŸÄ±n ortasÄ±nda olduÄŸumuz iÃ§in bu kartÄ± hemen Ã§ekme destesine de ekleyelim mi?
+            // Genelde "Shuffle" edilerek araya karÄ±ÅŸÄ±r.
             drawPile.Add(newCard);
-            ShuffleDrawPile(); // Karýþtýr ki rastgele bir yere gitsin
+            ShuffleDrawPile(); // KarÄ±ÅŸtÄ±r ki rastgele bir yere gitsin
 
-            Debug.Log($"Kart {newCard.cardName} kilidi açýldý ve desteye eklendi!");
+            Debug.Log($"Kart {newCard.cardName} kilidi aÃ§Ä±ldÄ± ve desteye eklendi!");
         }
     }
     public void RemoveCardFromDeck(CardData cardToRemove)
@@ -329,13 +329,13 @@ public class DeckManager : MonoBehaviour
         DrawCard(drawAmount);
     }
 
-    // --- YENÝ: Kartý iskartaya uçuran ortak fonksiyon ---
+    // --- YENÄ°: KartÄ± iskartaya uÃ§uran ortak fonksiyon ---
     public IEnumerator AnimateCardToDiscard(GameObject cardObj)
     {
         if (AudioManager.instance != null) AudioManager.instance.PlayCardPaper();
         if (cardObj == null) yield break;
 
-        // Kartýn UI'da her þeyin üstünde görünmesi için Canvas'a taþý
+        // KartÄ±n UI'da her ÅŸeyin Ã¼stÃ¼nde gÃ¶rÃ¼nmesi iÃ§in Canvas'a taÅŸÄ±
         if (mainCanvas != null) cardObj.transform.SetParent(mainCanvas.transform);
         cardObj.transform.SetAsLastSibling();
 
@@ -351,13 +351,13 @@ public class DeckManager : MonoBehaviour
             if (cardObj == null) yield break;
             t += Time.deltaTime / duration;
 
-            // Hareketi yumuþat
+            // Hareketi yumuÅŸat
             float smoothT = t * t * (3f - 2f * t);
 
-            // Pozisyonu, boyutu ve açýyý ayný anda deðiþtir
+            // Pozisyonu, boyutu ve aÃ§Ä±yÄ± aynÄ± anda deÄŸiÅŸtir
             cardObj.transform.position = Vector3.Lerp(startPos, targetPos, smoothT);
             cardObj.transform.localScale = Vector3.Lerp(new Vector3(1.5f, 1.5f, 1.5f ), Vector3.zero, smoothT);
-            cardObj.transform.rotation = Quaternion.Lerp(startRot, Quaternion.Euler(0, 0, 180), smoothT); // Uçarken döner
+            cardObj.transform.rotation = Quaternion.Lerp(startRot, Quaternion.Euler(0, 0, 180), smoothT); // UÃ§arken dÃ¶ner
 
             yield return null;
         }

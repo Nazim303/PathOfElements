@@ -1,21 +1,23 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+using DG.Tweening;
 
 public class MainMenuManager : MonoBehaviour
 {
     [Header("Scene Settings")]
-    [Tooltip("Oyunun oynandýðý ana sahnenin tam adý (Örn: GameScene)")]
-    public string gameSceneName = "Sample Scene";
+    [Tooltip("Oyunun oynandÄ±ÄŸÄ± ana sahnenin tam adÄ± (Ã–rn: SampleScene)")]
+    public string gameSceneName = "SampleScene";
+    public string tutorialSceneName = "NewTutorialScene";
 
     [Header("Video Settings")]
     public VideoPlayer backgroundVideoPlayer;
     public VideoClip introVideoClip;
     public VideoClip loopVideoClip;
 
-    // --- YENÝ EKLENEN KISIM ---
+    // --- YENÄ° EKLENEN KISIM ---
     [Header("UI Settings")]
-    [Tooltip("Ýntro oynarken gizlenecek olan menü butonlarýnýn bulunduðu ana obje (Örn: Buttons Panel)")]
+    [Tooltip("Ä°ntro oynarken gizlenecek olan menÃ¼ butonlarÄ±nÄ±n bulunduÄŸu ana obje (Ã–rn: Buttons Panel)")]
     public GameObject menuButtonsPanel;
 
     private static bool hasPlayedIntro = false;
@@ -30,10 +32,10 @@ public class MainMenuManager : MonoBehaviour
     {
         if (backgroundVideoPlayer == null) return;
 
-        // 1. DURUM: Oyun yeni açýldýysa ve intro henüz oynamadýysa
+        // 1. DURUM: Oyun yeni aÃ§Ä±ldÄ±ysa ve intro henÃ¼z oynamadÄ±ysa
         if (!hasPlayedIntro && introVideoClip != null)
         {
-            // --- YENÝ: Ýntro oynarken butonlarý gizle ---
+            // --- YENÄ°: Ä°ntro oynarken butonlarÄ± gizle ---
             if (menuButtonsPanel != null) menuButtonsPanel.SetActive(false);
 
             backgroundVideoPlayer.clip = introVideoClip;
@@ -43,10 +45,10 @@ public class MainMenuManager : MonoBehaviour
 
             backgroundVideoPlayer.Play();
         }
-        // 2. DURUM: Oyuncu oyun içinden ana menüye döndüyse (Ýntro zaten oynadýysa)
+        // 2. DURUM: Oyuncu oyun iÃ§inden ana menÃ¼ye dÃ¶ndÃ¼yse (Ä°ntro zaten oynadÄ±ysa)
         else if (loopVideoClip != null)
         {
-            // --- YENÝ: Ýntro daha önce izlendiyse butonlarý direkt göster ---
+            // --- YENÄ°: Ä°ntro daha Ã¶nce izlendiyse butonlarÄ± direkt gÃ¶ster ---
             if (menuButtonsPanel != null) menuButtonsPanel.SetActive(true);
 
             PlayLoopVideo();
@@ -58,8 +60,15 @@ public class MainMenuManager : MonoBehaviour
         hasPlayedIntro = true;
         vp.loopPointReached -= OnIntroFinished;
 
-        // --- YENÝ: Ýntro bittiðinde butonlarý görünür yap ---
-        if (menuButtonsPanel != null) menuButtonsPanel.SetActive(true);
+        // --- YENÄ°: Ä°ntro bittiÄŸinde butonlarÄ± yumuÅŸakÃ§a gÃ¶rÃ¼nÃ¼r yap ---
+        if (menuButtonsPanel != null)
+        {
+            menuButtonsPanel.SetActive(true);
+            CanvasGroup cg = menuButtonsPanel.GetComponent<CanvasGroup>();
+            if (cg == null) cg = menuButtonsPanel.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+            cg.DOFade(1f, 0.4f);
+        }
 
         PlayLoopVideo();
     }
@@ -76,25 +85,21 @@ public class MainMenuManager : MonoBehaviour
 
     public void StartGame()
     {
-        Debug.Log("Oyun sahnesine geçiliyor...");
-        if(hasPlayedTutorial == false)
+        Debug.Log("Oyun sahnesine geÃ§iliyor...");
+        if (!hasPlayedTutorial)
         {
-            SceneManager.LoadScene(gameSceneName);
             hasPlayedTutorial = true;
+            SceneManager.LoadScene(tutorialSceneName);
         }
         else
         {
-            SceneManager.LoadScene("SampleScene");
-
+            SceneManager.LoadScene(gameSceneName);
         }
-       
-
-        
     }
 
     public void OpenJournal()
     {
-        Debug.Log("Günlük açýlýyor...");
+        Debug.Log("GÃ¼nlÃ¼k aÃ§Ä±lÄ±yor...");
         if (JournalManager.instance != null)
         {
             JournalManager.instance.OpenJournal();
@@ -103,7 +108,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void QuitGame()
     {
-        Debug.Log("Oyun Kapatýlýyor...");
+        Debug.Log("Oyun KapatÄ±lÄ±yor...");
         Application.Quit();
     }
 }

@@ -9,7 +9,7 @@ public class UIShake : MonoBehaviour
     public RectTransform uiElementToShake; // Sallanacak Ana Panel
 
     [Header("Settings")]
-    public bool enableScreenShake = true; // Ayarlar için toggle
+    public bool enableScreenShake = true; // Ayarlar iÃ§in toggle
 
     private Vector2 originalPos;
 
@@ -40,7 +40,7 @@ public class UIShake : MonoBehaviour
 
         while (elapsed < duration)
         {
-            // UI için X ve Y ekseninde rastgele kayma
+            // UI iÃ§in X ve Y ekseninde rastgele kayma
             float x = Random.Range(-1f, 1f) * magnitude;
             float y = Random.Range(-1f, 1f) * magnitude;
 
@@ -51,11 +51,11 @@ public class UIShake : MonoBehaviour
             yield return null;
         }
 
-        // Yerine geri dön
+        // Yerine geri dÃ¶n
         uiElementToShake.anchoredPosition = originalPos;
     }
 
-    // Ayarlar menüsü için
+    // Ayarlar menÃ¼sÃ¼ iÃ§in
     public void ToggleShake(bool status)
     {
         enableScreenShake = status;

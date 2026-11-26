@@ -5,13 +5,13 @@ public class FusionRecipe : ScriptableObject
 {
     public string recipeName;
 
-    [Header("Bileşenler (Hangi kartlar birleşecek?)")]
+    [Header("BileÅŸenler (Hangi kartlar birleÅŸecek?)")]
     public CardData cardA;
     public CardData cardB;
 
-    [Header("Sonuç (Hangi kart çıkacak?)")]
+    [Header("SonuÃ§ (Hangi kart Ã§Ä±kacak?)")]
     public CardData resultCard;
 
-    [Header("Görsel Efekt (Opsiyonel)")]
-    public GameObject fusionVFX; // Birleşme anında patlayacak efekt
+    [Header("GÃ¶rsel Efekt (Opsiyonel)")]
+    public GameObject fusionVFX; // BirleÅŸme anÄ±nda patlayacak efekt
 }

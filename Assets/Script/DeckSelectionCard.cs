@@ -57,7 +57,7 @@ public class DeckSelectionCard : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public void OnPointerEnter(PointerEventData eventData)
     {
 
-        // Orijinal pozisyonu sadece ilk fare giriþinde kaydet
+        // Orijinal pozisyonu sadece ilk fare giriÅŸinde kaydet
         if (!hasOriginalPos) 
         { 
             originalPos = rectTransform.anchoredPosition; 
@@ -67,7 +67,7 @@ public class DeckSelectionCard : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (overrideCanvas != null) overrideCanvas.sortingOrder = 100; 
 
         if (hoverCoroutine != null) StopCoroutine(hoverCoroutine);
-        // Hem %35 büyüt, hem de 40 birim yukarý kaldýr!
+        // Hem %35 bÃ¼yÃ¼t, hem de 40 birim yukarÄ± kaldÄ±r!
         hoverCoroutine = StartCoroutine(HoverRoutine(new Vector3(1.35f, 1.35f, 1.35f), originalPos + new Vector2(0, 40f))); 
     }
 
@@ -76,7 +76,7 @@ public class DeckSelectionCard : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (overrideCanvas != null) overrideCanvas.sortingOrder = 1; 
 
         if (hoverCoroutine != null) StopCoroutine(hoverCoroutine);
-        // Orijinal boyut ve pozisyona dön
+        // Orijinal boyut ve pozisyona dÃ¶n
         hoverCoroutine = StartCoroutine(HoverRoutine(originalScale, originalPos)); 
     }
 

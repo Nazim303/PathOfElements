@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class DivinerManager : MonoBehaviour
 {
@@ -10,23 +11,23 @@ public class DivinerManager : MonoBehaviour
     [Header("UI")]
     public GameObject divinerPanel;
     public Transform cardsContainer;
-    public GameObject cardPrefab; // Arkasý kapalý kart prefabý
+    public GameObject cardPrefab; // ArkasÄ± kapalÄ± kart prefabÄ±
     public Button continueButton;
 
     [Header("Tarot Card Arts")]
-    public Sprite cardBackSprite; // Kartýn arkasý
-    public Sprite tarotCombatSprite; // Tarot Büyücü (Combat Temsili)
-    public Sprite tarotCompanionSprite; // Tarot Aþýklar (Companion Temsili)
+    public Sprite cardBackSprite; // KartÄ±n arkasÄ±
+    public Sprite tarotCombatSprite; // Tarot BÃ¼yÃ¼cÃ¼ (Combat Temsili)
+    public Sprite tarotCompanionSprite; // Tarot AÅŸÄ±klar (Companion Temsili)
     public Sprite tarotShopSprite; // Tarot Araba (Shop Temsili)
 
     [Header("Map Icons (Real Path Icons)")]
-    public Sprite mapCombatIcon; // Haritadaki Kýlýç Ýkonu
-    public Sprite mapCompanionIcon; // Haritadaki Yoldaþ Ýkonu
-    public Sprite mapShopIcon; // Haritadaki Kese Ýkonu
+    public Sprite mapCombatIcon; // Haritadaki KÄ±lÄ±Ã§ Ä°konu
+    public Sprite mapCompanionIcon; // Haritadaki YoldaÅŸ Ä°konu
+    public Sprite mapShopIcon; // Haritadaki Kese Ä°konu
 
     [Header("Settings")]
-    public float shuffleSpeed = 0.4f; // Yer deðiþtirme hýzý
-    public int shuffleCount = 5; // Kaç kere yer deðiþsin?
+    public float shuffleSpeed = 0.4f; // Yer deÄŸiÅŸtirme hÄ±zÄ±
+    public int shuffleCount = 5; // KaÃ§ kere yer deÄŸiÅŸsin?
 
     private List<DivinerCard> activeCards = new List<DivinerCard>();
     private bool isShuffling = false;
@@ -38,7 +39,7 @@ public class DivinerManager : MonoBehaviour
         if(continueButton != null)
         {
             continueButton.onClick.AddListener(OnContinueClicked);
-            continueButton.gameObject.SetActive(false);// baþta gizli 
+            continueButton.gameObject.SetActive(false);// baÅŸta gizli 
         }
 
 
@@ -51,43 +52,52 @@ public class DivinerManager : MonoBehaviour
 
     public void OpenDivinerEvent()
     {
-        divinerPanel.SetActive(true);
-        // Sadece kartlarý göster, karýþtýrma
+        if (divinerPanel != null)
+        {
+            divinerPanel.SetActive(true);
+            CanvasGroup cg = divinerPanel.GetComponent<CanvasGroup>();
+            if (cg == null) cg = divinerPanel.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+            cg.DOFade(1f, 0.35f);
+            divinerPanel.transform.localScale = Vector3.one * 0.95f;
+            divinerPanel.transform.DOScale(Vector3.one, 0.35f).SetEase(Ease.OutBack);
+        }
+        // Sadece kartlarÄ± gÃ¶ster, karÄ±ÅŸtÄ±rma
         StartCoroutine(ShowCardsPhase());
     }
 
     IEnumerator StartMinigame()
     {
-        // 1. Kartlarý Temizle
+        // 1. KartlarÄ± Temizle
         foreach (Transform child in cardsContainer) Destroy(child.gameObject);
         activeCards.Clear();
 
-        // 2. Layout Group'u Geçici Olarak Aç (Hizalamak için)
+        // 2. Layout Group'u GeÃ§ici Olarak AÃ§ (Hizalamak iÃ§in)
         HorizontalLayoutGroup layout = cardsContainer.GetComponent<HorizontalLayoutGroup>();
         if (layout != null) layout.enabled = true;
 
-        // 3. Kartlarý Oluþtur (Combat, Companion, Shop)
+        // 3. KartlarÄ± OluÅŸtur (Combat, Companion, Shop)
         CreateCard(PathType.Combat, tarotCombatSprite);
         CreateCard(PathType.Companion, tarotCompanionSprite);
         CreateCard(PathType.Shop, tarotShopSprite);
 
-        // Layout'un kartlarý dizmesi için 1 kare bekle
+        // Layout'un kartlarÄ± dizmesi iÃ§in 1 kare bekle
         yield return new WaitForEndOfFrame();
 
-        // 4. Layout Group'u KAPAT (Artýk biz hareket ettireceðiz)
+        // 4. Layout Group'u KAPAT (ArtÄ±k biz hareket ettireceÄŸiz)
         if (layout != null) layout.enabled = false;
 
         yield return new WaitForSeconds(2.5f);
 
-        // 5. Kartlarý Kapat (Arkasý dönsün)
+        // 5. KartlarÄ± Kapat (ArkasÄ± dÃ¶nsÃ¼n)
         foreach (var card in activeCards) card.FlipBack(cardBackSprite);
 
         yield return new WaitForSeconds(0.5f);
 
-        // 6. Karýþtýr (Animasyonlu)
+        // 6. KarÄ±ÅŸtÄ±r (Animasyonlu)
         yield return StartCoroutine(ShuffleRoutine());
 
-        // 7. Seçime Ýzin Ver
+        // 7. SeÃ§ime Ä°zin Ver
         foreach (var card in activeCards) card.button.interactable = true;
     }
 
@@ -96,21 +106,21 @@ public class DivinerManager : MonoBehaviour
     {
         if (continueButton != null) continueButton.gameObject.SetActive(false);
 
-        // Aþama 2: Kapat ve Karýþtýr
+        // AÅŸama 2: Kapat ve KarÄ±ÅŸtÄ±r
         StartCoroutine(ShufflePhase());
     }
 
     IEnumerator ShufflePhase()
     {
-        // 5. Kartlarý Kapat
+        // 5. KartlarÄ± Kapat
         foreach (var card in activeCards) card.FlipBack(cardBackSprite);
 
         yield return new WaitForSeconds(0.5f);
 
-        // 6. Karýþtýr
+        // 6. KarÄ±ÅŸtÄ±r
         yield return StartCoroutine(ShuffleRoutine());
 
-        // 7. Seçime Ýzin Ver
+        // 7. SeÃ§ime Ä°zin Ver
         foreach (var card in activeCards) card.button.interactable = true;
     }
     void CreateCard(PathType type, Sprite tarotArt)
@@ -121,47 +131,47 @@ public class DivinerManager : MonoBehaviour
         activeCards.Add(script);
     }
 
-    // --- YENÝ: ANÝMASYONLU KARISTIRMA ---
+    // --- YENÄ°: ANÄ°MASYONLU KARISTIRMA ---
     IEnumerator ShuffleRoutine()
     {
         isShuffling = true;
 
         for (int i = 0; i < shuffleCount; i++)
         {
-            // Rastgele iki kart seç
+            // Rastgele iki kart seÃ§
             int index1 = Random.Range(0, activeCards.Count);
             int index2 = Random.Range(0, activeCards.Count);
 
-            // Aynýysa tekrar seç
+            // AynÄ±ysa tekrar seÃ§
             while (index1 == index2) index2 = Random.Range(0, activeCards.Count);
 
             DivinerCard card1 = activeCards[index1];
             DivinerCard card2 = activeCards[index2];
 
-            // Pozisyonlarýný al
+            // PozisyonlarÄ±nÄ± al
             Vector3 pos1 = card1.transform.localPosition;
             Vector3 pos2 = card2.transform.localPosition;
 
-            // Animasyonla yer deðiþtir (Swap)
+            // Animasyonla yer deÄŸiÅŸtir (Swap)
             float t = 0;
             while (t < 1)
             {
                 t += Time.deltaTime / shuffleSpeed;
-                // Smoothstep ile yumuþak hareket
+                // Smoothstep ile yumuÅŸak hareket
                 float smoothT = t * t * (3f - 2f * t);
 
-                // Yay çizerek gitmeleri için (Shell game hissi) biraz Y offset verebiliriz ama düz swap yeterli þimdilik.
+                // Yay Ã§izerek gitmeleri iÃ§in (Shell game hissi) biraz Y offset verebiliriz ama dÃ¼z swap yeterli ÅŸimdilik.
                 card1.transform.localPosition = Vector3.Lerp(pos1, pos2, smoothT);
                 card2.transform.localPosition = Vector3.Lerp(pos2, pos1, smoothT);
 
                 yield return null;
             }
 
-            // Pozisyonlarý tam oturt
+            // PozisyonlarÄ± tam oturt
             card1.transform.localPosition = pos2;
             card2.transform.localPosition = pos1;
 
-            yield return new WaitForSeconds(0.1f); // Kýsa bekleme
+            yield return new WaitForSeconds(0.1f); // KÄ±sa bekleme
         }
 
         isShuffling = false;
@@ -171,17 +181,18 @@ public class DivinerManager : MonoBehaviour
     {
         if (isShuffling) return;
 
-        // Seçileni aç
+        // SeÃ§ileni aÃ§ ve hafifÃ§e Ã¶ne Ã§Ä±kar
+        selectedCard.transform.DOPunchScale(Vector3.one * 0.15f, 0.3f, 5, 0.5f);
         selectedCard.FlipFront();
 
-        // Diðerlerini de aç ama pasif yap
+        // DiÄŸerlerini de aÃ§ ama pasif yap
         foreach (var card in activeCards)
         {
             card.button.interactable = false;
             if (card != selectedCard) card.FlipFront();
         }
 
-        // --- DÜZELTME: HARÝTAYA GERÇEK ÝKONU GÖNDER ---
+        // --- DÃœZELTME: HARÄ°TAYA GERÃ‡EK Ä°KONU GÃ–NDER ---
         Sprite realMapIcon = GetMapIconForType(selectedCard.myType);
         ApplyFate(selectedCard.myType, realMapIcon);
 
@@ -204,43 +215,49 @@ public class DivinerManager : MonoBehaviour
         MapNode currentNode = PathManager.instance.currentNode;
         if (currentNode != null && currentNode.nextNodes.Count > 0)
         {
-            // Rastgele bir sonraki düðümü seç
+            // Rastgele bir sonraki dÃ¼ÄŸÃ¼mÃ¼ seÃ§
             int randIndex = Random.Range(0, currentNode.nextNodes.Count);
             MapNode nextNode = currentNode.nextNodes[randIndex];
 
-            // --- YENÝ: BOSS KORUMASI ---
-            // Eðer sýradaki düðüm Boss ise, onu deðiþtirme!
-            // (Alternatif olarak: Baþka bir nextNode dene veya hiçbir þey yapma)
+            // --- YENÄ°: BOSS KORUMASI ---
+            // EÄŸer sÄ±radaki dÃ¼ÄŸÃ¼m Boss ise, onu deÄŸiÅŸtirme!
+            // (Alternatif olarak: BaÅŸka bir nextNode dene veya hiÃ§bir ÅŸey yapma)
             if (nextNode.pathType == PathType.Boss)
             {
-                Debug.Log("Sýradaki durak Boss olduðu için kader deðiþtirilemedi.");
+                Debug.Log("SÄ±radaki durak Boss olduÄŸu iÃ§in kader deÄŸiÅŸtirilemedi.");
                 return;
             }
             // ---------------------------
 
             nextNode.ChangeType(type, icon);
-            Debug.Log($"Gelecek deðiþti! Sonraki durak: {type}");
+            Debug.Log($"Gelecek deÄŸiÅŸti! Sonraki durak: {type}");
         }
     }
 
     IEnumerator CloseDelay()
     {
-        yield return new WaitForSeconds(2f);
-        divinerPanel.SetActive(false);
+        yield return new WaitForSeconds(1.8f);
+        if (divinerPanel != null)
+        {
+            CanvasGroup cg = divinerPanel.GetComponent<CanvasGroup>();
+            if (cg != null) cg.DOFade(0f, 0.25f);
+            yield return new WaitForSeconds(0.25f);
+            divinerPanel.SetActive(false);
+        }
         PathManager.instance.CompleteCurrentNode();
     }
 
     IEnumerator ShowCardsPhase()
     {
-        // 1. Kartlarý Temizle
+        // 1. KartlarÄ± Temizle
         foreach (Transform child in cardsContainer) Destroy(child.gameObject);
         activeCards.Clear();
 
-        // 2. Layout Aç
+        // 2. Layout AÃ§
         HorizontalLayoutGroup layout = cardsContainer.GetComponent<HorizontalLayoutGroup>();
         if (layout != null) layout.enabled = true;
 
-        // 3. Kartlarý Oluþtur
+        // 3. KartlarÄ± OluÅŸtur
         CreateCard(PathType.Combat, tarotCombatSprite);
         CreateCard(PathType.Companion, tarotCompanionSprite);
         CreateCard(PathType.Shop, tarotShopSprite);
@@ -250,18 +267,18 @@ public class DivinerManager : MonoBehaviour
         // 4. Layout Kapat
         if (layout != null) layout.enabled = false;
 
-        // --- YENÝ: Oyuncunun incelemesi için bekle (Butonu aç) ---
+        // --- YENÄ°: Oyuncunun incelemesi iÃ§in bekle (Butonu aÃ§) ---
         if (continueButton != null)
         {
             continueButton.gameObject.SetActive(true);
             continueButton.interactable = true;
         }
 
-        // Butona basýlana kadar bekle...
+        // Butona basÄ±lana kadar bekle...
     }
 }
 
-// Kart Yardýmcý Sýnýfý (Ayný kalýyor ama scriptin içine dahil ettim)
+// Kart YardÄ±mcÄ± SÄ±nÄ±fÄ± (AynÄ± kalÄ±yor ama scriptin iÃ§ine dahil ettim)
 public class DivinerCard : MonoBehaviour
 {
     public PathType myType;
@@ -280,11 +297,28 @@ public class DivinerCard : MonoBehaviour
         button = GetComponent<Button>();
         if (button == null) button = gameObject.AddComponent<Button>();
 
-        img.sprite = icon; // Ýlk baþta açýk gelsin
+        img.sprite = icon; // Ä°lk baÅŸta aÃ§Ä±k gelsin
         button.onClick.AddListener(() => manager.OnCardSelected(this));
         button.interactable = false;
     }
 
-    public void FlipBack(Sprite back) { img.sprite = back; }
-    public void FlipFront() { img.sprite = frontSprite; }
+    public void FlipBack(Sprite back)
+    {
+        transform.DOKill();
+        transform.DORotate(new Vector3(0, 90f, 0), 0.15f).OnComplete(() =>
+        {
+            if (img != null) img.sprite = back;
+            transform.DORotate(Vector3.zero, 0.15f);
+        });
+    }
+
+    public void FlipFront()
+    {
+        transform.DOKill();
+        transform.DORotate(new Vector3(0, 90f, 0), 0.15f).OnComplete(() =>
+        {
+            if (img != null) img.sprite = frontSprite;
+            transform.DORotate(Vector3.zero, 0.15f);
+        });
+    }
 }

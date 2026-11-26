@@ -4,12 +4,12 @@ public class GlobalScaleManager : MonoBehaviour
 {
     public static GlobalScaleManager instance;
 
-    [Header("Kart Büyüklükleri")]
+    [Header("Kart BÃ¼yÃ¼klÃ¼kleri")]
     [Range(0.5f, 3f)] public float cardInHandScale = 1.0f; // Eldeki kartlar
     [Range(0.5f, 3f)] public float cardInSlotScale = 1.5f; // Masaya konan kartlar
 
-    [Header("Düþman Büyüklükleri")]
-    [Range(0.5f, 4f)] public float normalEnemyScale = 1.0f; // Normal düþmanlar
+    [Header("DÃ¼ÅŸman BÃ¼yÃ¼klÃ¼kleri")]
+    [Range(0.5f, 4f)] public float normalEnemyScale = 1.0f; // Normal dÃ¼ÅŸmanlar
     [Range(0.5f, 5f)] public float bossEnemyScale = 1.5f;   // Boss'lar
 
     private CombatManager cm;
@@ -21,28 +21,33 @@ public class GlobalScaleManager : MonoBehaviour
 
     void Update()
     {
-        // Anlýk güncellemeleri savaþ sýrasýnda yapýyoruz
-        if (cm == null) cm = FindObjectOfType<CombatManager>();
+        // AnlÄ±k gÃ¼ncellemeleri savaÅŸ sÄ±rasÄ±nda yapÄ±yoruz
+        if (cm == null) cm = CombatManager.instance != null ? CombatManager.instance : FindFirstObjectByType<CombatManager>();
         if (cm == null) return;
 
-        // 1. MASADAKÝ (SLOTLARDAKÝ) KARTLARI GÜNCELLE
+        // 1. MASADAKÄ° (SLOTLARDAKÄ°) KARTLARI GÃœNCELLE
         foreach (Transform slot in cm.slotTransforms)
         {
-            if (slot != null && slot.childCount > 0)
+            if (slot != null)
             {
-                Transform card = slot.GetChild(0);
-                // Kart yutulma veya fizyon gibi sebeplerle küçülüyorsa ona dokunma
-                if (card.localScale.x > 0.1f)
+                CardSlot slotComp = slot.GetComponent<CardSlot>();
+                CardDisplay cardDisplay = slotComp != null ? slotComp.GetCurrentCard() : slot.GetComponentInChildren<CardDisplay>();
+                if (cardDisplay != null)
                 {
-                    card.localScale = Vector3.one * cardInSlotScale;
+                    Transform card = cardDisplay.transform;
+                    // Kart yutulma veya fizyon gibi sebeplerle kÃ¼Ã§Ã¼lÃ¼yorsa ona dokunma
+                    if (card.localScale.x > 0.1f)
+                    {
+                        card.localScale = Vector3.one * cardInSlotScale;
+                    }
                 }
             }
         }
 
-        // 2. DÜÞMANLARI GÜNCELLE
+        // 2. DÃœÅžMANLARI GÃœNCELLE
         foreach (EnemyDisplay enemy in cm.activeEnemies)
         {
-            // Ölen düþmanýn küçülerek yok olma animasyonunu bozmamak için can kontrolü yapýyoruz
+            // Ã–len dÃ¼ÅŸmanÄ±n kÃ¼Ã§Ã¼lerek yok olma animasyonunu bozmamak iÃ§in can kontrolÃ¼ yapÄ±yoruz
             if (enemy != null && enemy.currentHealth > 0)
             {
                 bool isBoss = enemy.GetComponent<BossBehavior>() != null;

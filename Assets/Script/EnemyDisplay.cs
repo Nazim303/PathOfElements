@@ -2,13 +2,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using System.Collections.Generic; // YENÝ: List yapýsý için eklendi
+using System.Collections.Generic; // YENÄ°: List yapÄ±sÄ± iÃ§in eklendi
 
 public class EnemyDisplay : MonoBehaviour
 {
     [Header("Data")]
     public EnemyData enemyData;
     public int currentHealth;
+    public ElementType currentElement;
 
     [Header("UI Components")]
     public Transform visualRoot;
@@ -22,6 +23,7 @@ public class EnemyDisplay : MonoBehaviour
     {
         this.enemyData = data;
         this.currentHealth = maxHealth;
+        this.currentElement = data != null ? data.element : ElementType.None;
 
         if (nameText != null) nameText.text = data.enemyName;
         if (banderimage != null)
@@ -37,7 +39,7 @@ public class EnemyDisplay : MonoBehaviour
 
         if (visualRoot != null) visualRoot.localPosition = Vector3.zero;
 
-        UpdateElementVisual(data.element);
+        UpdateElementVisual(this.currentElement);
         UpdateHealthUI(currentHealth);
 
         TooltipTrigger tooltip = GetComponent<TooltipTrigger>();
@@ -52,7 +54,8 @@ public class EnemyDisplay : MonoBehaviour
 
     public void UpdateHealthUI(int healthVal)
     {
-        if (healthText != null) healthText.text = healthVal.ToString();
+        int displayVal = Mathf.Max(0, healthVal);
+        if (healthText != null) healthText.text = displayVal.ToString();
     }
 
     public void UpdateElementVisual(ElementType type)
@@ -61,12 +64,22 @@ public class EnemyDisplay : MonoBehaviour
 
         switch (type)
         {
-            case ElementType.Fire: elementIcon.color = Color.red; break;
-            case ElementType.Water: elementIcon.color = Color.blue; break;
+            case ElementType.Fire: elementIcon.color = new Color(1f, 0.25f, 0.25f); break;
+            case ElementType.Water: elementIcon.color = new Color(0.25f, 0.6f, 1f); break;
             case ElementType.Earth: elementIcon.color = new Color(0.6f, 0.4f, 0.2f); break;
-            case ElementType.Air: elementIcon.color = Color.cyan; break;
+            case ElementType.Air: elementIcon.color = new Color(0.3f, 0.85f, 0.7f); break;
+            case ElementType.Magma: elementIcon.color = new Color(1f, 0.28f, 0f); break;
+            case ElementType.Steam: elementIcon.color = new Color(0.75f, 0.85f, 0.95f); break;
+            case ElementType.Ice: elementIcon.color = new Color(0.4f, 0.85f, 1f); break;
+            case ElementType.Dust: elementIcon.color = new Color(0.8f, 0.7f, 0.45f); break;
             default: elementIcon.color = Color.white; break;
         }
+    }
+
+    public void ChangeElement(ElementType newElement)
+    {
+        this.currentElement = newElement;
+        UpdateElementVisual(newElement);
     }
 
     public IEnumerator TakeDamageEffect()
@@ -122,20 +135,20 @@ public class EnemyDisplay : MonoBehaviour
         target.localPosition = originalPos;
     }
 
-    // --- YENÝ: DISSOLVE SHADER ÝLE ERÝYEREK ÖLME MANTIÐI ---
+    // --- YENÄ°: DISSOLVE SHADER Ä°LE ERÄ°YEREK Ã–LME MANTIÄžI ---
     public IEnumerator DieAnimationAndDestroy()
     {
-        // Yazýlarý gizle
+        // YazÄ±larÄ± gizle
         if (healthText != null) healthText.gameObject.SetActive(false);
         if (nameText != null) nameText.gameObject.SetActive(false);
 
         Transform target = (visualRoot != null) ? visualRoot : transform;
 
-        // Düþmanýn içindeki tüm UI görsellerini (Image) bul
+        // DÃ¼ÅŸmanÄ±n iÃ§indeki tÃ¼m UI gÃ¶rsellerini (Image) bul
         Image[] allImages = target.GetComponentsInChildren<Image>(true);
         List<Material> dissolveMats = new List<Material>();
 
-        // Her görsel için materyalin KOPYASINI oluþtur (Tüm düþmanlar ayný anda erimesin diye)
+        // Her gÃ¶rsel iÃ§in materyalin KOPYASINI oluÅŸtur (TÃ¼m dÃ¼ÅŸmanlar aynÄ± anda erimesin diye)
         foreach (Image img in allImages)
         {
             Material matInstance = new Material(img.material);
@@ -144,7 +157,7 @@ public class EnemyDisplay : MonoBehaviour
         }
 
         float t = 0;
-        float duration = 1.0f; // Erime süresi (1 saniye)
+        float duration = 1.0f; // Erime sÃ¼resi (1 saniye)
         Vector3 startPos = target.localPosition;
         if (AudioManager.instance != null) AudioManager.instance.PlayEnemyDissolve();
 
@@ -152,10 +165,10 @@ public class EnemyDisplay : MonoBehaviour
         {
             t += Time.deltaTime / duration;
 
-            // Yanarken hafif titreme efekti (Kül oluyormuþ hissi verir)
+            // Yanarken hafif titreme efekti (KÃ¼l oluyormuÅŸ hissi verir)
             target.localPosition = startPos + new Vector3(Mathf.Sin(t * 50f) * 5f, 0, 0);
 
-            // Tüm materyallerdeki _DissolveAmount parametresini artýr
+            // TÃ¼m materyallerdeki _DissolveAmount parametresini artÄ±r
             foreach (Material mat in dissolveMats)
             {
                 if (mat != null)

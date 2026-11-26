@@ -1,18 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class PauseMenuManager : MonoBehaviour
 {
     [Header("UI References")]
-    [Tooltip("Açılıp kapanacak olan Ayarlar/Duraklatma Paneli")]
+    [Tooltip("AÃ§Ä±lÄ±p kapanacak olan Ayarlar/Duraklatma Paneli")]
     public GameObject pausePanel;
 
     [Header("Scene Settings")]
-    [Tooltip("Ana menü sahnesinin tam adı (Örn: MainMenu)")]
-    public string mainMenuSceneName = "MainMenu";
+    [Tooltip("Ana menÃ¼ sahnesinin tam adÄ± (Ã–rn: Menu Scene)")]
+    public string mainMenuSceneName = "Menu Scene";
 
     private bool isPaused = false;
-    private bool wasCombatActiveBeforePause = false; // --- YENİ ---
+    private bool wasCombatActiveBeforePause = false; // --- YENÄ° ---
 
     void Start()
     {
@@ -36,19 +37,44 @@ public class PauseMenuManager : MonoBehaviour
 
         if (pausePanel != null)
         {
-            pausePanel.SetActive(isPaused);
-            if (isPaused) pausePanel.transform.SetAsLastSibling(); // Paneli en öne al
+            if (isPaused)
+            {
+                pausePanel.SetActive(true);
+                pausePanel.transform.SetAsLastSibling();
+                pausePanel.transform.localScale = Vector3.one * 0.85f;
+                pausePanel.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack).SetUpdate(true);
+
+                CanvasGroup cg = pausePanel.GetComponent<CanvasGroup>();
+                if (cg == null) cg = pausePanel.AddComponent<CanvasGroup>();
+                cg.alpha = 0f;
+                cg.DOFade(1f, 0.2f).SetUpdate(true);
+            }
+            else
+            {
+                CanvasGroup cg = pausePanel.GetComponent<CanvasGroup>();
+                if (cg != null)
+                {
+                    cg.DOFade(0f, 0.15f).SetUpdate(true).OnComplete(() =>
+                    {
+                        pausePanel.SetActive(false);
+                    });
+                }
+                else
+                {
+                    pausePanel.SetActive(false);
+                }
+            }
         }
 
-        // Oyunu duraklat (Zamanı dondurur)
+        // Oyunu duraklat (ZamanÄ± dondurur)
         Time.timeScale = isPaused ? 0f : 1f;
 
-        // --- YENİ: Combat Panelini Geçici Kapatma ---
+        // --- YENÄ°: Combat Panelini GeÃ§ici Kapatma ---
         if (PathManager.instance != null && PathManager.instance.combatPanel != null)
         {
             if (isPaused)
             {
-                // Menü açılırken savaş panelinin durumunu kaydet ve kapat
+                // MenÃ¼ aÃ§Ä±lÄ±rken savaÅŸ panelinin durumunu kaydet ve kapat
                 wasCombatActiveBeforePause = PathManager.instance.combatPanel.activeSelf;
                 if (wasCombatActiveBeforePause)
                 {
@@ -57,7 +83,7 @@ public class PauseMenuManager : MonoBehaviour
             }
             else
             {
-                // Menü kapanırken savaş paneli önceden açıksa geri aç
+                // MenÃ¼ kapanÄ±rken savaÅŸ paneli Ã¶nceden aÃ§Ä±ksa geri aÃ§
                 if (wasCombatActiveBeforePause)
                 {
                     PathManager.instance.combatPanel.SetActive(true);
@@ -70,10 +96,10 @@ public class PauseMenuManager : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        // --- YENİ EKLENEN SATIR: Ana menüye dönerken savaş müziğini kapat ---
+        // --- YENÄ° EKLENEN SATIR: Ana menÃ¼ye dÃ¶nerken savaÅŸ mÃ¼ziÄŸini kapat ---
         if (AudioManager.instance != null) AudioManager.instance.StopBGM();
 
-        Debug.Log("Ana Menüye dönülüyor...");
+        Debug.Log("Ana MenÃ¼ye dÃ¶nÃ¼lÃ¼yor...");
         SceneManager.LoadScene(mainMenuSceneName);
     }
 }

@@ -16,7 +16,7 @@ public class HandVisualManager : MonoBehaviour
     private List<RectTransform> cards = new List<RectTransform>();
     private int hoveredIndex = -1;
 
-    // --- YENÝ: Sürüklenen Kart ---
+    // --- YENÄ°: SÃ¼rÃ¼klenen Kart ---
     private RectTransform draggingCard = null;
 
     void Update()
@@ -31,10 +31,10 @@ public class HandVisualManager : MonoBehaviour
         foreach (Transform child in transform)
         {
             CanvasGroup cg = child.GetComponent<CanvasGroup>();
-            // Sürüklenen kartý listeye EKLEME (Böylece pozisyonu hesaplanmaz)
-            // Ama listeden çýkarýrsak diðer kartlarýn arasýndaki boþluk kapanýr.
-            // Slay the Spire gibi boþluk kalsýn istiyorsan listeye ekle ama pozisyonunu deðiþtirme.
-            // Biz basit yöntemle gidelim: Listeye ekleyelim ama UpdateCardPositions'da kontrol edelim.
+            // SÃ¼rÃ¼klenen kartÄ± listeye EKLEME (BÃ¶ylece pozisyonu hesaplanmaz)
+            // Ama listeden Ã§Ä±karÄ±rsak diÄŸer kartlarÄ±n arasÄ±ndaki boÅŸluk kapanÄ±r.
+            // Slay the Spire gibi boÅŸluk kalsÄ±n istiyorsan listeye ekle ama pozisyonunu deÄŸiÅŸtirme.
+            // Biz basit yÃ¶ntemle gidelim: Listeye ekleyelim ama UpdateCardPositions'da kontrol edelim.
 
             if (child.gameObject.activeSelf && (cg == null || cg.alpha > 0.1f))
             {
@@ -55,11 +55,11 @@ public class HandVisualManager : MonoBehaviour
         {
             RectTransform card = cards[i];
 
-            // --- YENÝ: Eðer bu kart sürükleniyorsa pozisyonuna dokunma! ---
+            // --- YENÄ°: EÄŸer bu kart sÃ¼rÃ¼kleniyorsa pozisyonuna dokunma! ---
             if (card == draggingCard) continue;
             // --------------------------------------------------------------
 
-            // 1. Hedef Pozisyon ve Açý
+            // 1. Hedef Pozisyon ve AÃ§Ä±
             float xPos = startX + (i * cardSpacing);
             float normalizedX = (count > 1) ? (float)i / (count - 1) * 2f - 1f : 0f;
             float yPos = Mathf.Abs(normalizedX) * -arcHeight;
@@ -69,7 +69,7 @@ public class HandVisualManager : MonoBehaviour
             float baseScale = GlobalScaleManager.instance != null ? GlobalScaleManager.instance.cardInHandScale : 1f;
             float targetScale = baseScale;
 
-            // 2. HOVER (Sürüklenen kart varsa Hover çalýþmasýn veya kýsýtlý çalýþsýn)
+            // 2. HOVER (SÃ¼rÃ¼klenen kart varsa Hover Ã§alÄ±ÅŸmasÄ±n veya kÄ±sÄ±tlÄ± Ã§alÄ±ÅŸsÄ±n)
             if (hoveredIndex != -1 && draggingCard == null)
             {
                 float dist = Mathf.Abs(i - hoveredIndex);
@@ -91,7 +91,7 @@ public class HandVisualManager : MonoBehaviour
             Vector2 targetPos = new Vector2(xPos, yPos);
             card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, targetPos, Time.deltaTime * animSpeed);
 
-            // Eðer sürüklenen kart DEÐÝLSE scale ve rotasyonu deðiþtir
+            // EÄŸer sÃ¼rÃ¼klenen kart DEÄžÄ°LSE scale ve rotasyonu deÄŸiÅŸtir
             card.localScale = Vector3.Lerp(card.localScale, Vector3.one * targetScale, Time.deltaTime * animSpeed);
 
             Quaternion targetRot = Quaternion.Euler(0, 0, targetRotation);
@@ -99,25 +99,26 @@ public class HandVisualManager : MonoBehaviour
         }
     }
 
-    // --- YENÝ FONKSÝYONLAR ---
+    // --- YENÄ° FONKSÄ°YONLAR ---
     public void StartDraggingCard(RectTransform card)
     {
         draggingCard = card;
 
-        // Kartý en öne çizdir
+        // KartÄ± en Ã¶ne Ã§izdir
         card.SetAsLastSibling();
-        Canvas c = card.GetComponent<Canvas>();
-        if (c == null) c = card.gameObject.AddComponent<Canvas>();
+        if (!card.TryGetComponent<Canvas>(out var c))
+        {
+            c = card.gameObject.AddComponent<Canvas>();
+        }
         c.overrideSorting = true;
-        c.sortingOrder = 250; // Tooltip 300'dü, sürüklenen kart 250 olsun
+        c.sortingOrder = 250; // Tooltip 300'dÃ¼, sÃ¼rÃ¼klenen kart 250 olsun
     }
 
     public void StopDraggingCard()
     {
         if (draggingCard != null)
         {
-            Canvas c = draggingCard.GetComponent<Canvas>();
-            if (c != null)
+            if (draggingCard.TryGetComponent<Canvas>(out var c))
             {
                 c.overrideSorting = false;
                 c.sortingOrder = 0;
@@ -129,25 +130,30 @@ public class HandVisualManager : MonoBehaviour
 
     public void OnCardEnter(RectTransform card)
     {
-        if (draggingCard != null) return; // Sürükleme varken hover'ý engelle
+        if (draggingCard != null) return; // SÃ¼rÃ¼kleme varken hover'Ä± engelle
 
         hoveredIndex = cards.IndexOf(card);
 
-        Canvas c = card.GetComponent<Canvas>();
-        if (c == null) c = card.gameObject.AddComponent<Canvas>();
+        if (!card.TryGetComponent<Canvas>(out var c))
+        {
+            c = card.gameObject.AddComponent<Canvas>();
+        }
         c.overrideSorting = true;
         c.sortingOrder = 100;
-        if (card.GetComponent<GraphicRaycaster>() == null) card.gameObject.AddComponent<GraphicRaycaster>();
+
+        if (!card.TryGetComponent<GraphicRaycaster>(out _))
+        {
+            card.gameObject.AddComponent<GraphicRaycaster>();
+        }
     }
 
     public void OnCardExit(RectTransform card)
     {
-        // YENÝ: Eðer fare üstünden çýksa bile bu kart SÜRÜKLENEN KART ise iþlemleri iptal et! (Arkaya düþmesin)
+        // YENÄ°: EÄŸer fare Ã¼stÃ¼nden Ã§Ä±ksa bile bu kart SÃœRÃœKLENEN KART ise iÅŸlemleri iptal et! (Arkaya dÃ¼ÅŸmesin)
         if (draggingCard == card) return;
 
         hoveredIndex = -1;
-        Canvas c = card.GetComponent<Canvas>();
-        if (c != null)
+        if (card.TryGetComponent<Canvas>(out var c))
         {
             c.overrideSorting = false;
             c.sortingOrder = 0;

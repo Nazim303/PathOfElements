@@ -24,7 +24,7 @@ public class MapNode : MonoBehaviour
     public List<MapNode> nextNodes = new List<MapNode>();
     public List<MapNode> parentNodes = new List<MapNode>();
 
-    // --- YENÝ: Bu düðümden çýkan noktalarýn (çizgilerin) referanslarý ---
+    // --- YENÄ°: Bu dÃ¼ÄŸÃ¼mden Ã§Ä±kan noktalarÄ±n (Ã§izgilerin) referanslarÄ± ---
     public Dictionary<MapNode, List<Image>> lineDots = new Dictionary<MapNode, List<Image>>();
 
     [Header("Status")]
@@ -32,7 +32,7 @@ public class MapNode : MonoBehaviour
     public bool isLocked = true;
     public bool isSkipped = false;
 
-    // --- YENÝ: Zýplama Animasyonu için ---
+    // --- YENÄ°: ZÄ±plama Animasyonu iÃ§in ---
     private Coroutine bounceCoroutine;
 
     void Start()
@@ -42,7 +42,7 @@ public class MapNode : MonoBehaviour
 
     void OnEnable()
     {
-        // Obje (Harita) her görünür olduðunda animasyonun çökmemesi ve devam etmesi için kendini yenile
+        // Obje (Harita) her gÃ¶rÃ¼nÃ¼r olduÄŸunda animasyonun Ã§Ã¶kmemesi ve devam etmesi iÃ§in kendini yenile
         UpdateVisuals();
     }
 
@@ -107,12 +107,12 @@ public class MapNode : MonoBehaviour
     {
         if (nodeButton == null || nodeIcon == null) return;
 
-        // --- YENÝ: Animasyon Temizliði ---
+        // --- YENÄ°: Animasyon TemizliÄŸi ---
         if (bounceCoroutine != null)
         {
             StopCoroutine(bounceCoroutine);
             bounceCoroutine = null;
-            nodeButton.transform.localScale = Vector3.one; // Boyutu normale döndür
+            nodeButton.transform.localScale = Vector3.one; // Boyutu normale dÃ¶ndÃ¼r
         }
 
         if (isCompleted)
@@ -137,7 +137,7 @@ public class MapNode : MonoBehaviour
             nodeButton.interactable = false;
             nodeIcon.color = Color.black;
         }
-        else // Tamamen açýk ve gidilebilir durum
+        else // Tamamen aÃ§Ä±k ve gidilebilir durum
         { 
             nodeButton.interactable = true;
             nodeIcon.color = Color.white;
@@ -146,16 +146,16 @@ public class MapNode : MonoBehaviour
         } 
 
 
-        // --- YENÝ: Nefes Alma / Zýplama Animasyonu ---
+        // --- YENÄ°: Nefes Alma / ZÄ±plama Animasyonu ---
         System.Collections.IEnumerator BounceRoutine()
         {
-            float speed = 2f; // Ne kadar hýzlý nefes alacaðý
-            float amount = 0.05f; // Ne kadar büyüyeceði (%5)
-            Vector3 baseScale = Vector3.one * 1.1f; // Ana büyüklük
+            float speed = 2f; // Ne kadar hÄ±zlÄ± nefes alacaÄŸÄ±
+            float amount = 0.05f; // Ne kadar bÃ¼yÃ¼yeceÄŸi (%5)
+            Vector3 baseScale = Vector3.one * 1.1f; // Ana bÃ¼yÃ¼klÃ¼k
 
             while (true)
             {
-                // Sinüs dalgasý ile yumuþak büyüme küçülme
+                // SinÃ¼s dalgasÄ± ile yumuÅŸak bÃ¼yÃ¼me kÃ¼Ã§Ã¼lme
                 float scale = 1f + Mathf.Sin(Time.time * Mathf.PI * speed) * amount;
                 nodeButton.transform.localScale = baseScale * scale;
                 yield return null;

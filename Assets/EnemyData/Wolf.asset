@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c06f743384e2224dbd2e3cda8d6db0c, type: 3}
   m_Name: Wolf
   m_EditorClassIdentifier: 
-  enemyName: "Sh\u0131fk\u0131n Flower"
+  enemyName: Bloom Sprout
   maxHealth: 20
   element: 3
   enemyArt: {fileID: 3657537090157891186, guid: 406d7c267c5a13340aecefe5ab123cb6, type: 3}

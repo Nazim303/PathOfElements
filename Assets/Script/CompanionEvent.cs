@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
-using System.Collections; // YENÝ: Coroutine için eklendi
+using System.Collections; // YENÄ°: Coroutine iÃ§in eklendi
 
 public class CompanionEvent : MonoBehaviour
 {
@@ -17,9 +17,9 @@ public class CompanionEvent : MonoBehaviour
     [Header("UI Elements")]
     public Button skipButton;
 
-    // YENÝ: Animasyon hedefleri
-    public Transform deckIconPoint; // Inspector'dan destenin durduðu UI objesini buraya ata
-    public float flyDuration = 0.6f; // Süzülme süresi
+    // YENÄ°: Animasyon hedefleri
+    public Transform deckIconPoint; // Inspector'dan destenin durduÄŸu UI objesini buraya ata
+    public float flyDuration = 0.6f; // SÃ¼zÃ¼lme sÃ¼resi
 
     [Header("Flying Animation Prefabs")]
     public GameObject standardCardPrefab;
@@ -78,16 +78,16 @@ public class CompanionEvent : MonoBehaviour
         }
     }
 
-    // YENÝ: Artýk startTransform parametresi alýyor
+    // YENÄ°: ArtÄ±k startTransform parametresi alÄ±yor
     public void OnCompanionSelected(CardData selectedCard, Transform startTransform)
     {
-        // Anýnda kapatmak yerine animasyonu baþlatýyoruz
+        // AnÄ±nda kapatmak yerine animasyonu baÅŸlatÄ±yoruz
         StartCoroutine(AnimateAndSelectRoutine(selectedCard, startTransform));
     }
 
     IEnumerator AnimateAndSelectRoutine(CardData selectedCard, Transform startTransform)
     {
-        Debug.Log($"[DEBUG] Süzülme Animasyonu Baþlýyor: {selectedCard.cardName}");
+        Debug.Log($"[DEBUG] SÃ¼zÃ¼lme Animasyonu BaÅŸlÄ±yor: {selectedCard.cardName}");
 
         // 1. Lock AND Hide the unselected buttons to prevent spam clicks and clean the UI
         foreach (Transform child in cardsContainer)
@@ -98,7 +98,7 @@ public class CompanionEvent : MonoBehaviour
                 btn.interactable = false;
             }
 
-            // YENÝ: Seçilmeyen diðer kartlarý anýnda görünmez yap
+            // YENÄ°: SeÃ§ilmeyen diÄŸer kartlarÄ± anÄ±nda gÃ¶rÃ¼nmez yap
             if (child != startTransform)
             {
                 child.gameObject.SetActive(false);
@@ -111,14 +111,14 @@ public class CompanionEvent : MonoBehaviour
 
         if (prefabToUse == null)
         {
-            Debug.LogError("[HATA] Uçuþ için Card Prefab atanmamýþ! Lütfen Inspector'dan kontrol et.");
+            Debug.LogError("[HATA] UÃ§uÅŸ iÃ§in Card Prefab atanmamÄ±ÅŸ! LÃ¼tfen Inspector'dan kontrol et.");
             yield break;
         }
 
         Canvas mainCanvas = GetComponentInParent<Canvas>();
         if (mainCanvas == null)
         {
-            mainCanvas = FindObjectOfType<Canvas>();
+            mainCanvas = FindFirstObjectByType<Canvas>();
         }
 
         GameObject flyingCard = Instantiate(prefabToUse, mainCanvas.transform);
@@ -180,7 +180,7 @@ public class CompanionEvent : MonoBehaviour
         if (flyingCard != null) Destroy(flyingCard);
 
         // 4. Animation finished! Execute the actual logic
-        DeckManager dm = FindObjectOfType<DeckManager>();
+        DeckManager dm = DeckManager.instance != null ? DeckManager.instance : FindFirstObjectByType<DeckManager>();
         if (dm != null)
         {
             dm.AddCardFromEvent(selectedCard);
@@ -191,12 +191,12 @@ public class CompanionEvent : MonoBehaviour
             if (allCompanionCards.Contains(selectedCard))
             {
                 allCompanionCards.Remove(selectedCard);
-                Debug.Log($"{selectedCard.cardName} kalýcý bir kart, havuzdan çýkarýldý.");
+                Debug.Log($"{selectedCard.cardName} kalÄ±cÄ± bir kart, havuzdan Ã§Ä±karÄ±ldÄ±.");
             }
         }
         else
         {
-            Debug.Log($"{selectedCard.cardName} tek kullanýmlýk bir yoldaþ, Tavernada kalmaya devam edecek.");
+            Debug.Log($"{selectedCard.cardName} tek kullanÄ±mlÄ±k bir yoldaÅŸ, Tavernada kalmaya devam edecek.");
         }
 
         if (skipButton != null) skipButton.interactable = true;
@@ -209,7 +209,7 @@ public class CompanionEvent : MonoBehaviour
 
     public void SkipEvent()
     {
-        Debug.Log("Tavernadan hiçbir þey almadan, desteni temiz tutarak ayrýldýn.");
+        Debug.Log("Tavernadan hiÃ§bir ÅŸey almadan, desteni temiz tutarak ayrÄ±ldÄ±n.");
 
         if (PathManager.instance != null)
         {

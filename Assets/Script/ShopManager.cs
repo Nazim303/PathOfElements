@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class ShopManager : MonoBehaviour
 {
@@ -40,8 +41,8 @@ public class ShopManager : MonoBehaviour
         foreach (GameObject slot in currentShopSlots) Destroy(slot);
         currentShopSlots.Clear();
 
-        // Rastgele 3 eþya seçimi
-        // (Eðer listede 3'ten az eþya varsa hata vermemesi için koruma)
+        // Rastgele 3 eÅŸya seÃ§imi
+        // (EÄŸer listede 3'ten az eÅŸya varsa hata vermemesi iÃ§in koruma)
         int itemsToSpawn = Mathf.Min(3, allPossibleItems.Count);
 
         List<ItemData> availablePool = new List<ItemData>(allPossibleItems);
@@ -53,7 +54,7 @@ public class ShopManager : MonoBehaviour
 
             CreateItemSlot(randomItem);
 
-            // Ayný eþyadan dükkanda 2 tane çýkmamasý için havuzdan çýkar
+            // AynÄ± eÅŸyadan dÃ¼kkanda 2 tane Ã§Ä±kmamasÄ± iÃ§in havuzdan Ã§Ä±kar
             availablePool.RemoveAt(randomIndex);
         }
     }
@@ -63,6 +64,9 @@ public class ShopManager : MonoBehaviour
         GameObject newSlot = Instantiate(shopItemPrefab, itemsContainer);
         currentShopSlots.Add(newSlot);
 
+        newSlot.transform.localScale = Vector3.zero;
+        newSlot.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+
         ShopSlot slotScript = newSlot.GetComponent<ShopSlot>();
         if (slotScript != null)
         {
@@ -70,33 +74,48 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    // EÞYA SATIN ALMA
+    // EÅžYA SATIN ALMA
     public void TryBuyItem(ItemData item, GameObject slotObj)
     {
         if (PlayerManager.instance.currentGold >= item.cost)
         {
-            // 1. Parayý düþ
+            // 1. ParayÄ± dÃ¼ÅŸ
             PlayerManager.instance.AddGold(-item.cost);
             if (AudioManager.instance != null) AudioManager.instance.PlayPurchase();
 
             // 2. Efekti uygula
             ApplyItemEffect(item);
 
-            // 3. Eþyayý dükkandan kaldýr
-            Destroy(slotObj);
+            // 3. EÅŸyayÄ± dÃ¼kkandan kaldÄ±r (animasyonlu)
             currentShopSlots.Remove(slotObj);
+            if (slotObj != null)
+            {
+                slotObj.transform.DOScale(Vector3.zero, 0.25f).SetEase(Ease.InBack).OnComplete(() =>
+                {
+                    Destroy(slotObj);
+                });
+            }
 
             UpdateUI();
-            Debug.Log($"[SHOP] {item.itemName} satýn alýndý!");
+            Debug.Log($"[SHOP] {item.itemName} satÄ±n alÄ±ndÄ±!");
         }
         else
         {
             Debug.Log("[SHOP] Yetersiz Bakiye!");
-            // (Ýleride buraya ui titremesi veya kýrmýzý uyarý yazýsý koyabilirsin)
+            if (slotObj != null)
+            {
+                slotObj.transform.DOComplete();
+                slotObj.transform.DOShakePosition(0.35f, new Vector3(8f, 0, 0), 10, 90f, false, true);
+            }
+            if (playerGoldText != null)
+            {
+                playerGoldText.transform.DOComplete();
+                playerGoldText.transform.DOShakePosition(0.3f, new Vector3(6f, 0, 0), 10, 90f, false, true);
+            }
         }
     }
 
-    // --- GÜNCELLENEN KISIM: YENÝ EFEKTLERÝN ÇALIÞMA MANTIÐI ---
+    // --- GÃœNCELLENEN KISIM: YENÄ° EFEKTLERÄ°N Ã‡ALIÅžMA MANTIÄžI ---
     void ApplyItemEffect(ItemData item)
     {
         switch (item.effectType)
@@ -134,6 +153,14 @@ public class ShopManager : MonoBehaviour
                 }
                 break;
 
+            case ItemEffectType.GainGold:
+                if (PlayerManager.instance != null)
+                {
+                    PlayerManager.instance.AddGold(item.effectValue);
+                    Debug.Log($"[SHOP] Added gold: {item.effectValue} G");
+                }
+                break;
+
             case ItemEffectType.GainCard:
                 if (item.rewardCard != null)
                 {
@@ -147,7 +174,7 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    // REROLL (YENÝLEME)
+    // REROLL (YENÄ°LEME)
     public void RerollShop()
     {
         if (PlayerManager.instance.currentGold >= rerollCost)
@@ -155,14 +182,19 @@ public class ShopManager : MonoBehaviour
             PlayerManager.instance.AddGold(-rerollCost);
             GenerateItems();
 
-            // Opsiyonel: Her yenilemede fiyat artsýn (Hardcore roguelike hissi)
+            // Opsiyonel: Her yenilemede fiyat artsÄ±n (Hardcore roguelike hissi)
             // rerollCost += 5; 
 
             UpdateUI();
         }
         else
         {
-            Debug.Log("[SHOP] Yenilemek için paran yetmiyor!");
+            Debug.Log("[SHOP] Yenilemek iÃ§in paran yetmiyor!");
+            if (rerollCostText != null)
+            {
+                rerollCostText.transform.DOComplete();
+                rerollCostText.transform.DOShakePosition(0.35f, new Vector3(8f, 0, 0), 10, 90f, false, true);
+            }
         }
     }
 

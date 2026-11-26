@@ -1,51 +1,94 @@
 using UnityEngine;
 
-// Element türlerini tanımlıyoruz
+// Element tÃ¼rlerini tanÄ±mlÄ±yoruz
 public enum ElementType
 {
     None,
     // --- ANA ELEMENTLER ---
     Fire,
     Water,
-    Earth,  // (Doğa)
+    Earth,  // (DoÄŸa)
     Air,
 
-    // --- YAN ELEMENTLER (FİZYON) ---
-    Magma,  // Ateş + Doğa
-    Steam,  // Su + Ateş
+    // --- YAN ELEMENTLER (FÃœZYON) ---
+    Magma,  // AteÅŸ + DoÄŸa
+    Steam,  // Su + AteÅŸ
     Ice,    // Su + Hava
-    Dust    // Doğa + Hava
+    Dust    // DoÄŸa + Hava
 }
 
-// ElementSystem.cs sınıfının kalan kısmı (GetDamageMultiplier) aynı kalacak.
 public static class ElementSystem
 {
-    // Hasar çarpanını hesaplayan fonksiyon
+    // Hasar Ã§arpanÄ±nÄ± hesaplayan fonksiyon
     public static float GetDamageMultiplier(ElementType attacker, ElementType defender)
     {
-        // Örnek Mantık: Ateş > Toprak > Hava > Su > Ateş (Bu döngüyü tasarımına göre değiştirebilirsin)
+        if (attacker == ElementType.None || defender == ElementType.None) return 1.0f;
+        if (attacker == defender) return 1.0f;
 
-        if (attacker == ElementType.Fire && defender == ElementType.Earth) return 2.0f; // Kritik
+        // --- 1. ANA ELEMENTLERÄ°N DÃ–NGÃœSÃœ (AteÅŸ > Toprak > Hava > Su > AteÅŸ) ---
+        // Kritik VuruÅŸlar (2.0x)
+        if (attacker == ElementType.Fire && defender == ElementType.Earth) return 2.0f;
         if (attacker == ElementType.Earth && defender == ElementType.Air) return 2.0f;
         if (attacker == ElementType.Air && defender == ElementType.Water) return 2.0f;
         if (attacker == ElementType.Water && defender == ElementType.Fire) return 2.0f;
 
-        // Zayıf vuruşlar (Resistance)
+        // ZayÄ±f VuruÅŸlar (0.5x)
         if (attacker == ElementType.Fire && defender == ElementType.Water) return 0.5f;
-
-        // Su -> Havaya vurursa (Zayıf)
         if (attacker == ElementType.Water && defender == ElementType.Air) return 0.5f;
-
-        // Hava -> Toprağa vurursa (Zayıf)
         if (attacker == ElementType.Air && defender == ElementType.Earth) return 0.5f;
-
-        // Toprak -> Ateşe vurursa (Zayıf)
         if (attacker == ElementType.Earth && defender == ElementType.Fire) return 0.5f;
 
-        return 1.0f; // Nötr
-        if (attacker == ElementType.Water && defender == ElementType.Air) return 0.5f;
-        // ... diğer zayıflıklar buraya
+        // --- 2. FÃœZYON SALDIRILARI (FÃ¼zyon KartÄ± -> Normal DÃ¼ÅŸman) ---
+        // Magma (AteÅŸ + DoÄŸa): Toprak ve Havaya karÅŸÄ± gÃ¼Ã§lÃ¼, Suya karÅŸÄ± zayÄ±f
+        if (attacker == ElementType.Magma)
+        {
+            if (defender == ElementType.Earth || defender == ElementType.Air) return 2.0f;
+            if (defender == ElementType.Water) return 0.5f;
+        }
 
-       
+        // Steam (Su + AteÅŸ): AteÅŸ ve TopraÄŸa karÅŸÄ± gÃ¼Ã§lÃ¼, Havaya karÅŸÄ± zayÄ±f
+        if (attacker == ElementType.Steam)
+        {
+            if (defender == ElementType.Fire || defender == ElementType.Earth) return 2.0f;
+            if (defender == ElementType.Air) return 0.5f;
+        }
+
+        // Ice (Su + Hava): AteÅŸ ve Suya karÅŸÄ± gÃ¼Ã§lÃ¼, TopraÄŸa karÅŸÄ± zayÄ±f
+        if (attacker == ElementType.Ice)
+        {
+            if (defender == ElementType.Fire || defender == ElementType.Water) return 2.0f;
+            if (defender == ElementType.Earth) return 0.5f;
+        }
+
+        // Dust (DoÄŸa + Hava): Hava ve Suya karÅŸÄ± gÃ¼Ã§lÃ¼, AteÅŸe karÅŸÄ± zayÄ±f
+        if (attacker == ElementType.Dust)
+        {
+            if (defender == ElementType.Air || defender == ElementType.Water) return 2.0f;
+            if (defender == ElementType.Fire) return 0.5f;
+        }
+
+        // --- 3. NORMAL SALDIRILAR (Normal Kart -> FÃ¼zyon DÃ¼ÅŸman) ---
+        if (defender == ElementType.Magma)
+        {
+            if (attacker == ElementType.Water) return 1.5f; // Su, Magma'yÄ± sÃ¶ndÃ¼rÃ¼r
+            if (attacker == ElementType.Earth || attacker == ElementType.Air) return 0.5f;
+        }
+        if (defender == ElementType.Steam)
+        {
+            if (attacker == ElementType.Air) return 1.5f; // Hava, BuharÄ± daÄŸÄ±tÄ±r
+            if (attacker == ElementType.Fire || attacker == ElementType.Earth) return 0.5f;
+        }
+        if (defender == ElementType.Ice)
+        {
+            if (attacker == ElementType.Earth) return 1.5f; // Toprak/Kaya, Buzu kÄ±rar
+            if (attacker == ElementType.Fire || attacker == ElementType.Water) return 0.5f;
+        }
+        if (defender == ElementType.Dust)
+        {
+            if (attacker == ElementType.Fire) return 1.5f; // AteÅŸ, Tozu yakar
+            if (attacker == ElementType.Air || attacker == ElementType.Water) return 0.5f;
+        }
+
+        return 1.0f; // DiÄŸer durumlar nÃ¶tr
     }
 }

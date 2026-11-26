@@ -23,19 +23,31 @@ public class StartingDeckManager : MonoBehaviour
     private List<CardData> selectedDeck = new List<CardData>();
     private DeckManager deckManager;
 
-    void Awake() { if (instance == null) instance = this; }
+    void Awake()
+    {
+        if (instance == null) instance = this;
+    }
+
+    void Start()
+    {
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.RemoveListener(ConfirmDeck);
+            confirmButton.onClick.AddListener(ConfirmDeck);
+        }
+    }
 
     public void OpenSelection()
     {
         selectionPanel.SetActive(true);
-        deckManager = FindObjectOfType<DeckManager>();
+        deckManager = DeckManager.instance != null ? DeckManager.instance : FindFirstObjectByType<DeckManager>();
 
-        // 1. Havuzu doldur ve DeckManager'daki asýl desteyi temizle
+        // 1. Havuzu doldur ve DeckManager'daki asÄ±l desteyi temizle
         unlockedPool = new List<CardData>(deckManager.allCardsInDeck);
         selectedDeck.Clear();
         deckManager.allCardsInDeck.Clear();
 
-        // 2. SADECE hafýzada kayýtlý bir deste varsa otomatik yükle
+        // 2. HafÄ±zada kayÄ±tlÄ± bir deste varsa yÃ¼kle
         string savedDeck = PlayerPrefs.GetString("LastSelectedDeck", "");
 
         if (!string.IsNullOrEmpty(savedDeck))
@@ -52,9 +64,49 @@ public class StartingDeckManager : MonoBehaviour
                     unlockedPool.Remove(foundCard);
                 }
             }
+
+            // KayÄ±tlÄ± destede hiÃ§ Destek (Support) kartÄ± yoksa, oyuncunun eline en az 2 destek kartÄ± geÃ§mesi iÃ§in takviye yap
+            bool hasSupportInDeck = selectedDeck.Exists(c => c.cardType == CardType.Support);
+            if (!hasSupportInDeck)
+            {
+                List<CardData> availableSupports = unlockedPool.FindAll(c => c.cardType == CardType.Support);
+                int supportsToAdd = Mathf.Min(2, availableSupports.Count);
+                for (int i = 0; i < supportsToAdd; i++)
+                {
+                    CardData supCard = availableSupports[i];
+                    // Son kartlardan birini Ã§Ä±karÄ±p yerine destek kartÄ± ekle
+                    if (selectedDeck.Count >= requiredCardCount)
+                    {
+                        CardData removed = selectedDeck[selectedDeck.Count - 1];
+                        selectedDeck.RemoveAt(selectedDeck.Count - 1);
+                        unlockedPool.Add(removed);
+                    }
+                    selectedDeck.Add(supCard);
+                    unlockedPool.Remove(supCard);
+                }
+            }
         }
-        // Eðer kayýtlý deste yoksa (örn: Tutorial'dan yeni gelmiþse) 
-        // sistem hiçbir þeyi otomatik seçmez, alt taraf boþ kalýr.
+        else
+        {
+            // KayÄ±tlÄ± deste yoksa dengeli bir baÅŸlangÄ±Ã§ destesi oluÅŸtur (SaldÄ±rÄ± + Åžifa + Destek)
+            // Ã–nce 2-3 destek kartÄ± ekle
+            List<CardData> supportPool = unlockedPool.FindAll(c => c.cardType == CardType.Support);
+            int supCount = Mathf.Min(3, supportPool.Count);
+            for (int i = 0; i < supCount; i++)
+            {
+                CardData sc = supportPool[i];
+                selectedDeck.Add(sc);
+                unlockedPool.Remove(sc);
+            }
+
+            // Kalan yerleri diÄŸer kartlarla doldur
+            while (selectedDeck.Count < requiredCardCount && unlockedPool.Count > 0)
+            {
+                CardData ac = unlockedPool[0];
+                selectedDeck.Add(ac);
+                unlockedPool.RemoveAt(0);
+            }
+        }
 
         RefreshSelectionUI();
     }
@@ -78,7 +130,7 @@ public class StartingDeckManager : MonoBehaviour
 
     public void RefreshSelectionUI()
     {
-        // Havuzdaki kartlarý yarat
+        // Havuzdaki kartlarÄ± yarat
         foreach (Transform child in availableCardsContainer) Destroy(child.gameObject);
         foreach (CardData card in unlockedPool)
         {
@@ -88,7 +140,7 @@ public class StartingDeckManager : MonoBehaviour
             obj.AddComponent<DeckSelectionCard>().Setup(card, this, false);
         }
 
-        // Seçilen kartlarý yarat
+        // SeÃ§ilen kartlarÄ± yarat
         foreach (Transform child in selectedCardsContainer) Destroy(child.gameObject);
         foreach (CardData card in selectedDeck)
         {
@@ -106,7 +158,7 @@ public class StartingDeckManager : MonoBehaviour
     {
         deckManager.allCardsInDeck = new List<CardData>(selectedDeck);
 
-        // Seçilen desteyi bir sonraki oyun için hafýzaya kaydet
+        // SeÃ§ilen desteyi bir sonraki oyun iÃ§in hafÄ±zaya kaydet
         string deckToSave = "";
         foreach (CardData card in selectedDeck)
         {
@@ -115,10 +167,16 @@ public class StartingDeckManager : MonoBehaviour
         PlayerPrefs.SetString("LastSelectedDeck", deckToSave);
         PlayerPrefs.Save();
 
-        // Dýþlanan kartlarý Taverna (Companion) havuzuna fýrlat
+        // DÄ±ÅŸlanan kartlarÄ± Taverna (Companion) havuzuna fÄ±rlat (MÃ¼kerrer eklemeyi Ã¶nle)
         if (CompanionEvent.instance != null)
         {
-            CompanionEvent.instance.allCompanionCards.AddRange(unlockedPool);
+            foreach (CardData card in unlockedPool)
+            {
+                if (card != null && !CompanionEvent.instance.allCompanionCards.Contains(card))
+                {
+                    CompanionEvent.instance.allCompanionCards.Add(card);
+                }
+            }
         }
 
         selectionPanel.SetActive(false);

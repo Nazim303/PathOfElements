@@ -8804,7 +8804,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Define
+  m_text: CONFIRM DECK
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 987df72e00bb63749922124423942844, type: 2}
   m_sharedMaterial: {fileID: 6203209605918324484, guid: 987df72e00bb63749922124423942844, type: 2}

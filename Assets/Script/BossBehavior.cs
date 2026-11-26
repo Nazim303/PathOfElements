@@ -13,15 +13,15 @@ public abstract class BossBehavior : MonoBehaviour
         myDisplay = display;
     }
 
-    // Boss'un sırası gelince ne yapacak? (TurnManager bunu çağıracak)
+    // Boss'un sÄ±rasÄ± gelince ne yapacak? (TurnManager bunu Ã§aÄŸÄ±racak)
     public abstract IEnumerator ExecuteBossTurn();
 
-    // Boss şu an hasar alabilir mi?
+    // Boss ÅŸu an hasar alabilir mi?
     public virtual bool IsInvulnerable()
     {
-        return false; // Varsayılan olarak hasar alır
+        return false; // VarsayÄ±lan olarak hasar alÄ±r
     }
 
-    // Boss hasar alınca özel bir tepki verir mi?
+    // Boss hasar alÄ±nca Ã¶zel bir tepki verir mi?
     public virtual void OnTakeDamage(int amount) { }
 }

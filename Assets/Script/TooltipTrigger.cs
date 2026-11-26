@@ -4,7 +4,7 @@ using System.Collections;
 
 public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [TextArea] public string overrideText; // Manuel yazý (Varsa bunu gösterir)
+    [TextArea] public string overrideText; // Manuel yazÄ± (Varsa bunu gÃ¶sterir)
 
     private float hoverDelay = 0.7f;
     private Coroutine hoverCoroutine;
@@ -24,10 +24,10 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         yield return new WaitForSeconds(hoverDelay);
 
-        // 1. Önce manuel yazý var mý bak
+        // 1. Ã–nce manuel yazÄ± var mÄ± bak
         string textToShow = overrideText;
 
-        // 2. Yoksa, bu objenin bir KART olup olmadýðýna bak ve veriyi çek
+        // 2. Yoksa, bu objenin bir KART olup olmadÄ±ÄŸÄ±na bak ve veriyi Ã§ek
         if (string.IsNullOrEmpty(textToShow))
         {
             CardDisplay card = GetComponent<CardDisplay>();
@@ -37,16 +37,16 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             }
         }
 
-        // 3. Hala boþsa, belki bu bir DÜÞMANDIR? (EnemyDisplay'den gelen veri overrideText'e yazýlýr)
+        // 3. Hala boÅŸsa, belki bu bir DÃœÅžMANDIR? (EnemyDisplay'den gelen veri overrideText'e yazÄ±lÄ±r)
 
-        // Sonuçta bir yazý varsa göster
+        // SonuÃ§ta bir yazÄ± varsa gÃ¶ster
         if (!string.IsNullOrEmpty(textToShow) && TooltipUI.instance != null)
         {
             TooltipUI.instance.ShowTooltip(textToShow);
         }
     }
 
-    // Dýþarýdan yazý atamak için (Örn: Düþmanlar için)
+    // DÄ±ÅŸarÄ±dan yazÄ± atamak iÃ§in (Ã–rn: DÃ¼ÅŸmanlar iÃ§in)
     public void SetTooltipText(string text)
     {
         overrideText = text;

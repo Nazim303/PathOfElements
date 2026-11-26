@@ -8,11 +8,11 @@ public class EnemyData : ScriptableObject
     public ElementType element;
     public Sprite enemyArt;
     public Sprite enemybander;
-    public int damage;      // Düşmanın tur başına vurduğu hasar
-    public int goldReward;  // Yendiğimizde düşecek para [YENİ]
+    public int damage;      // DÃ¼ÅŸmanÄ±n tur baÅŸÄ±na vurduÄŸu hasar
+    public int goldReward;  // YendiÄŸimizde dÃ¼ÅŸecek para [YENÄ°]
 
     
     [Header("Journal Info")]
     [TextArea(5, 10)]
-    public string journalDescription; // Düşmanın uzun hikayesi
+    public string journalDescription; // DÃ¼ÅŸmanÄ±n uzun hikayesi
 }

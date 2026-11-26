@@ -1,72 +1,90 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class DeckViewerUI : MonoBehaviour
 {
     [Header("UI References")]
-    public GameObject viewerPanel;        // Saðdan açýlacak ana panel
-    public Transform contentContainer;    // Scroll View içindeki Content objesi
-    public GameObject cardPrefab;         // Standart kart prefabý 
-    public GameObject supportCardPrefab;  // <--- YENÝ: Destek Kartý Prefabý ---
+    public GameObject viewerPanel;        // SaÄŸdan aÃ§Ä±lacak ana panel
+    public Transform contentContainer;    // Scroll View iÃ§indeki Content objesi
+    public GameObject cardPrefab;         // Standart kart prefabÄ± 
+    public GameObject supportCardPrefab;  // <--- YENÄ°: Destek KartÄ± PrefabÄ± ---
 
     private DeckManager deckManager;
 
     void Start()
     {
-        // Baþlangýçta paneli gizle
+        // BaÅŸlangÄ±Ã§ta paneli gizle
         if (viewerPanel != null) viewerPanel.SetActive(false);
-        deckManager = FindObjectOfType<DeckManager>();
+        deckManager = DeckManager.instance != null ? DeckManager.instance : FindFirstObjectByType<DeckManager>();
     }
 
-    // Butona týklandýðýnda çalýþacak fonksiyon
+    // Butona tÄ±klandÄ±ÄŸÄ±nda Ã§alÄ±ÅŸacak fonksiyon
     public void ToggleDeckViewer()
     {
         if (viewerPanel == null) return;
 
         bool isActive = viewerPanel.activeSelf;
-        viewerPanel.SetActive(!isActive);
 
-        // Panel açýlýyorsa (aktif hale geliyorsa) listeyi yenile
         if (!isActive)
         {
+            viewerPanel.SetActive(true);
+            viewerPanel.transform.localScale = Vector3.one * 0.9f;
+            viewerPanel.transform.DOScale(Vector3.one, 0.25f).SetEase(Ease.OutBack);
+
+            CanvasGroup cg = viewerPanel.GetComponent<CanvasGroup>();
+            if (cg == null) cg = viewerPanel.AddComponent<CanvasGroup>();
+            cg.alpha = 0f;
+            cg.DOFade(1f, 0.2f);
+
             RefreshDeckView();
+        }
+        else
+        {
+            CanvasGroup cg = viewerPanel.GetComponent<CanvasGroup>();
+            if (cg != null) cg.DOFade(0f, 0.15f);
+
+            viewerPanel.transform.DOScale(Vector3.one * 0.9f, 0.15f).SetEase(Ease.InCubic).OnComplete(() =>
+            {
+                viewerPanel.SetActive(false);
+            });
         }
     }
 
     public void RefreshDeckView()
     {
-        if (deckManager == null) deckManager = FindObjectOfType<DeckManager>();
+        if (deckManager == null) deckManager = DeckManager.instance != null ? DeckManager.instance : FindFirstObjectByType<DeckManager>();
         if (deckManager == null) return;
 
-        // 1. Önceki listelenen kartlarý temizle
+        // 1. Ã–nceki listelenen kartlarÄ± temizle
         foreach (Transform child in contentContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // 2. Güncel desteyi döngüye al ve yarat
+        // 2. GÃ¼ncel desteyi dÃ¶ngÃ¼ye al ve yarat
         foreach (CardData card in deckManager.allCardsInDeck)
         {
-            // --- YENÝ: KART TÜRÜNE GÖRE PREFAB SEÇÝMÝ ---
+            // --- YENÄ°: KART TÃœRÃœNE GÃ–RE PREFAB SEÃ‡Ä°MÄ° ---
             GameObject prefabToUse = cardPrefab;
             if (card.cardType == CardType.Support && supportCardPrefab != null)
             {
                 prefabToUse = supportCardPrefab;
             }
 
-            // Seçilen prefabý yarat
+            // SeÃ§ilen prefabÄ± yarat
             GameObject newCard = Instantiate(prefabToUse, contentContainer);
             // ----------------------------------------------
 
-            // Kartýn UI'da düzgün durmasý için boyutunu sabitle
+            // KartÄ±n UI'da dÃ¼zgÃ¼n durmasÄ± iÃ§in boyutunu sabitle
             newCard.transform.localScale = Vector3.one;
 
-            // Sürüklemeyi (Draggable) kapat! Sadece görüntüleme amaçlý olduðu için kartlar yerinden oynamamalý.
+            // SÃ¼rÃ¼klemeyi (Draggable) kapat! Sadece gÃ¶rÃ¼ntÃ¼leme amaÃ§lÄ± olduÄŸu iÃ§in kartlar yerinden oynamamalÄ±.
             Draggable drag = newCard.GetComponent<Draggable>();
             if (drag != null) drag.enabled = false;
 
-            // Kartýn verisini yükle
+            // KartÄ±n verisini yÃ¼kle
             CardDisplay display = newCard.GetComponent<CardDisplay>();
             if (display != null) display.LoadCard(card);
         }

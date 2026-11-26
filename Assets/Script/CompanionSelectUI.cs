@@ -28,7 +28,7 @@ public class CompanionSelectUI : MonoBehaviour
         }
 
         selectButton.onClick.RemoveAllListeners();
-        // YENÝ: Artýk animasyonun nereden baþlayacaðýný bilmesi için kendi transform'unu da gönderiyor
+        // YENÄ°: ArtÄ±k animasyonun nereden baÅŸlayacaÄŸÄ±nÄ± bilmesi iÃ§in kendi transform'unu da gÃ¶nderiyor
         selectButton.onClick.AddListener(() => manager.OnCompanionSelected(myCard, this.transform));
     }
 }
