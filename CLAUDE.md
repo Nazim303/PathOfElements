@@ -19,5 +19,14 @@ The project stalled because the artist could not finish the drawings, not becaus
 - `.gitattributes` only contains `* text=auto`. There is no UnityYAMLMerge setup.
 - `Assets/Plugins/` (DOTween) and `Assets/Resources/` are not tracked yet, but the working copy code uses `DG.Tweening`.
 
-## Checking references
-Collect the GUIDs from all `.meta` files under `Assets/` and `Library/PackageCache/`, then look for `guid:` references in `.unity`/`.prefab`/`.asset`/`.mat` files that are not in that set.
+## Token rules
+- **Never read `.unity` scene files whole.** `SampleScene.unity` is ~470 KB (≈150k tokens). Search only with `grep -n` in Bash. The Read tool is closed to them in `.claude/settings.json`.
+- `.prefab` files: grep first, then read only the relevant line range.
+- Do not open the `Library/`, `Temp/`, `Logs/`, `obj/` or `UserSettings/` folders.
+- Run the asset checks with the ready-made scripts instead of re-exploring (see below).
+
+## Scan scripts
+- `python Tools/guidscan.py`: missing .meta files, duplicate GUIDs, broken GUID references (file:line).
+- `python Tools/artscan.py [--missing]`: visual assignments of cards/enemies/items. With `--missing`, only the missing ones.
+
+Known broken references to leave alone (as of 2026-11-26): `enemyDeathEffectPrefab` and the `0dbca…` material in EnemyPref/SupportPrefab are effect references. Do not touch them without asking the user. The `327bc461…` Missing Script in SampleScene was never committed. The 7 URP references in Renderer2D refresh when the project is opened.
