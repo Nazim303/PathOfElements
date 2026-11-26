@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Mother of Nature
   cardArt: {fileID: 1144038027374253279, guid: 8d4decf02e1c7d149a359a8064e16f4e, type: 3}
   cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
-  description: a heal card with eath element
+  description: 'Restore 20 HP.'
   cardType: 1
   element: 3
   baseDamage: 20

@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Fire Supportive
   cardArt: {fileID: 0}
   cardbander: {fileID: -6889857487880924528, guid: 1828523002e97944b8014fc218db0d6a, type: 3}
-  description: 
+  description: 'Right of a Fire card: +50% damage. Alone: 3 damage.'
   cardType: 0
   element: 1
   baseDamage: 3

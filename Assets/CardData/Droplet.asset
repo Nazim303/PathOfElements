@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Droplet
   cardArt: {fileID: -757571461024565052, guid: cd371676d231cf348b71b561622b98ae, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
-  description: 
+  description: 'Deal 5 damage. Strong vs Fire.'
   cardType: 0
   element: 2
   baseDamage: 5

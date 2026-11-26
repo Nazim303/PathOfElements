@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Tsunami
   cardArt: {fileID: -4205624841535225538, guid: e8ee492fbc5a0ca4cbb37891eab18a73, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
-  description: a strong water attack
+  description: 'Deal 22 damage. Strong vs Fire.'
   cardType: 0
   element: 2
   baseDamage: 22

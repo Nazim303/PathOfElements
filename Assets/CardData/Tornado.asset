@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Tornado
   cardArt: {fileID: 2076349192607735517, guid: a0bfc1377ec361243a669b3da0d7701a, type: 3}
   cardbander: {fileID: 3970667679311140378, guid: ca29aabeb6032604eab4f881dfcc8333, type: 3}
-  description: 
+  description: 'Deal 16 damage. Strong vs Water.'
   cardType: 0
   element: 4
   baseDamage: 16

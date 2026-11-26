@@ -18,6 +18,10 @@ public class CompanionSelectUI : MonoBehaviour
         myCard = card;
         manager = eventManager;
 
+        // Taverna kartında uzun isim/açıklama taşmasın
+        CardDisplay.FitText(nameText, true);
+        CardDisplay.FitText(descText, false);
+
         if (nameText != null) nameText.text = card.cardName;
         if (descText != null) descText.text = card.description;
         if (cardArt != null) cardArt.sprite = card.cardArt;

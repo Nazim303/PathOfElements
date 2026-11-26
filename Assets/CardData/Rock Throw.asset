@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Rock Throw
   cardArt: {fileID: 5758707604509202249, guid: f69f4cabc4a33364c927a7c3deab8cac, type: 3}
   cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
-  description: 
+  description: 'Deal 13 damage. Strong vs Air.'
   cardType: 0
   element: 3
   baseDamage: 13

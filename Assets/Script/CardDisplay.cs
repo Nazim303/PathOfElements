@@ -47,6 +47,14 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (data == null) return;
         this.cardData = data;
 
+        // Metinler kutuya sığsın: ilk yüklemede auto-size ayarla (bir kez)
+        if (!textFitReady)
+        {
+            FitText(nameText, true);
+            FitText(descriptionText, false);
+            textFitReady = true;
+        }
+
         if (nameText != null) nameText.text = data.cardName;
         if (artImage != null) artImage.sprite = data.cardArt;
         if (banderimage != null) banderimage.sprite = data.cardbander;
@@ -85,6 +93,28 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
     }
 
+    private bool textFitReady = false;
+
+    /// <summary>
+    /// TMP metnini kutusuna sığdırır: prefab'daki boyut üst sınır olur, gerekirse
+    /// %45'ine kadar küçülür, yine sığmazsa "..." ile kesilir.
+    /// Metin atanmadan ÖNCE ve nesne başına bir kez çağrılmalı (fontSize o an prefab değeridir).
+    /// </summary>
+    public static void FitText(TMP_Text text, bool singleLine)
+    {
+        if (text == null) return;
+
+        float authoredSize = text.fontSize;
+        float minSize = authoredSize * 0.45f;
+        if (text.enableAutoSizing) minSize = Mathf.Min(minSize, text.fontSizeMin);
+
+        text.enableAutoSizing = true;
+        text.fontSizeMax = authoredSize;
+        text.fontSizeMin = Mathf.Max(1f, minSize);
+        text.textWrappingMode = singleLine ? TextWrappingModes.NoWrap : TextWrappingModes.Normal;
+        text.overflowMode = TextOverflowModes.Ellipsis;
+    }
+
     public static Color GetElementColor(ElementType type)
     {
         switch (type)
@@ -93,10 +123,6 @@ public class CardDisplay : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             case ElementType.Water: return new Color(0.25f, 0.65f, 1f); // Su Mavisi
             case ElementType.Earth: return new Color(0.55f, 0.78f, 0.3f); // Doğa Yeşili
             case ElementType.Air: return new Color(0.4f, 0.95f, 0.95f); // Hava Camgöbeği
-            case ElementType.Magma: return new Color(1f, 0.45f, 0.15f); // Magma Turuncu
-            case ElementType.Steam: return new Color(0.75f, 0.85f, 1f); // Buhar
-            case ElementType.Ice: return new Color(0.5f, 0.88f, 1f); // Buz Mavisi
-            case ElementType.Dust: return new Color(0.85f, 0.75f, 0.5f); // Kum / Toz
             default: return Color.white;
         }
     }

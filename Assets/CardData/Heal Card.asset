@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Heal Potion
   cardArt: {fileID: -4865851979153055223, guid: 8ea0dce126886354299d18d7028857b3, type: 3}
   cardbander: {fileID: -4119780039443726140, guid: 3d8b3be217bda4a4690bad2adab3416b, type: 3}
-  description: 
+  description: 'Restore 8 HP.'
   cardType: 1
   element: 0
   baseDamage: 8

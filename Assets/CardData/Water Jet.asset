@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Water Jet
   cardArt: {fileID: -8444326125788179740, guid: 7c05762d97090eb4fbf33f619c4c7bcb, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
-  description: 
+  description: 'Deal 11 damage. Strong vs Fire.'
   cardType: 0
   element: 2
   baseDamage: 11

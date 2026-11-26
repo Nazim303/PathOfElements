@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Greed
   cardArt: {fileID: -2308642744850600909, guid: 7ddbad2ca89699c45af0b34b563d36e3, type: 3}
   cardbander: {fileID: 3280247252720426850, guid: a9c49fd53ecd9444b88c5be8f15c6d57, type: 3}
-  description: use it in card exchange slot and draw 2 card
+  description: 'Exchange slot: draw 2 cards.'
   cardType: 3
   element: 0
   baseDamage: 0

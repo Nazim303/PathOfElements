@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Gambling
   cardArt: {fileID: -4793679837526635205, guid: c5ae04a8742ea49479060e4b212e96bd, type: 3}
   cardbander: {fileID: 3280247252720426850, guid: a9c49fd53ecd9444b88c5be8f15c6d57, type: 3}
-  description: 'Use it in card exchange slot '
+  description: 'Exchange slot: discard your hand, draw 4.'
   cardType: 3
   element: 0
   baseDamage: 0

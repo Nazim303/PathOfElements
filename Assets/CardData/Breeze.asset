@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Breeze
   cardArt: {fileID: -3357456237637211654, guid: fb61b3cd04ec64f489d4351f0618a6d1, type: 3}
   cardbander: {fileID: 3970667679311140378, guid: ca29aabeb6032604eab4f881dfcc8333, type: 3}
-  description: Air attack card
+  description: 'Deal 6 damage. Strong vs Water.'
   cardType: 0
   element: 4
   baseDamage: 6
