@@ -15,11 +15,11 @@ MonoBehaviour:
   cardName: Healing Water
   cardArt: {fileID: -5629764385055494699, guid: 2320a4b4816ff794ca92aa3f7db55284, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
-  description: 'Restore 15 HP.'
+  description: 'Restore 16 HP.'
   cardType: 1
   element: 2
-  baseDamage: 15
-  healAmount: 15
+  baseDamage: 16
+  healAmount: 16
   cardPower: 1
   isElementalModifier: 0
   specialEffect: 0

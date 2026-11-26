@@ -59,6 +59,14 @@ public class EnergyManager : MonoBehaviour
         return false;
     }
 
+    // Her savaşın başında enerji dolar (önceki savaştan kalan açık taşınmaz)
+    public void RefillToMax()
+    {
+        currentEnergy = maxEnergy;
+        currentPendingCost = 0;
+        UpdateUI();
+    }
+
     public void GainEnergy(int amount)
     {
 

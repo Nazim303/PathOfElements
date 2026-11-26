@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Camp Fire
   icon: {fileID: -34345388537201796, guid: b4d5f60cf4ff4c141b20202f9545c46a, type: 3}
-  description: Maximum HP increases by 15
+  description: 'Maximum HP increases by 12.'
   cost: 30
   effectType: 0
-  effectValue: 15
+  effectValue: 12
   rewardCard: {fileID: 0}

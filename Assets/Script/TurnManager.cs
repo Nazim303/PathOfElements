@@ -24,12 +24,21 @@ public class TurnManager : MonoBehaviour
 
     [Header("Enemy Configuration")]
     public EnemyData[] allEnemies; // Normal düşmanlar
+    [Tooltip("Haritanın ilk yarısında çıkan zayıf düşmanlar. Boşsa allEnemies kullanılır.")]
+    public EnemyData[] earlyEnemies;
     public EnemyData[] bossEnemies; // --- YENİ: Boss listesi ---
 
   
    
     public int minEnemySpawn = 2; // En az kaç düşman çıksın?
     public int maxEnemySpawn = 3; // En çok kaç düşman çıksın?
+
+    [Header("Balance")]
+    public int openingDraw = 5;          // Savaş başında çekilen kart
+    public float eliteHealthMult = 1.3f;
+    public float eliteDamageMult = 1.2f;
+    public float eliteGoldMult = 2.0f;
+    public int eliteEnemyCount = 2;
     // --------------------------
 
     [Header("UI Feedback")]
@@ -65,8 +74,6 @@ public class TurnManager : MonoBehaviour
         currentRound = 1;       // Savaş başlarken Raunt 1'den başlar
         UpdateRoundUI();        // Yazıyı günceller
 
-        if (TerrainManager.instance != null) TerrainManager.instance.ResetTerrain();
-
         currentBattleType = battleType;
 
         // Yazıyı Türe Göre Ayarla
@@ -92,6 +99,7 @@ public class TurnManager : MonoBehaviour
 
         // 2. Deste Hazırlığı
         if (deckManager != null) deckManager.InitializeBattle();
+        if (EnergyManager.instance != null) EnergyManager.instance.RefillToMax();
 
         yield return new WaitForSeconds(0.5f);
 
@@ -103,7 +111,9 @@ public class TurnManager : MonoBehaviour
             // --- BOSS MANTIĞI ---
             if (bossEnemies.Length > 0)
             {
-                enemiesToSpawn.Add(bossEnemies[Random.Range(0, bossEnemies.Length)]);
+                // Final boss: Elementalist (element döngüsünü test eder). Yoksa listeden rastgele.
+                EnemyData finalBoss = System.Array.Find(bossEnemies, b => b != null && b.enemyName.Contains("Elementalist"));
+                enemiesToSpawn.Add(finalBoss != null ? finalBoss : bossEnemies[Random.Range(0, bossEnemies.Length)]);
             }
             else
             {
@@ -112,25 +122,32 @@ public class TurnManager : MonoBehaviour
         }
         else if (battleType == PathType.Elite)
         {
-            // --- YENİ: ELITE SAVAŞ MANTIĞI ---
-            // Kural: En az 2 düşman çıkacak
-            int enemyCount = Random.Range(2, 4); // 2 veya 3 düşman
+            // --- ELITE SAVAŞ MANTIĞI ---
+            // %50 ihtimalle ara boss Protector (minyonlarını kendisi çağırır), aksi halde güçlendirilmiş düşmanlar.
+            EnemyData protector = System.Array.Find(bossEnemies, b => b != null && b.enemyName.Contains("Protector"));
+            int enemyCount = (protector != null && Random.value < 0.5f) ? 0 : eliteEnemyCount;
+            EnemyData[] elitePool = GetLatePool();
+            if (enemyCount == 0)
+            {
+                enemiesToSpawn.Add(protector);
+                Debug.Log("Elite Savaşı: Ara boss Protector geliyor!");
+            }
 
             for (int i = 0; i < enemyCount; i++)
             {
-                if (allEnemies.Length > 0)
+                if (elitePool.Length > 0)
                 {
-                    // Düşmanı seç
-                    EnemyData baseEnemy = allEnemies[Random.Range(0, allEnemies.Length)];
+                    // Düşmanı seç (güçlü havuzdan)
+                    EnemyData baseEnemy = elitePool[Random.Range(0, elitePool.Length)];
 
                     // Orijinal veriyi bozmamak için kopyasını (Instance) oluşturuyoruz!
                     EnemyData eliteEnemy = Instantiate(baseEnemy);
                     eliteEnemy.name = baseEnemy.name + "_Elite"; // Bellekteki ismini değiştir
 
                     // Elite Çarpanları (Orantılı Artış)
-                    eliteEnemy.maxHealth = Mathf.RoundToInt(baseEnemy.maxHealth * 1.5f); // %50 Daha fazla can
-                    eliteEnemy.damage = Mathf.RoundToInt(baseEnemy.damage * 1.3f);       // %30 Daha fazla hasar
-                    eliteEnemy.goldReward = Mathf.RoundToInt(baseEnemy.goldReward * 2.0f); // 2 Katı altın ödülü
+                    eliteEnemy.maxHealth = Mathf.RoundToInt(baseEnemy.maxHealth * eliteHealthMult);
+                    eliteEnemy.damage = Mathf.RoundToInt(baseEnemy.damage * eliteDamageMult);
+                    eliteEnemy.goldReward = Mathf.RoundToInt(baseEnemy.goldReward * eliteGoldMult);
 
                     enemiesToSpawn.Add(eliteEnemy);
                 }
@@ -141,6 +158,7 @@ public class TurnManager : MonoBehaviour
         {
             // --- NORMAL SAVAŞ MANTIĞI (Dinamik Zorluk) ---
             int enemyCount = 1;
+            bool earlyHalf = true;
 
             if (PathManager.instance != null && PathManager.instance.currentNode != null && PathManager.instance.mapGenerator != null)
             {
@@ -148,7 +166,8 @@ public class TurnManager : MonoBehaviour
                 int totalLayers = PathManager.instance.mapGenerator.mapLength;
                 int middleLayer = totalLayers / 2;
 
-                if (currentLayer < middleLayer)
+                earlyHalf = currentLayer < middleLayer;
+                if (earlyHalf)
                 {
                     enemyCount = Random.Range(1, 3); // 1 veya 2 düşman
                 }
@@ -162,10 +181,14 @@ public class TurnManager : MonoBehaviour
                 enemyCount = Random.Range(minEnemySpawn, maxEnemySpawn + 1);
             }
 
+            // İlk yarı: zayıf havuz. İkinci yarı: güçlü havuz; 3'lü grupta biri zayıf havuzdan.
+            EnemyData[] early = (earlyEnemies != null && earlyEnemies.Length > 0) ? earlyEnemies : allEnemies;
+            EnemyData[] late = GetLatePool();
             for (int i = 0; i < enemyCount; i++)
             {
-                if (allEnemies.Length > 0)
-                    enemiesToSpawn.Add(allEnemies[Random.Range(0, allEnemies.Length)]);
+                EnemyData[] pool = earlyHalf ? early : ((enemyCount == 3 && i == 2) ? early : late);
+                if (pool.Length > 0)
+                    enemiesToSpawn.Add(pool[Random.Range(0, pool.Length)]);
             }
         }
 
@@ -174,7 +197,7 @@ public class TurnManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // 4. Başlangıç Eli
-        if (deckManager != null) deckManager.DrawCard(4);
+        if (deckManager != null) deckManager.DrawCard(openingDraw);
 
         yield return new WaitForSeconds(1.5f);
 
@@ -183,6 +206,14 @@ public class TurnManager : MonoBehaviour
 
     // ... Kalan fonksiyonlar (PlayerTurn, Attack, EnemyTurn vs.) aynı kalacak ...
     // Sadece aşağıya kopyalıyorum ki eksik kalmasın:
+
+    // Güçlü havuz: allEnemies içinde earlyEnemies'te olmayanlar
+    EnemyData[] GetLatePool()
+    {
+        if (earlyEnemies == null || earlyEnemies.Length == 0) return allEnemies;
+        EnemyData[] late = System.Array.FindAll(allEnemies, e => e != null && System.Array.IndexOf(earlyEnemies, e) < 0);
+        return late.Length > 0 ? late : allEnemies;
+    }
 
     void UpdateRoundUI()
     {
@@ -273,16 +304,11 @@ public class TurnManager : MonoBehaviour
         {
             yield return StartCoroutine(combatManager.DestroyPlayedCards());
             yield return new WaitForEndOfFrame();
-            if (deckManager != null) deckManager.DrawCard(2);
+            if (deckManager != null) deckManager.DrawCard(deckManager.drawPerTurn);
             yield return new WaitForSeconds(0.8f);
 
             currentRound++;
             UpdateRoundUI();
-
-            if (TerrainManager.instance != null)
-            {
-                TerrainManager.instance.ResetTerrain();
-            }
 
             PlayerTurn();
         }

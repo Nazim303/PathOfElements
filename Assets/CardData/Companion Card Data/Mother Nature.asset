@@ -23,7 +23,7 @@ MonoBehaviour:
   cardPower: 1
   isElementalModifier: 0
   specialEffect: 0
-  energyCost: 3
+  energyCost: 2
   supportEffect: 0
   supportValue: 0
   journalDescription: 

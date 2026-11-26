@@ -223,7 +223,6 @@ public class CardExchangeSlot : MonoBehaviour, IDropHandler, IPointerEnterHandle
 
             case SupportEffect.GainEnergy: if (EnergyManager.instance != null) EnergyManager.instance.GainEnergy(card.supportValue); break;
             case SupportEffect.GainShield: if (PlayerManager.instance != null) PlayerManager.instance.AddShield(card.supportValue); break;
-            case SupportEffect.ChangeTerrain: if (TerrainManager.instance != null) TerrainManager.instance.ChangeTerrain(card.element); break;
         }
 
         if (card.specialEffect == SpecialEffect.HalveEnemyHealth && castBloodTransferPrefab != null)

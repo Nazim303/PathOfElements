@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Blood Transfer
   cardArt: {fileID: -8876319794365974641, guid: 1792b1e3eee0917489a47643e67ecda6, type: 3}
   cardbander: {fileID: 3280247252720426850, guid: a9c49fd53ecd9444b88c5be8f15c6d57, type: 3}
-  description: 'Exchange slot: restore 15 HP.'
+  description: 'Exchange slot: restore 8 HP.'
   cardType: 3
   element: 0
   baseDamage: 0
@@ -25,5 +25,5 @@ MonoBehaviour:
   specialEffect: 0
   energyCost: 0
   supportEffect: 3
-  supportValue: 15
+  supportValue: 8
   journalDescription: 

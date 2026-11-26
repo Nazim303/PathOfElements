@@ -5599,8 +5599,6 @@ MonoBehaviour:
   comboCard: {fileID: 11400000, guid: ec219fcb1e84d434396abedea50f6d42, type: 2}
   supportCard1: {fileID: 11400000, guid: e65a5d31a1dd73f4bab5c47f6e1eba1d, type: 2}
   supportCard2: {fileID: 11400000, guid: 2b62766d479c1bf48839bae0e0853b07, type: 2}
-  terrainSupportCard: {fileID: 11400000, guid: 285b1424d34ea4842b701c6ff657b200, type: 2}
-  terrainAttackCard: {fileID: 11400000, guid: b037ec2a8678d7e41b0d29741d9438f8, type: 2}
   fusionCardA: {fileID: 11400000, guid: 808967b8d877de3429089abe659c445a, type: 2}
   fusionCardB: {fileID: 11400000, guid: 1d5636bf99254ce458086d9e5a1c9cbc, type: 2}
 --- !u!1 &1414311679
@@ -8238,7 +8236,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1717809298}
-  - component: {fileID: 1717809299}
   m_Layer: 0
   m_Name: TerrainManager
   m_TagString: Untagged
@@ -8261,23 +8258,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 417855677}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1717809299
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1717809297}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18a763ff54c0f2e4a86d988eea5a7116, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentTerrain: 0
-  fireTerrainPanel: {fileID: 1315398790}
-  waterTerrainPanel: {fileID: 1511200365}
-  earthTerrainPanel: {fileID: 1082482473}
-  airTerrainPanel: {fileID: 1820607512}
 --- !u!1 &1750703965
 GameObject:
   m_ObjectHideFlags: 0
@@ -9106,8 +9086,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2b62766d479c1bf48839bae0e0853b07, type: 2}
   - {fileID: 11400000, guid: 8ffe3bc1b27098c409c91670900942b1, type: 2}
   - {fileID: 11400000, guid: 4b86b2626663f724aa8507e117a40267, type: 2}
-  - {fileID: 11400000, guid: 285b1424d34ea4842b701c6ff657b200, type: 2}
-  - {fileID: 11400000, guid: fb8869029fa3b08449f74dea744679b2, type: 2}
   maxHandSize: 7
   drawPile:
   - {fileID: 11400000, guid: 6fa8ec7e1b8b2cf4db5ef984e6c04823, type: 2}

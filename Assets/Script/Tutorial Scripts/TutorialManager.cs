@@ -19,11 +19,9 @@ public class TutorialManager : MonoBehaviour
     public CardData supportCard1; // Örn: Heal veya Draw yapan bir destek kartı
     public CardData supportCard2; // Örn: Gain Shield yapan bir destek kartı
 
-    [Header("Scripted Cards (Aşama 6-7)")]
-    public CardData terrainSupportCard; // Zemin değiştiren destek kartı
-    public CardData terrainAttackCard;  // Zeminle aynı elementte saldırı kartı
-    public CardData fusionCardA;        // Fizyon Tarifindeki 1. Kart
-    public CardData fusionCardB;        // Fizyon Tarifindeki 2. Kart
+    [Header("Scripted Cards (Final Saldırısı)")]
+    [UnityEngine.Serialization.FormerlySerializedAs("fusionCardA")] public CardData finalCardA;
+    [UnityEngine.Serialization.FormerlySerializedAs("fusionCardB")] public CardData finalCardB;
 
     private bool isStepCompleted = false;
     private bool isTutoComplated =false;
@@ -149,26 +147,11 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitUntil(() => tm.state == BattleState.PLAYERTURN);
 
         // ==========================================
-        // AŞAMA 7: ZEMİN (TERRAIN) MEKANİĞİ (RAUNT 5)
+        // AŞAMA 7: FİNAL SALDIRISI (RAUNT 5)
         // ==========================================
         yield return new WaitForSeconds(1.0f);
         dm.DiscardHand(); dm.drawPile.Clear(); dm.discardPile.Clear();
-        dm.drawPile.Add(terrainSupportCard); dm.drawPile.Add(terrainAttackCard);
-        dm.DrawCard(2);
-
-        isStepCompleted = false;
-        popupUI.Show("Terrain Control", "Some very special Support Cards can change the battlefield's ground to match their element!\n\nFirst, drag your Ground Support card to the 'Exchange' area. After the ground changes, play another attack card of the same element as the ground into a normal slot to deal extra 'Ground Synergy' damage!", () => { isStepCompleted = true; });
-        yield return new WaitUntil(() => isStepCompleted);
-
-        yield return new WaitUntil(() => tm.state == BattleState.ENEMYTURN);
-        yield return new WaitUntil(() => tm.state == BattleState.PLAYERTURN);
-
-        // ==========================================
-        // AŞAMA 8: FİZYON - BÜYÜK FİNAL (RAUNT 6)
-        // ==========================================
-        yield return new WaitForSeconds(1.0f);
-        dm.DiscardHand(); dm.drawPile.Clear(); dm.discardPile.Clear();
-        dm.drawPile.Add(fusionCardA); dm.drawPile.Add(fusionCardB);
+        dm.drawPile.Add(finalCardA); dm.drawPile.Add(finalCardB);
         dm.DrawCard(2);
 
         // Düşmanın canını 1'e indirelim
@@ -179,14 +162,14 @@ public class TutorialManager : MonoBehaviour
         }
 
         isStepCompleted = false;
-        popupUI.Show("Fusion (Merging)", "Here's our final and most powerful mechanic!\n\nBy stacking some compatible cards on the table, you can create powerful, brand-new cards for that battle.\n\nNow place a card in an empty slot, then drag and drop another card directly on top of it. Unleash the final attack with the resulting new fusion card and end the battle!", () => { isStepCompleted = true; });
+        popupUI.Show("Finish It!", "The enemy is barely standing.\n\nYou now know everything you need: elements, combos and support cards.\n\nPlace your cards into the slots and end the battle with a final attack!", () => { isStepCompleted = true; });
         yield return new WaitUntil(() => isStepCompleted);
 
         // Savaşın KAZANILMASINI bekle
         yield return new WaitUntil(() => tm.state == BattleState.WON);
 
         // ==========================================
-        // AŞAMA 9: HARİTAYA DÖNÜŞ VE TAVERNA HACK'İ
+        // AŞAMA 8: HARİTAYA DÖNÜŞ VE TAVERNA HACK'İ
         // ==========================================
         yield return new WaitUntil(() => PathManager.instance.mapPanel.activeSelf);
 

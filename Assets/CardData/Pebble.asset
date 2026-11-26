@@ -15,10 +15,10 @@ MonoBehaviour:
   cardName: Pebble
   cardArt: {fileID: 2820131925045074649, guid: 7ee0d71e412050b44813f9cd8ab8552d, type: 3}
   cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
-  description: 'Deal 7 damage. Strong vs Air.'
+  description: 'Deal 6 damage. Strong vs Air.'
   cardType: 0
   element: 3
-  baseDamage: 7
+  baseDamage: 6
   healAmount: 0
   cardPower: 1
   isElementalModifier: 0

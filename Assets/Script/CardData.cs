@@ -23,8 +23,7 @@ public enum SupportEffect
     GainGold,
     HealPlayer,
     GainEnergy,
-    GainShield,
-    ChangeTerrain
+    GainShield
 }
 
 [CreateAssetMenu(fileName = "New Card", menuName = "Path of Elements/Card Data")]

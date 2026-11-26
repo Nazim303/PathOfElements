@@ -20,6 +20,8 @@ Bu maddeler bir kere yapılır, sonraki her oturumda maliyeti düşürür.
 
 ## 1. Eksik görseller (asıl iş)
 
+> **Güncel ve tam liste: [GORSEL_DURUMU.md](GORSEL_DURUMU.md).** 47 görselden 17'si bitmiş, 17'si eskiz, 9'u yok. Aşağıdaki tablolar ilk taramadan kalma; sadece "görsel atanmamış" olanları gösteriyor.
+
 ### Görseli hiç olmayanlar
 | Asset | Eksik |
 |---|---|

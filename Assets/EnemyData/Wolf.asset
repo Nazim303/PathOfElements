@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Wolf
   m_EditorClassIdentifier: 
   enemyName: Bloom Sprout
-  maxHealth: 20
+  maxHealth: 22
   element: 3
   enemyArt: {fileID: 3657537090157891186, guid: 406d7c267c5a13340aecefe5ab123cb6, type: 3}
   enemybander: {fileID: -5544542530636854122, guid: fa01ea136791dd84980dbfebcac81d6b, type: 3}
-  damage: 4
-  goldReward: 2
+  damage: 6
+  goldReward: 4
   journalDescription: 

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8c332e0445cbb742a19e34357867b49, type: 3}
+  m_Name: Water Supportive
+  m_EditorClassIdentifier: 
+  cardName: Water Supportive
+  cardArt: {fileID: 0}
+  cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
+  description: 'Right of a Water card: +50% damage. Alone: 5 damage.'
+  cardType: 0
+  element: 2
+  baseDamage: 5
+  healAmount: 0
+  isElementalModifier: 1
+  specialEffect: 0
+  energyCost: 1
+  supportEffect: 0
+  supportValue: 0

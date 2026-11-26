@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Angry Bat
   m_EditorClassIdentifier: 
   enemyName: Watcher
-  maxHealth: 20
+  maxHealth: 22
   element: 4
   enemyArt: {fileID: -6769114193448139303, guid: d3b845d994b3d084e8f575fc9adc366e, type: 3}
   enemybander: {fileID: -1588456661140534554, guid: ce8f54ae8eade6042bcf36aab961a019, type: 3}
   damage: 7
-  goldReward: 5
+  goldReward: 4

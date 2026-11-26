@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Bandage
   icon: {fileID: 4480434827562053419, guid: 5e71b6e4d65d54046b6914418aa44439, type: 3}
-  description: HP completes
-  cost: 30
+  description: 'Fully restore your HP.'
+  cost: 40
   effectType: 2
   effectValue: 5
   rewardCard: {fileID: 0}

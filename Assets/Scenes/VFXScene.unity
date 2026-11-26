@@ -128,7 +128,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2701417}
-  - component: {fileID: 2701418}
   m_Layer: 0
   m_Name: TerrainManager
   m_TagString: Untagged
@@ -151,23 +150,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 357382206}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2701418
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2701416}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18a763ff54c0f2e4a86d988eea5a7116, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentTerrain: 0
-  fireTerrainPanel: {fileID: 511408221}
-  waterTerrainPanel: {fileID: 821423507}
-  earthTerrainPanel: {fileID: 1865809727}
-  airTerrainPanel: {fileID: 2079713095}
 --- !u!1 &17730058
 GameObject:
   m_ObjectHideFlags: 0
@@ -4778,10 +4760,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d3c7aabdbc66de74b84d0c2542dc5008, type: 2}
   - {fileID: 11400000, guid: e65a5d31a1dd73f4bab5c47f6e1eba1d, type: 2}
   - {fileID: 11400000, guid: 2b62766d479c1bf48839bae0e0853b07, type: 2}
-  - {fileID: 11400000, guid: 42d8ca317f959414e889c6f4f6edf904, type: 2}
-  - {fileID: 11400000, guid: af4c87556f0b59a428c922ccd67c03ff, type: 2}
-  - {fileID: 11400000, guid: 2872276d4eaf66140a6a273ea515c2c6, type: 2}
-  - {fileID: 11400000, guid: 931836e652e11af4d8fc4c01962badf9, type: 2}
   maxHandSize: 6
   drawPile:
   - {fileID: 11400000, guid: 6fa8ec7e1b8b2cf4db5ef984e6c04823, type: 2}
@@ -8390,14 +8368,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 447782de2d73c3b4e9d3bebec7c3acf6, type: 2}
   cardPrefab: {fileID: 5556082629489027912, guid: 77686d45a12ea3541b7a2786770d63d8, type: 3}
   discardPoint: {fileID: 2023878184}
-  ultimateCombos:
-  - comboName: Hexodia
-    requiredCards:
-    - {fileID: 11400000, guid: 42d8ca317f959414e889c6f4f6edf904, type: 2}
-    - {fileID: 11400000, guid: af4c87556f0b59a428c922ccd67c03ff, type: 2}
-    - {fileID: 11400000, guid: 2872276d4eaf66140a6a273ea515c2c6, type: 2}
-    - {fileID: 11400000, guid: 931836e652e11af4d8fc4c01962badf9, type: 2}
-    ultimateDamage: 50
 --- !u!4 &1665884256
 Transform:
   m_ObjectHideFlags: 0

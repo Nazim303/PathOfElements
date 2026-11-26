@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Water Spirit
   m_EditorClassIdentifier: 
   enemyName: Boiling Desire
-  maxHealth: 30
+  maxHealth: 34
   element: 2
   enemyArt: {fileID: -7825159072999598754, guid: 6232b9b1d746807448ea4159da82df01, type: 3}
   enemybander: {fileID: -4179425161918205984, guid: 68e365159cbff1a4685c611e86bd5831, type: 3}
-  damage: 10
-  goldReward: 9
+  damage: 11
+  goldReward: 8

@@ -68,10 +68,6 @@ public class EnemyDisplay : MonoBehaviour
             case ElementType.Water: elementIcon.color = new Color(0.25f, 0.6f, 1f); break;
             case ElementType.Earth: elementIcon.color = new Color(0.6f, 0.4f, 0.2f); break;
             case ElementType.Air: elementIcon.color = new Color(0.3f, 0.85f, 0.7f); break;
-            case ElementType.Magma: elementIcon.color = new Color(1f, 0.28f, 0f); break;
-            case ElementType.Steam: elementIcon.color = new Color(0.75f, 0.85f, 0.95f); break;
-            case ElementType.Ice: elementIcon.color = new Color(0.4f, 0.85f, 1f); break;
-            case ElementType.Dust: elementIcon.color = new Color(0.8f, 0.7f, 0.45f); break;
             default: elementIcon.color = Color.white; break;
         }
     }

@@ -15,15 +15,15 @@ MonoBehaviour:
   cardName: Quake
   cardArt: {fileID: -1816015570539651540, guid: 7bc7d0f212ea3784c9528d3e36f785f6, type: 3}
   cardbander: {fileID: 744950415022112236, guid: 08a3534907597bf4a97a72db6ad6189c, type: 3}
-  description: 'Deal 16 damage. Strong vs Air.'
+  description: 'Deal 20 damage. Strong vs Air.'
   cardType: 0
   element: 3
-  baseDamage: 16
+  baseDamage: 20
   healAmount: 0
   cardPower: 3
   isElementalModifier: 0
   specialEffect: 0
-  energyCost: 2
+  energyCost: 3
   supportEffect: 0
   supportValue: 0
   journalDescription: 

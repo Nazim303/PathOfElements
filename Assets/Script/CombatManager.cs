@@ -3,14 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI; // YENİ: Image materyallerine erişmek için
 
-[System.Serializable]
-public class UltimateCombo
-{
-    public string comboName;
-    public List<CardData> requiredCards;
-    public int ultimateDamage = 9999;
-}
-
 public class CombatManager : MonoBehaviour
 {
     public static CombatManager instance;
@@ -34,15 +26,10 @@ public class CombatManager : MonoBehaviour
     public EnemyData defaultMinion;
     public GameObject enemyDeathEffectPrefab;
 
-    [Header("Fusion System")]
-    public List<FusionRecipe> allFusionRecipes;
     public GameObject cardPrefab;
 
     [Header("Visuals")]
     public Transform discardPoint;
-
-    [Header("Ultimate Combos (Kadim Birleşimler)")]
-    public List<UltimateCombo> ultimateCombos;
 
     // --- YENİ EFEKT REFERANSLARI (GÜNCELLENDİ) ---
     [Header("Particle & Shader Effects")]
@@ -86,8 +73,6 @@ public class CombatManager : MonoBehaviour
     public GameObject vfx_EarthImpact03;
     public GameObject vfx_AirImpact03;
 
-    public GameObject ultimateAttackVFX; 
-    public GameObject ultimateImpactVFX;
 
 
 
@@ -243,10 +228,6 @@ public class CombatManager : MonoBehaviour
             case ElementType.Water: return new Color(0.25f, 0.6f, 1f);
             case ElementType.Earth: return new Color(0.6f, 0.4f, 0.2f);
             case ElementType.Air: return new Color(0.3f, 0.85f, 0.7f);
-            case ElementType.Magma: return new Color(1f, 0.28f, 0f);
-            case ElementType.Steam: return new Color(0.75f, 0.85f, 0.95f);
-            case ElementType.Ice: return new Color(0.4f, 0.85f, 1f);
-            case ElementType.Dust: return new Color(0.8f, 0.7f, 0.45f);
             default: return Color.white;
         }
     }
@@ -397,7 +378,6 @@ public class CombatManager : MonoBehaviour
 
     public IEnumerator OnAttackPhase()
     {
-        UltimateCombo activeUltimate = CheckUltimateCombo();
         bool isFullCombo = CheckElementalCombo();
         bool isSplitCombo = CheckTwoPairCombo();
 
@@ -406,103 +386,6 @@ public class CombatManager : MonoBehaviour
 
         Debug.Log("--- TUR BAŞLIYOR ---");
 
-        bool canExecuteUltimate = false;
-        List<Transform> ultimateCards = new List<Transform>();
-        List<CardData> ultimateData = new List<CardData>();
-
-        if (activeUltimate != null)
-        {
-            int totalUltimateEnergyCost = 0;
-            for (int i = 0; i < playerSlots.Length; i++)
-            {
-                if (playerSlots[i] != null) totalUltimateEnergyCost += playerSlots[i].energyCost;
-            }
-
-            if (EnergyManager.instance.currentEnergy >= totalUltimateEnergyCost)
-            {
-                canExecuteUltimate = true;
-                for (int i = 0; i < playerSlots.Length; i++)
-                {
-                    if (playerSlots[i] != null && slotTransforms[i].childCount > 0)
-                    {
-                        // YENİ: Sadece CardDisplay olan objeyi (Gerçek Kartı) bul
-                        CardDisplay cardDisplay = slotTransforms[i].GetComponentInChildren<CardDisplay>();
-                        if (cardDisplay != null)
-                        {
-                            EnergyManager.instance.TrySpendEnergy(playerSlots[i].energyCost);
-                            ultimateCards.Add(cardDisplay.transform); // Efekti değil, kartı ekle
-                            ultimateData.Add(playerSlots[i]);
-                        }
-                    }
-                }
-            }
-            else Debug.Log("Ultimate için yeterli enerji yok! Kadim bağ koptu, normal saldırıya dönülüyor...");
-        }
-
-        // ========================================================
-        // ?? DURUM A: ULTIMATE BAŞARILI
-        // ========================================================
-        if (canExecuteUltimate)
-        {
-            Debug.Log($"?? {activeUltimate.comboName} UYANDI! ??");
-
-            if (AudioManager.instance != null) AudioManager.instance.PlayHexodiaAttack();
-
-            float animT = 0;
-            List<Vector3> originalPosList = new List<Vector3>();
-            List<Vector3> punchPosList = new List<Vector3>();
-
-            foreach (Transform t in ultimateCards)
-            {
-                originalPosList.Add(t.localPosition);
-                punchPosList.Add(t.localPosition + new Vector3(0, 50f, 0));
-            }
-
-            while (animT < 1)
-            {
-                animT += Time.deltaTime * 10;
-                for (int k = 0; k < ultimateCards.Count; k++)
-                {
-                    ultimateCards[k].localPosition = Vector3.Lerp(originalPosList[k], punchPosList[k], animT);
-                }
-                yield return null;
-            }
-
-            List<EnemyDisplay> targets = new List<EnemyDisplay>(activeEnemies);
-            List<Coroutine> spellRoutines = new List<Coroutine>();
-            for (int k = 0; k < ultimateCards.Count; k++)
-            {
-                // ESKİ: spellRoutines.Add(StartCoroutine(PlaySpellEffects(ultimateCards[k], targets, ultimateData[k].element)));
-                // YENİ:
-                spellRoutines.Add(StartCoroutine(PlaySpellEffects(ultimateCards[k], targets, ultimateData[k])));
-            }
-            if (spellRoutines.Count > 0) yield return spellRoutines[0];
-
-            foreach (EnemyDisplay enemy in targets)
-            {
-                if (enemy != null)
-                {
-                    ApplyDamageToEnemy(ultimateData[0], enemy, activeUltimate);
-                    StartCoroutine(enemy.TakeDamageEffect());
-                }
-            }
-            if (UIShake.instance != null) UIShake.instance.TriggerShake(0.5f, 20f);
-
-            animT = 0;
-            while (animT < 1)
-            {
-                animT += Time.deltaTime * 10;
-                for (int k = 0; k < ultimateCards.Count; k++)
-                {
-                    ultimateCards[k].localPosition = Vector3.Lerp(punchPosList[k], originalPosList[k], animT);
-                }
-                yield return null;
-            }
-
-            yield return new WaitForSeconds(0.2f);
-            HandleDeaths();
-        }
-        else
         {
            
             if (isFullCombo) Debug.Log("?? TAM ELEMENTAL KOMBO (AOE) AKTİF! ??");
@@ -535,7 +418,10 @@ public class CombatManager : MonoBehaviour
                     float currentSupportMultiplier = 1.0f;
 
                     // --- SAĞDAKİ GÜÇLENDİRİCİYİ KONTROL ET ---
-                    if (i < 3 && playerSlots[i + 1] != null && playerSlots[i + 1].isElementalModifier)
+                    // Güçlendirici sadece AYNI elementteki kartı +%50 güçlendirir.
+                    // Farklı elementteyse eşleşmez ve kendi başına normal saldırı yapar (ceza yok).
+                    if (i < 3 && playerSlots[i + 1] != null && playerSlots[i + 1].isElementalModifier
+                        && playerSlots[i + 1].element == card.element)
                     {
                         supportCard = playerSlots[i + 1];
                         if (slotTransforms[i + 1].childCount > 0)
@@ -549,21 +435,8 @@ public class CombatManager : MonoBehaviour
                         {
                             processed[i + 1] = true;
 
-                            if (card.element == supportCard.element)
-                            {
-                                currentSupportMultiplier = 1.5f;
-                                Debug.Log($"?? MÜKEMMEL UYUM! {supportCard.cardName}, hasarı artırdı!");
-                            }
-                            else if (IsAntiElement(card.element, supportCard.element))
-                            {
-                                currentSupportMultiplier = 0.4f;
-                                Debug.Log($"?? ZIT ELEMENT! {supportCard.cardName} yüzünden hasar çok düştü!");
-                            }
-                            else
-                            {
-                                currentSupportMultiplier = 0.8f;
-                                Debug.Log($"?? UYUMSUZ ELEMENT. {supportCard.cardName} yüzünden hasar düştü.");
-                            }
+                            currentSupportMultiplier = 1.5f;
+                            Debug.Log($"MÜKEMMEL UYUM! {supportCard.cardName}, hasarı artırdı!");
                         }
                     }
 
@@ -610,11 +483,7 @@ public class CombatManager : MonoBehaviour
                         }
                     }
 
-                    if (card.isElementalModifier && supportCard == null)
-                    {
-                        Debug.Log($"{card.cardName} tek başına oynandı. Etki etmeden kayboluyor.");
-                    }
-                    else
+                    // Güçlendirici tek başına oynanırsa kendi hasarıyla normal saldırı yapar
                     {
                         if (currentTargets.Count > 0)
                         {
@@ -640,7 +509,7 @@ public class CombatManager : MonoBehaviour
                                 case SpecialEffect.AOE_Damage:
                                     foreach (EnemyDisplay enemy in currentTargets)
                                     {
-                                        if (enemy != null) { ApplyDamageToEnemy(card, enemy, null, currentSupportMultiplier); StartCoroutine(enemy.TakeDamageEffect()); }
+                                        if (enemy != null) { ApplyDamageToEnemy(card, enemy, currentSupportMultiplier); StartCoroutine(enemy.TakeDamageEffect()); }
                                     }
                                     break;
                             }
@@ -660,7 +529,7 @@ public class CombatManager : MonoBehaviour
                         {
                             foreach (EnemyDisplay enemy in currentTargets)
                             {
-                                if (enemy != null) { ApplyDamageToEnemy(card, enemy, null, currentSupportMultiplier); StartCoroutine(enemy.TakeDamageEffect()); }
+                                if (enemy != null) { ApplyDamageToEnemy(card, enemy, currentSupportMultiplier); StartCoroutine(enemy.TakeDamageEffect()); }
                             }
                         }
                     }
@@ -710,27 +579,15 @@ public class CombatManager : MonoBehaviour
         activeEnemyCount = activeEnemies.Count;
     }
 
-    void ApplyDamageToEnemy(CardData card, EnemyDisplay target, UltimateCombo activeUltimate = null, float supportMultiplier = 1.0f)
+    void ApplyDamageToEnemy(CardData card, EnemyDisplay target, float supportMultiplier = 1.0f)
     {
         if (target == null) return;
         BossBehavior boss = target.GetComponent<BossBehavior>();
-        if (boss != null && boss.IsInvulnerable() && activeUltimate == null) return;
+        if (boss != null && boss.IsInvulnerable()) return;
 
         int finalDamage = 0;
-        if (activeUltimate != null) finalDamage = activeUltimate.ultimateDamage;
-        else
         {
             float multiplier = ElementSystem.GetDamageMultiplier(card.element, target.currentElement);
-            if (TerrainManager.instance != null && TerrainManager.instance.currentTerrain != ElementType.None)
-            {
-                ElementType activeTerrain = TerrainManager.instance.currentTerrain;
-                if (card.element == activeTerrain) multiplier += 0.5f;
-                else if (ElementSystem.GetDamageMultiplier(activeTerrain, card.element) > 1.0f)
-                {
-                    multiplier -= 0.5f;
-                    if (multiplier < 0.1f) multiplier = 0.1f;
-                }
-            }
 
             int baseDmg = card.baseDamage;
             if (PlayerManager.instance != null)
@@ -815,15 +672,6 @@ public class CombatManager : MonoBehaviour
         if (EnergyManager.instance != null) EnergyManager.instance.UpdatePendingCost(totalCost);
     }
 
-    public FusionRecipe CheckFusion(CardData a, CardData b)
-    {
-        foreach (FusionRecipe recipe in allFusionRecipes)
-        {
-            if ((recipe.cardA == a && recipe.cardB == b) || (recipe.cardA == b && recipe.cardB == a)) return recipe;
-        }
-        return null;
-    }
-
     public IEnumerator DestroyPlayedCards()
     {
         DeckManager deckManager = DeckManager.instance != null ? DeckManager.instance : FindFirstObjectByType<DeckManager>();
@@ -867,22 +715,6 @@ public class CombatManager : MonoBehaviour
         }
         yield return new WaitForSeconds(0.4f);
         RecalculateTotalEnergyCost();
-    }
-    UltimateCombo CheckUltimateCombo()
-    {
-        if (ultimateCombos == null || ultimateCombos.Count == 0) return null;
-        foreach (UltimateCombo combo in ultimateCombos)
-        {
-            if (combo.requiredCards == null || combo.requiredCards.Count == 0) continue;
-            List<CardData> tempPieces = new List<CardData>(combo.requiredCards);
-            for (int i = 0; i < playerSlots.Length; i++)
-            {
-                if (playerSlots[i] == null) continue;
-                if (tempPieces.Contains(playerSlots[i])) tempPieces.Remove(playerSlots[i]);
-            }
-            if (tempPieces.Count == 0) return combo;
-        }
-        return null;
     }
 
     // --- YENİ: DISSOLVE EFEKTİ VE KART YANMASI ---
@@ -946,12 +778,4 @@ public class CombatManager : MonoBehaviour
     }
 
     // Hangi elementlerin birbirine zıt (Anti) olduğunu belirler
-    bool IsAntiElement(ElementType attackElem, ElementType supportElem)
-    {
-        if (attackElem == ElementType.Fire && supportElem == ElementType.Water) return true;
-        if (attackElem == ElementType.Water && supportElem == ElementType.Fire) return true;
-        if (attackElem == ElementType.Earth && supportElem == ElementType.Air) return true;
-        if (attackElem == ElementType.Air && supportElem == ElementType.Earth) return true;
-        return false;
-    }
 }

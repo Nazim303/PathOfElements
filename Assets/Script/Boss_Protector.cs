@@ -6,6 +6,8 @@ public class Boss_Protector : BossBehavior
 {
     [Header("Minion Settings")]
     public EnemyData minionData; // Inspector'dan atanacak minyon türü
+    public int healAmount = 10;   // Her 3 turda bir tüm düşmanlara
+    public int healEvery = 3;
 
     public override void Setup(CombatManager cm, EnemyDisplay display)
     {
@@ -36,7 +38,7 @@ public class Boss_Protector : BossBehavior
         turnCount++;
 
         // Her 3 turda bir (3, 6, 9...) İyileştirme yapar
-        if (turnCount % 3 == 0)
+        if (turnCount % healEvery == 0)
         {
             Debug.Log("BOSS ÖZEL YETENEK: Kutsal İyileştirme!");
 
@@ -47,9 +49,7 @@ public class Boss_Protector : BossBehavior
             {
                 if (enemy != null)
                 {
-                    // %20 Can yenile
-                    int heal = 20;
-                    enemy.currentHealth += heal;
+                    enemy.currentHealth += healAmount;
                     if (enemy.currentHealth > enemy.enemyData.maxHealth)
                         enemy.currentHealth = enemy.enemyData.maxHealth;
 

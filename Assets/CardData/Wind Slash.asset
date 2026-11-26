@@ -15,10 +15,10 @@ MonoBehaviour:
   cardName: Wind Slash
   cardArt: {fileID: 6580227817065110172, guid: 1f021b7bc5808b5449025388a429c4b1, type: 3}
   cardbander: {fileID: 3970667679311140378, guid: ca29aabeb6032604eab4f881dfcc8333, type: 3}
-  description: 'Deal 12 damage. Strong vs Water.'
+  description: 'Deal 13 damage. Strong vs Water.'
   cardType: 0
   element: 4
-  baseDamage: 12
+  baseDamage: 13
   healAmount: 0
   cardPower: 2
   isElementalModifier: 0

@@ -15,10 +15,10 @@ MonoBehaviour:
   cardName: Fire Ball
   cardArt: {fileID: 3570861482548032500, guid: 7df2ab43576be104c9dd944ef8930a06, type: 3}
   cardbander: {fileID: -6889857487880924528, guid: 1828523002e97944b8014fc218db0d6a, type: 3}
-  description: 'Deal 12 damage. Strong vs Earth.'
+  description: 'Deal 13 damage. Strong vs Earth.'
   cardType: 0
   element: 1
-  baseDamage: 12
+  baseDamage: 13
   healAmount: 0
   cardPower: 2
   isElementalModifier: 0

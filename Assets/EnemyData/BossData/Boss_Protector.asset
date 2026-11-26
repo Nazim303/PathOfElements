@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Boss_Protector
   m_EditorClassIdentifier: 
   enemyName: Boss_Protector
-  maxHealth: 150
+  maxHealth: 70
   element: 3
   enemyArt: {fileID: -2424553518018739129, guid: fcc8b12b44d23c648823cb8d407e36b4, type: 3}
   enemybander: {fileID: -5544542530636854122, guid: fa01ea136791dd84980dbfebcac81d6b, type: 3}
-  damage: 20
-  goldReward: 25
+  damage: 10
+  goldReward: 30
   journalDescription: 

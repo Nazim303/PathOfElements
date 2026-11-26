@@ -59,23 +59,8 @@ public class CardSlot : MonoBehaviour, IDropHandler
 
         if (draggable != null && droppedCardDisplay != null)
         {
-            // --- FİZYON (BİRLEŞME) KONTROLÜ ---
-            if (currentCardDisplay != null)
-            {
-                if (combatManager != null)
-                {
-                    Transform existingCardTransform = currentCardDisplay.transform;
-                    FusionRecipe recipe = combatManager.CheckFusion(currentCardDisplay.cardData, droppedCardDisplay.cardData);
-
-                    if (recipe != null)
-                    {
-                        Debug.Log($"FİZYON BAŞARILI!");
-                        StartCoroutine(AnimateFusionAndCreateCard(existingCardTransform.gameObject, droppedObject, recipe));
-                        return;
-                    }
-                }
-                return;
-            }
+            // Slot doluysa kart bırakılamaz
+            if (currentCardDisplay != null) return;
 
             // --- NORMAL KART YERLEŞTİRME ---
             currentCardDisplay = droppedCardDisplay;
@@ -136,91 +121,6 @@ public class CardSlot : MonoBehaviour, IDropHandler
         }
     }
 
-    IEnumerator AnimateFusionAndCreateCard(GameObject cardA, GameObject cardB, FusionRecipe recipe)
-    {
-        Draggable dragA = cardA.GetComponent<Draggable>();
-        if (dragA != null) dragA.enabled = false;
-
-        Draggable dragB = cardB.GetComponent<Draggable>();
-        if (dragB != null) dragB.enabled = false;
-
-        cardA.transform.SetAsLastSibling();
-        cardB.transform.SetAsLastSibling();
-
-        if (recipe.fusionVFX != null)
-        {
-            GameObject vfx = Instantiate(recipe.fusionVFX, transform.position, Quaternion.identity, transform);
-            vfx.transform.SetAsFirstSibling();
-            Destroy(vfx, 2.5f);
-        }
-
-        float t = 0;
-        float duration = 1.0f;
-        float rotationSpeed = 720f;
-
-        Vector3 startPosA = cardA.transform.position;
-        Vector3 startPosB = cardB.transform.position;
-        Vector3 centerPoint = transform.position;
-
-        while (t < 1)
-        {
-            t += Time.deltaTime / duration;
-            float smoothT = t * t * (3f - 2f * t);
-
-            if (cardA != null && cardB != null)
-            {
-                cardA.transform.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
-                cardB.transform.Rotate(Vector3.forward * -rotationSpeed * Time.deltaTime);
-                cardA.transform.position = Vector3.Lerp(startPosA, centerPoint, smoothT);
-                cardB.transform.position = Vector3.Lerp(startPosB, centerPoint, smoothT);
-                cardA.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, smoothT);
-                cardB.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, smoothT);
-            }
-            yield return null;
-        }
-
-        if (cardA != null) Destroy(cardA);
-        if (cardB != null) Destroy(cardB);
-
-        GameObject newCardObj = Instantiate(combatManager.cardPrefab, this.transform);
-        RectTransform rect = newCardObj.GetComponent<RectTransform>();
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.anchorMin = new Vector2(0.5f, 0.5f);
-        rect.anchorMax = new Vector2(0.5f, 0.5f);
-        rect.anchoredPosition = Vector2.zero;
-        newCardObj.transform.localRotation = Quaternion.identity;
-        newCardObj.transform.localScale = Vector3.one;
-
-        CardDisplay newCardDisplay = newCardObj.GetComponent<CardDisplay>();
-        newCardDisplay.LoadCard(recipe.resultCard);
-        currentCardDisplay = newCardDisplay;
-        combatManager.UpdateSlot(slotIndex, recipe.resultCard);
-
-        StartCoroutine(AnimateCardArrival(newCardObj));
-
-        if (elementPlacementVFX != null)
-        {
-            if (activePlacementVFX != null) Destroy(activePlacementVFX);
-
-            activePlacementVFX = Instantiate(elementPlacementVFX, transform);
-            activePlacementVFX.transform.localPosition = Vector3.zero;
-            activePlacementVFX.transform.localScale = Vector3.one;
-            activePlacementVFX.transform.SetAsFirstSibling();
-
-            ParticleSystemRenderer[] renderers = activePlacementVFX.GetComponentsInChildren<ParticleSystemRenderer>(true);
-            foreach (var r in renderers) r.sortingOrder = 50;
-
-            Color elementColor = GetElementColor(newCardDisplay.cardData.element);
-            ParticleSystem[] particles = activePlacementVFX.GetComponentsInChildren<ParticleSystem>(true);
-            foreach (var ps in particles)
-            {
-                var main = ps.main;
-                main.startColor = elementColor;
-            }
-        }
-    }
-
-    // --- ÇÖZÜM: MILIMETRIK UI HİZALAMASI (RectTransform) ---
     IEnumerator AnimateCardArrival(GameObject cardObj)
     {
         if (cardObj == null) yield break;

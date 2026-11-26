@@ -161,6 +161,14 @@ public class ShopManager : MonoBehaviour
                 }
                 break;
 
+            case ItemEffectType.IncreaseDrawPerTurn:
+                if (DeckManager.instance != null)
+                {
+                    DeckManager.instance.drawPerTurn += item.effectValue;
+                    Debug.Log($"[SHOP] Draw per turn: {DeckManager.instance.drawPerTurn}");
+                }
+                break;
+
             case ItemEffectType.GainCard:
                 if (item.rewardCard != null)
                 {

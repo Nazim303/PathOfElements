@@ -36,7 +36,6 @@ public class AudioManager : MonoBehaviour
     public AudioClip gamblingSFX;
     public AudioClip exchangeSFX;
     public AudioClip enemyAttackSFX;
-    public AudioClip hexodiaAttackSFX;
     public AudioClip healSFX;
 
     private AudioSource sfxSource;
@@ -135,7 +134,6 @@ public class AudioManager : MonoBehaviour
     public void PlayGambling() { if (gamblingSFX != null) sfxSource.PlayOneShot(gamblingSFX); }
     public void PlayExchange() { if (exchangeSFX != null) sfxSource.PlayOneShot(exchangeSFX); }
     public void PlayEnemyAttack() { if (enemyAttackSFX != null) sfxSource.PlayOneShot(enemyAttackSFX); }
-    public void PlayHexodiaAttack() { if (hexodiaAttackSFX != null) sfxSource.PlayOneShot(hexodiaAttackSFX); }
     public void PlayHeal() { if (healSFX != null) sfxSource.PlayOneShot(healSFX); }
 
     // --- ELEMENT EFEKTLERİ ---

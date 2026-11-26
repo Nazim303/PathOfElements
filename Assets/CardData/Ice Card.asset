@@ -15,14 +15,14 @@ MonoBehaviour:
   cardName: Ice Spear
   cardArt: {fileID: 448556309585627184, guid: 5001560e1a7695044beff940f87e4aad, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
-  description: 'Deal 14 damage. Strong vs Fire.'
+  description: 'Deal 20 damage. Strong vs Fire.'
   cardType: 0
   element: 2
-  baseDamage: 14
+  baseDamage: 20
   healAmount: 0
-  cardPower: 2
+  cardPower: 3
   isElementalModifier: 0
   specialEffect: 0
-  energyCost: 2
+  energyCost: 3
   supportEffect: 0
   supportValue: 0

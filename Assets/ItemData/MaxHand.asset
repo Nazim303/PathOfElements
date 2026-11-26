@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Gambler's Hand
   icon: {fileID: 0}
-  description: Increase Max Hand Size +2
-  cost: 25
-  effectType: 4
-  effectValue: 2
+  description: 'Draw 1 more card every turn.'
+  cost: 40
+  effectType: 7
+  effectValue: 1
   rewardCard: {fileID: 0}

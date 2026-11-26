@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Mini Golem
   m_EditorClassIdentifier: 
   enemyName: Mushroom
-  maxHealth: 30
-  element: 3
+  maxHealth: 34
+  element: 2
   enemyArt: {fileID: -7206924570802015341, guid: 402e7006b30456e44b07035801c50d13, type: 3}
-  enemybander: {fileID: -5544542530636854122, guid: fa01ea136791dd84980dbfebcac81d6b, type: 3}
-  damage: 8
-  goldReward: 9
+  enemybander: {fileID: -4179425161918205984, guid: 68e365159cbff1a4685c611e86bd5831, type: 3}
+  damage: 9
+  goldReward: 7

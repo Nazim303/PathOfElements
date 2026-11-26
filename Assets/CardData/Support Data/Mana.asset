@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Mana Transfer
   cardArt: {fileID: 0}
-  description: 'Exchange slot: gain 2 energy.'
+  description: 'Exchange slot: gain 1 energy.'
   cardType: 3
   element: 0
   baseDamage: 0
@@ -22,4 +22,4 @@ MonoBehaviour:
   specialEffect: 0
   energyCost: 0
   supportEffect: 4
-  supportValue: 2
+  supportValue: 1

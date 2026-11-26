@@ -34,6 +34,12 @@ public class MapGenerator : MonoBehaviour
     public int companionChance = 15;
     public int mysteryChance = 15;
 
+    [Header("Layer Rules")]
+    [Tooltip("Elite bu katmandan önce çıkmaz (ilk savaşlarda deste daha kurulmadı)")]
+    public int eliteMinLayer = 3;
+    [Tooltip("Dükkan bu katmandan önce çıkmaz (henüz altın yok)")]
+    public int shopMinLayer = 2;
+
     [Header("Layout Settings")]
     public float xSpacing = 200f;
     public float ySpacing = 150f;
@@ -203,6 +209,8 @@ public class MapGenerator : MonoBehaviour
 
         // Diviner sadece haritanın orta katmanlarında çıkmalı
         if (layerIndex <= 1 || layerIndex >= mapLength - 2) dWeight = 0;
+        if (layerIndex < eliteMinLayer) eWeight = 0;
+        if (layerIndex < shopMinLayer) sWeight = 0;
 
         // Kalan ihtimalleri topla
         int totalWeight = cWeight + eWeight + sWeight + dWeight + compWeight + mWeight;

@@ -10,7 +10,8 @@ public enum ItemEffectType
     IncreaseMaxEnergy,  // Maksimum enerjiyi kalıcı artırır (Çok güçlü)
     IncreaseMaxHandSize,// Elde tutulabilen maksimum kart sayısını artırır
     GainGold,           // Parayla para almak? (Belki event'lerde kullanılır)
-    GainCard            // Satın alınınca desteye özel bir kart ekler
+    GainCard,           // Satın alınınca desteye özel bir kart ekler
+    IncreaseDrawPerTurn // Her tur çekilen kart sayısını kalıcı artırır (sona eklendi: asset'lerdeki sayılar kaymasın)
 }
 
 [CreateAssetMenu(fileName = "New Item", menuName = "Path of Elements/Shop Item")]

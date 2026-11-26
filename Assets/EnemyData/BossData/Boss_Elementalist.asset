@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Boss_Elementalist
   m_EditorClassIdentifier: 
   enemyName: Elementalist
-  maxHealth: 100
+  maxHealth: 150
   element: 1
   enemyArt: {fileID: 0}
-  damage: 15
-  goldReward: 100
+  damage: 14
+  goldReward: 0

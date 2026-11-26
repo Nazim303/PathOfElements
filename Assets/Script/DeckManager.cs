@@ -8,6 +8,8 @@ public class DeckManager : MonoBehaviour
     [Header("Deck Config")]
     public List<CardData> allCardsInDeck = new List<CardData>();
     public int maxHandSize = 7;
+    [Tooltip("Düşman turundan sonra çekilen kart sayısı (Gambler's Hand artırır)")]
+    public int drawPerTurn = 2;
 
     [Header("Battle State")]
     public List<CardData> drawPile = new List<CardData>();

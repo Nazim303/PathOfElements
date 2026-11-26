@@ -15,15 +15,15 @@ MonoBehaviour:
   cardName: Tsunami
   cardArt: {fileID: -4205624841535225538, guid: e8ee492fbc5a0ca4cbb37891eab18a73, type: 3}
   cardbander: {fileID: -4214241332329590814, guid: cba048d22c1d3e7419e2c974a516782a, type: 3}
-  description: 'Deal 22 damage. Strong vs Fire.'
+  description: 'Deal 24 damage. Strong vs Fire.'
   cardType: 0
   element: 2
-  baseDamage: 22
+  baseDamage: 24
   healAmount: 0
   cardPower: 1
   isElementalModifier: 0
   specialEffect: 0
-  energyCost: 4
+  energyCost: 3
   supportEffect: 0
   supportValue: 0
   journalDescription: 

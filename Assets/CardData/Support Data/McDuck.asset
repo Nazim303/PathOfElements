@@ -15,12 +15,12 @@ MonoBehaviour:
   cardName: McDuck
   cardArt: {fileID: 3992474747508812115, guid: 37609b3d10460514baa699aba6f843b2, type: 3}
   cardbander: {fileID: 3280247252720426850, guid: a9c49fd53ecd9444b88c5be8f15c6d57, type: 3}
-  description: 'Exchange slot: gain 5 gold.'
+  description: 'Exchange slot: gain 10 gold.'
   cardType: 3
   element: 0
-  baseDamage: 5
+  baseDamage: 10
   healAmount: 0
   specialEffect: 0
   energyCost: 0
   supportEffect: 2
-  supportValue: 5
+  supportValue: 10
